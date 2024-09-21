@@ -1,85 +1,254 @@
-<!-- templates/registration/login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}">  {% endcomment %}
-<style>/* static/css/style.css */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-    }
-    
-    .login-container {
-        width: 300px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        margin-top: 50px;
-    }
-    
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-    
-    input[type="text"],
-    input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    button:hover {
-        background-color: #0056b3;
-    }
-    
-    p {
-        text-align: center;
-        margin-top: 10px;
-    }
-    
-</style>
+    <style>
+        /* From Uiverse.io by Smit-Prajapati */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            background: linear-gradient(0deg, #ffffff 0%, #f4f7fb 100%);
+            border-radius: 40px;
+            padding: 30px 40px;
+            border: 5px solid #fff;
+            box-shadow: rgba(133, 189, 215, 0.88) 0px 30px 30px -20px;
+            margin: 20px;
+        }
+
+        .heading {
+            text-align: center;
+            font-weight: 900;
+            font-size: 32px;
+            color: #1089d3;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            margin-top: -10px;
+        }
+
+        .form {
+            margin-top: 30px;
+        }
+
+        .form .input {
+            width: 90%;
+            background: white;
+            border: none;
+            padding: 18px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: #cff0ff 0px 10px 10px -5px;
+            border-inline: 2px solid transparent;
+        }
+
+        .form .input::placeholder {
+            color: rgb(170, 170, 170);
+        }
+
+        .form .input:focus {
+            outline: none;
+            border-inline: 2px solid #12B1D1;
+        }
+
+        .form .forgot-password {
+            display: block;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .form .forgot-password a {
+            font-size: 11px;
+            color: #0099ff;
+            text-decoration: none;
+        }
+
+        .form .login-button {
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            background: linear-gradient(45deg, #1089d3 0%, #12B1D1 100%);
+            color: white;
+            padding: 18px;
+            margin: 25px auto;
+            border-radius: 20px;
+            box-shadow: rgba(133, 189, 215, 0.88) 0px 20px 10px -15px;
+            border: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form .login-button:hover {
+            transform: scale(1.03);
+            box-shadow: rgba(133, 189, 215, 0.88) 0px 23px 10px -20px;
+        }
+
+        .form .login-button:active {
+            transform: scale(0.95);
+            box-shadow: rgba(133, 189, 215, 0.88) 0px 15px 10px -10px;
+        }
+
+        .social-account-container {
+            margin-top: 30px;
+        }
+
+        .social-account-container .title {
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: rgb(170, 170, 170);
+        }
+
+        .social-account-container .social-accounts {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .social-button {
+            background: linear-gradient(45deg, #000 0%, #707070 100%);
+            border: 5px solid white;
+            padding: 8px;
+            border-radius: 50%;
+            width: 50px;
+            aspect-ratio: 1;
+            display: grid;
+            place-content: center;
+            box-shadow: rgba(133, 189, 215, 0.88) 0px 12px 10px -8px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .svg {
+            fill: white;
+            margin: auto;
+        }
+
+        .social-button:hover {
+            transform: scale(1.2);
+        }
+
+        .social-button:active {
+            transform: scale(0.9);
+        }
+
+        .agreement {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .agreement a {
+            text-decoration: none;
+            color: #0099ff;
+            font-size: 10px;
+        }
+
+        /* Media Queries for responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                padding: 25px;
+                margin: 15px;
+            }
+
+            .heading {
+                font-size: 28px;
+            }
+
+            .form .input {
+                padding: 16px 18px;
+                margin-top: 15px;
+            }
+
+            .form .login-button {
+                padding: 16px;
+            }
+
+            .social-button {
+                width: 45px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .heading {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .form .input {
+                font-size: 16px;
+                padding: 16px;
+                margin-top: 20px;
+            }
+
+            .form .login-button {
+                font-size: 18px;
+                padding: 18px;
+                margin: 30px auto;
+            }
+
+            .social-button {
+                width: 40px;
+            }
+
+            .social-account-container {
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" name="username" required id="username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" required id="password">
-            </div>
-            <button type="submit">Login</button>
+    <div class="container">
+        <div class="heading">Welcome Mentor,</div>
+        <h2>Sign in to continue</h2>
+        <form action="" class="form">
+            <input required class="input" type="email" name="email" id="email" placeholder="E-mail">
+            <input required class="input" type="password" name="password" id="password" placeholder="Password">
+            <span class="forgot-password"><a href="#">Forgot Password?</a></span>
+            <input class="login-button" type="submit" value="Sign In">
         </form>
-        <p>Don't have an account? <a href="{% url 'mentor_signup' %}">Sign up here</a>.</p>
+        <div class="social-account-container">
+            <span class="title">Or Sign in with</span>
+            <div class="social-accounts">
+                <button class="social-button google">
+                    <svg class="svg" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 488 512">
+                        <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
+                    </svg>
+                </button>
+                <button class="social-button apple">
+                    <svg class="svg" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512">
+                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43.4-18 76.1-18 32.2 0 48.6 18 76.3 18 47.9-1.3 90.2-85.4 102.7-122.1-65.5-31-62.1-90.9-62.3-89.1zM252.9 80.3c26.7-32.3 23.9-61.7 22.6-72.3-22 1.3-48.1 15-63.5 33.6-17.3 20.4-26.8 45.8-24.5 72.8 26 .2 49.7-11.9 65.4-34.1z"></path>
+                    </svg>
+                </button>
+                <button class="social-button twitter">
+                    <svg class="svg" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                        <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <span class="agreement"><a href="#">Learn user licence agreement</a></span>
     </div>
 </body>
 </html>
