@@ -51,7 +51,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
+  width: 230px;
   height: 100%;
   background: var(--light);
   z-index: 2000;
@@ -85,6 +85,9 @@ body {
   min-width: 60px;
   display: flex;
   justify-content: center;
+}
+#sidebar .brand .text {
+  padding-top: 10%;
 }
 #sidebar .side-menu {
   width: 100%;
@@ -153,13 +156,22 @@ body {
   display: flex;
   justify-content: center;
 }
+#sidebar.hide .side-menu li .logout {
+  display: flex;
+  justify-content: center;
+}
+
+#sidebar.hide .side-menu li .logout .text {
+  display: none;
+}
+
 /* SIDEBAR */
 
 /* CONTENT */
 #content {
   position: relative;
-  width: calc(100% - 280px);
-  left: 280px;
+  width: calc(100% - 230px);
+  left: 230px;
   transition: 0.3s ease;
 }
 #sidebar.hide ~ #content {
