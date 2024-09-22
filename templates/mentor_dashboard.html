@@ -153,7 +153,7 @@
                 English Marks: {{ student.english_marks }}<br>
                 History Marks: {{ student.history_marks }}<br>
                 Maths Marks: {{ student.maths_marks }}<br>
-				<a href="{% url 'student_form' student.id %}" class="btn-add-form">Add a Form</a><br>
+				<a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
             	<a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
             </div>
         </li>
