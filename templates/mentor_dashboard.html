@@ -144,7 +144,6 @@
             <a href="javascript:void(0);">
                 {{ student.name }}
             </a>
-			<a href="{% url 'student_form' student.id %}" class="btn-add-form">Add a Form</a>
             <div class="dropdown" id="dropdown-{{ student.id }}">
                 <strong>Details:</strong>
                 Gender: {{ student.gender }}<br>
@@ -154,6 +153,8 @@
                 English Marks: {{ student.english_marks }}<br>
                 History Marks: {{ student.history_marks }}<br>
                 Maths Marks: {{ student.maths_marks }}<br>
+				<a href="{% url 'student_form' student.id %}" class="btn-add-form">Add a Form</a><br>
+            	<a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
             </div>
         </li>
     {% empty %}

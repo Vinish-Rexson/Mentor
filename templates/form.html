@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Mentor Form</title>
+    <style>
+        .invoice-box {
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            font-size: 16px;
+            line-height: 24px;
+            font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+            color: #555;
+        }
+
+        /* Your existing styles here */
+        /* Add other styles as needed */
+        input {
+            width: 400px; /* Set the width for all input boxes */
+            height: 40px; /* Set the height for all input boxes */
+            font-size: 16px; /* Adjust the font size for all input boxes */
+            padding: 10px; /* Add padding for all input boxes */
+            border: 1px solid #ccc; /* Optional: border for all input boxes */
+            border-radius: 5px; /* Optional: rounded corners for all input boxes */
+        }
+    </style>
+</head>
+
+<body>
+    <br /><br /><br />
+    <div class="invoice-box">
+        <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td class="title">
+                                <h1>Mentor Form</h1>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h3>Details</h3>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <form method="post" action="{% url 'form_student' student.id %}">
+                        {% csrf_token %}
+                        <table>
+                            <tr class="item">
+                                <td>Student Name</td>
+                                <td>
+                                    <input type="text" name="name" placeholder="Enter student name" required />
+                                </td>
+                            </tr>
+                            <tr class="item">
+                                <td>Student Roll.No</td>
+                                <td>
+                                    <input type="number" name="rollno" placeholder="Enter student Roll.No" required />
+                                </td>
+                            </tr>
+                            <tr class="item">
+                                <td>Sem 3 Attendance</td>
+                                <td>
+                                    <input type="number" name="attendance" placeholder="Enter attendance percentage %" min="0" max="100" step="0.01" required />
+                                </td>
+                            </tr>
+                            <tr class="item">
+                                <td>SEM 3 CGPA</td>
+                                <td>
+                                    <input type="number" name="sem3cgpa" placeholder="Enter CGPA" min="0" max="10" step="0.01" required />
+                                </td>
+                            </tr>
+                            <tr class="item">
+                                <td>Are you a member of any tech or non-tech council/team in college? If yes, give details.</td>
+                                <td>
+                                    <input type="text" name="question1" placeholder="Enter details for council/team" required />
+                                </td>
+                            </tr>
+                            <tr class="item">
+                                <td>Give details of co-curricular events you participated in this semester.</td>
+                                <td>
+                                    <input type="text" name="question2" placeholder="Enter details for co-curricular events" required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: center;">
+                                    <input type="submit" name="submit" value="Submit Form" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
