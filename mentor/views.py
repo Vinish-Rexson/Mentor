@@ -11,6 +11,7 @@ import qrcode, base64
 from django.http import HttpResponse
 from django.contrib.staticfiles import finders
 from docxtpl import DocxTemplate
+import secrets 
 
 
 def Redirect(request):
@@ -88,41 +89,53 @@ def generate_qr_code(url):
 
 
 
+
+
+# QR code generation function
+def generate_qr_code(url):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill='black', back_color='white')
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    
+    img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    return img_base64
+
 # View to generate and display QR code
 def generate_qr(request, student_id):
     student = get_object_or_404(Student, id=student_id) 
-    form_url = request.build_absolute_uri(f"/form/{student.id}/")
+    # Generate a unique token to append to the URL
+    unique_token = secrets.token_urlsafe()  # Generates a secure random token
+    form_url = request.build_absolute_uri(f"/form/{student.id}/?token={unique_token}")
     qr_code = generate_qr_code(form_url)
     
     return render(request, 'qr_code_page.html', {'student': student, 'qr_code': qr_code})
 
-
-
-
 def form_student(request, student_id):
-    # Fetch the student object or return 404 if not found
     student = get_object_or_404(Student, id=student_id)
 
     if request.method == 'POST':
-        # Bind the form with POST data
         form = StudentSemForm(request.POST)
         if form.is_valid():
-            # Save the form but don't commit to the database yet
             student_form = form.save(commit=False)
-            # Assign the student to the form data if needed
-            student_form.student = student  # Assuming there's a ForeignKey to Student
+            student_form.student = student
             student_form.save()
-            # Pass rollno to the success template
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno}) 
         else:
-            # If form is invalid, render the form with error messages
             return render(request, 'form.html', {'form': form, 'student': student})
     else:
-        # If it's a GET request, display the empty form
         form = StudentSemForm()
 
-    # Render the form page
     return render(request, 'form.html', {'form': form, 'student': student})
+
 
 
 
@@ -240,3 +253,4 @@ def form_dashboard(request):
     
     # Render the template with the context
     return render(request, 'form_dashboard.html', context)
+
