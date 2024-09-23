@@ -13,6 +13,9 @@ from django.contrib.staticfiles import finders
 from docxtpl import DocxTemplate
 
 
+def Redirect(request):
+    return redirect('accounts/login')
+
 def mentor_signup(request):
     if request.method == 'POST':
         form = MentorSignUpForm(request.POST)
@@ -31,7 +34,7 @@ def mentor_signup(request):
 def mentor_dashboard(request):
     return render(request, 'mentor_dashboard.html')
 
-
+@login_required
 def mentor_dashboard(request):
     # Fetch all students from the database
     students = Student.objects.all()
