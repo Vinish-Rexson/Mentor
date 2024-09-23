@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TE Students</title>
+</head>
+<body>
+    <h1>Students in TE</h1>
+    <ul>
+        {% for student in te_students %}
+            <li>{{ student.name }} (Roll Number: {{ student.roll_number }})</li>
+        {% empty %}
+            <li>No students found in TE.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -184,12 +184,15 @@ def generate_document(form_dict):
 
 
 def SE(request):
-    return render(request,'se.html')
+    se_students = Student.objects.filter(year="SE")
+    return render(request, 'se.html', {'se_students': se_students})
 
 
 def TE(request):
-    return render(request,'te.html')
+    te_students = Student.objects.filter(year="TE ")
+    return render(request, 'te.html', {'te_students': te_students})
 
 
 def BE(request):
-    return render(request,'be.html')
+    be_students = Student.objects.filter(year="BE")
+    return render(request, 'be.html', {'be_students': be_students})

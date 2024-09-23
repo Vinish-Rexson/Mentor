@@ -7,18 +7,20 @@ class Mentor(models.Model):
     def __str__(self):
         return self.user.username
 
+from django.db import models
+
 class Student(models.Model):
     name = models.CharField(max_length=100)
     gender = models.CharField(max_length=10)
-    age = models.IntegerField()
-    section = models.CharField(max_length=1)
-    science_marks = models.IntegerField()
-    english_marks = models.IntegerField()
-    history_marks = models.IntegerField()
-    maths_marks = models.IntegerField()
+    year = models.CharField(max_length=10)  # SE, TE, etc.
+    semester = models.IntegerField()  # Sem value
+    roll_number = models.CharField(max_length=10)  # Roll number from CSV
+    branch = models.CharField(max_length=50)  # Branch like CE, IT, etc.
+    division = models.CharField(max_length=1)  # Div value (e.g., B)
 
     def __str__(self):
         return self.name
+
     
 
 class StudentForm(models.Model):
