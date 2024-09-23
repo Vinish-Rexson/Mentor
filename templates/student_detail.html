@@ -133,12 +133,11 @@
             </a>
             <div class="dropdown" id="dropdown-{{ student.id }}">
                 <strong>Details:</strong>
-                Gender: {{ student.gender }}<br>
                 Year: {{ student.year }}<br>
-                Semester: {{ student.semester }}<br>
-                Roll Number: {{ student.roll_number }}<br>
+                Roll.No: {{ student.roll_number }}<br>
                 Branch: {{ student.branch }}<br>
-                Division: {{ student.division }}<br>
+                Section: {{ student.division }}<br>
+                Gender: {{ student.gender }}<br>
 				<a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
             	<a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
             </div>

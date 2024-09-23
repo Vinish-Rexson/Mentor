@@ -52,16 +52,27 @@
                 <a class="active" href="#">Third Year</a>
             </li>
         </ul>
-        <ul>
-            {% for student in te_students %}
-                <li>{{ student.name }} (Roll Number: {{ student.roll_number }})</li>
-            {% empty %}
-                <li>No students found in TE.</li>
-            {% endfor %}
-        </ul>
-    </div>
-   
-</div>
+        <h2>List of Third Year Students</h2>
+<ul>
+    {% for student in te_students %}
+        <li class="student-item">
+            <a href="javascript:void(0);">
+                {{ student.name }}
+            </a>
+            <div class="dropdown" id="dropdown-{{ student.id }}">
+                <strong>Details:</strong>
+                Gender: {{ student.gender }}<br>
+                Roll.No: {{ student.roll_number }}<br>
+                Branch: {{ student.branch }}<br>
+                Section: {{ student.division }}<br>
+				<a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
+            	<a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
+            </div>
+        </li>
+    {% empty %}
+        <li>No students available</li>
+    {% endfor %}
+</ul>
 
 
 {% endblock %}
