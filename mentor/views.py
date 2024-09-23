@@ -16,6 +16,7 @@ from docxtpl import DocxTemplate
 def Redirect(request):
     return redirect('accounts/login')
 
+
 def mentor_signup(request):
     if request.method == 'POST':
         form = MentorSignUpForm(request.POST)
@@ -30,9 +31,13 @@ def mentor_signup(request):
 
     return render(request, 'signup.html', {'form': form})
 
+
+
 @login_required
 def mentor_dashboard(request):
     return render(request, 'mentor_dashboard.html')
+
+
 
 @login_required
 def mentor_dashboard(request):
@@ -49,11 +54,18 @@ def mentor_dashboard(request):
     # Render the template with the context
     return render(request, 'mentor_dashboard.html', context)
 
+
+
 def student_detail(request):
     return render(request, 'student_detail.html')
 
+
+
 def dashboard(request):
     return render(request, 'mentor_dashboard.html')
+
+
+
 # QR code generation function (same as before)
 def generate_qr_code(url):
     qr = qrcode.QRCode(
@@ -71,6 +83,8 @@ def generate_qr_code(url):
     
     img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
     return img_base64
+
+
 
 # View to generate and display QR code
 def generate_qr(request, student_id):
@@ -109,6 +123,7 @@ def form_student(request, student_id):
     return render(request, 'form.html', {'form': form, 'student': student})
 
 
+
 def download_document(request, rollno):
     # Fetch all entries with the given rollno
     forms = StudentForm.objects.filter(rollno=rollno)
@@ -131,6 +146,7 @@ def download_document(request, rollno):
     
     # Call the document generation function
     return generate_document(form_dict)
+
 
 
 def generate_document(form_dict):
@@ -164,3 +180,16 @@ def generate_document(form_dict):
     response = HttpResponse(doc_io.read(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={form_dict["rollno"]}.docx'
     return response
+
+
+
+def SE(request):
+    return render(request,'se.html')
+
+
+def TE(request):
+    return render(request,'te.html')
+
+
+def BE(request):
+    return render(request,'be.html')

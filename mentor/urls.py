@@ -10,4 +10,8 @@ urlpatterns = [
     path('generate_qr/<int:student_id>/', views.generate_qr, name='generate_qr'),
     path('download/<str:rollno>/', views.download_document, name='download_document'),
     path('', views.Redirect, name='Redirect'),
+    path('student_detail/', views.student_detail, name='student_detail'),
+    path('student_detail/SE', views.SE, name='SE'),
+    path('student_detail/TE', views.TE, name='TE'),
+    path('student_detail/BE', views.BE, name='BE'),
 ]

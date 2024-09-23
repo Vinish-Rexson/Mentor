@@ -3,25 +3,18 @@
 {% block title %}Students Detail{% endblock %}
 
 {% block content %}
-    <h2>List of Students</h2>
-    <ul>
-        {% for student in students %}
-            <li class="student-item">
-                <a href="javascript:void(0);">{{ student.name }}</a>
-                <a href="{% url 'student_form' student.id %}" class="btn-add-form">Add a Form</a>
-                <div class="dropdown" id="dropdown-{{ student.id }}">
-                    <strong>Details:</strong>
-                    Gender: {{ student.gender }}<br>
-                    Age: {{ student.age }}<br>
-                    Section: {{ student.section }}<br>
-                    Science Marks: {{ student.science_marks }}<br>
-                    English Marks: {{ student.english_marks }}<br>
-                    History Marks: {{ student.history_marks }}<br>
-                    Maths Marks: {{ student.maths_marks }}<br>
-                </div>
-            </li>
-        {% empty %}
-            <li>No students available</li>
-        {% endfor %}
-    </ul>
+    <body>
+        <a href="SE">
+            <div>SE</div>
+        </a>
+        
+        <a href="TE">
+            <div>TE</div>
+        </a>
+        
+        <a href="BE">
+            <div>BE</div>
+        </a>
+    </body>
 {% endblock %}
+
