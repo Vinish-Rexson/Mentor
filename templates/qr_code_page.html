@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code for {{ student.name }}</title>
+</head>
+<body>
+    <h1>QR Code for {{ student.name }}</h1>
+    <p>Scan the QR code to access the form:</p>
+    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for {{ student.name }}">
+    
+</body>
+</html>

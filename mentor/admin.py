@@ -5,3 +5,8 @@ from .models import *
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['name', 'gender', 'age', 'section']
+
+
+class StudentFormAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(StudentForm, StudentFormAdmin)
