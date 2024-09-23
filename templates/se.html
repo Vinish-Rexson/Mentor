@@ -106,47 +106,129 @@
 #content main .box-info li .text p {
   color: var(--dark);
 }
+/* Student list container */
+.student-list {
+  width: 1005;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Enforce 3 columns for larger screens */
+    grid-gap: 30px; /* Space between cards */
+    margin-top: 36px;
+    padding: 0 24px; /* Padding around the grid */
+}
 
+/* Individual student card */
+.student-item {
+    padding: 24px;
+    background: var(--light);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    width: 100%; /* Make sure it takes full width of the column */
+    max-width: 100%; /* Ensure it doesn't exceed the grid limits */
+}
+
+.student-item:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+/* Student icon */
+.student-item .bx {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+    background: var(--light-blue);
+    color: var(--blue);
+}
+
+/* Student name and details */
+.student-item h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+.student-item p {
+    font-size: 16px;
+    color: var(--dark-grey);
+    margin-bottom: 8px;
+}
+
+/* Links for form and QR code */
+.student-item a {
+    text-decoration: none;
+    color: var(--blue);
+    font-weight: 500;
+}
+
+.student-item a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .student-list {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .student-list {
+        grid-template-columns: 1fr; /* 1 column for smaller screens like mobile */
+    }
+}
 
 
 </style>
 <div class="head-title">
-    <div class="left">
-        <h1>Dashboard</h1>
-        <ul class="breadcrumb">
-            <li>
-                <a href="#">Dashboard</a>
-            </li>
-            <li><i class='bx bx-chevron-right'></i></li>
-            <li>
-                <a class="active" href="#">Student Details</a>
-            </li>
-            <li><i class='bx bx-chevron-right'></i></li>
-            <li>
-                <a class="active" href="#">Second Year</a>
-            </li>
-        </ul>
-        <h2>List of Second Year Students</h2>
-        <ul>
-            {% for student in se_students %}
-                <li class="student-item">
-                    <a href="javascript:void(0);">
-                        {{ student.name }}
-                    </a>
-                    <div class="dropdown" id="dropdown-{{ student.id }}">
-                        <strong>Details:</strong>
-                        Gender: {{ student.gender }}<br>
-                        Roll.No: {{ student.roll_number }}<br>
-                        Branch: {{ student.branch }}<br>
-                        Section: {{ student.division }}<br>
-                <a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
+  <div class="left">
+      <h1>Dashboard</h1>
+      <ul class="breadcrumb">
+          <li>
+              <a href="#">Dashboard</a>
+          </li>
+          <li><i class='bx bx-chevron-right'></i></li>
+          <li>
+              <a class="active" href="/student_detail">Student Details</a>
+          </li>
+          <li><i class='bx bx-chevron-right'></i></li>
+          <li>
+              <a class="active" href="#">Second Year</a>
+          </li>
+      </ul>
+    
+      <div class="student-list">
+          {% for student in se_students %}
+              <div class="student-item">
+                <div class="bx">
+                  <i class='bx bxs-user'></i> <!-- Icon for student -->
+              </div>
+                  <a href="javascript:void(0);">{{ student.name }}</a>
+                  <div class="dropdown" id="dropdown-{{ student.id }}">
+                      <strong>Details:</strong>
+                      <p>Gender: {{ student.gender }}</p>
+                      <p>Roll.No: {{ student.roll_number }}</p>
+                      <p>Branch: {{ student.branch }}</p>
+                      <p>Section: {{ student.division }}</p>
+                      <a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
                       <a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
-                    </div>
-                </li>
-            {% empty %}
-                <li>No students available</li>
-            {% endfor %}
-        </ul>
+                  </div>
+              </div>
+          {% empty %}
+              <div>No students available</div>
+          {% endfor %}
+      </div>
+  </div>
+</div>
 
 
 {% endblock %}

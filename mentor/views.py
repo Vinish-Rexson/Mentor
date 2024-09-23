@@ -219,3 +219,24 @@ def BE(request):
 
     }
     return render(request, 'be.html', {'be_students': be_students})
+
+def form_dashboard(request):
+    return render(request, 'form_dashboard.html')
+
+
+
+def form_dashboard(request):
+    
+    # Fetch all students from the database
+    students = Student.objects.all()
+    
+    # Create a dictionary to pass to the template
+    context = {
+        'student_count': students.count(),
+        'students': students,
+        'student_names': [student.name for student in students],
+
+    }
+    
+    # Render the template with the context
+    return render(request, 'form_dashboard.html', context)

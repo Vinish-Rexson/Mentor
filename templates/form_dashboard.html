@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Students Detail:Second Year{% endblock %}
+
+{% block content %}
+
+<h2>List of Students</h2>
+<ul>
+    {% for student in students %}
+        <li class="student-item">
+            <a href="javascript:void(0);">
+                {{ student.name }}
+            </a>
+            <div class="dropdown" id="dropdown-{{ student.id }}">
+                <strong>Details:</strong>
+                Year: {{ student.year }}<br>
+                Roll.No: {{ student.roll_number }}<br>
+                Branch: {{ student.branch }}<br>
+                Section: {{ student.division }}<br>
+                Gender: {{ student.gender }}<br>
+				<a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
+            	<a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
+            </div>
+        </li>
+    {% empty %}
+        <li>No students available</li>
+    {% endfor %}
+</ul>
+{% endblock %}
