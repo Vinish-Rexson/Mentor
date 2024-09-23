@@ -90,7 +90,7 @@ def generate_qr_code(url):
 
 # View to generate and display QR code
 def generate_qr(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(Student, id=student_id) 
     form_url = request.build_absolute_uri(f"/form/{student.id}/")
     qr_code = generate_qr_code(form_url)
     
