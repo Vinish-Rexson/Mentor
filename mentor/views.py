@@ -39,8 +39,8 @@ def mentor_dashboard(request):
 
 
 
-@login_required
-def mentor_dashboard(request):
+def student_detail(request):
+    
     # Fetch all students from the database
     students = Student.objects.all()
     
@@ -52,12 +52,7 @@ def mentor_dashboard(request):
     }
     
     # Render the template with the context
-    return render(request, 'mentor_dashboard.html', context)
-
-
-
-def student_detail(request):
-    return render(request, 'student_detail.html')
+    return render(request, 'student_detail.html', context)
 
 
 
