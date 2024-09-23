@@ -54,3 +54,9 @@ def student_form(request, student_id):
         # form = YourForm()  # Replace YourForm with the actual form you're using
 
     return render(request, 'form_template.html', {'student': student})
+
+def student_detail(request):
+    return render(request, 'student_detail.html')
+
+def dashboard(request):
+    return render(request, 'mentor_dashboard.html')

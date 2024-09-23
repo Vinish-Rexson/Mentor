@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'CSS/mentor_dashboard.css' %}">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap");
+
+        /* Add other CSS rules as required */
+    </style>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="{% block sidebar_class %}{% endblock %}">
+        <div class="brand">
+            <span class="bx bx-menu"></span>
+            <span class="text">Dashboard</span>
+        </div>
+        <ul class="side-menu top">
+            <li class="active">
+                <a href="/dashboard">
+                    <span class="bx bx-home"></span>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="/student_detail">
+                    <span class="bx bx-user"></span>
+                    <span class="text">Students detail</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="bx bx-cog"></span>
+                    <span class="text">Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}" class="logout">
+                    <i class="bx bx-log-out"></i>
+                    <span class="text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+        <nav>
+            <i class="bx bx-menu"></i>
+            <a href="#" class="nav-link">Dashboard</a>
+            <form>
+                <div class="form-input">
+                    <input type="text" placeholder="Search...">
+                    <button type="submit" class="bx bx-search"></button>
+                </div>
+            </form>
+            <a href="#" class="notification">
+                <span class="bx bx-bell"></span>
+                <span class="num">8</span>
+            </a>
+            <a href="#" class="profile">
+                <img src="{% static 'img/profile.jpg' %}" alt="Profile Image">
+            </a>
+            <input type="checkbox" id="switch-mode">
+            <label for="switch-mode" class="switch-mode"></label>
+        </nav>
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <script>
+        // Add necessary JavaScript for menu toggle
+    </script>
+</body>
+</html>
