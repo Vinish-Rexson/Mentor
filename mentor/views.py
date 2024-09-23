@@ -46,17 +46,11 @@ def mentor_dashboard(request):
     # Render the template with the context
     return render(request, 'mentor_dashboard.html', context)
 
-
-
-<<<<<<< HEAD
-    return render(request, 'form_template.html', {'student': student})
-
 def student_detail(request):
     return render(request, 'student_detail.html')
 
 def dashboard(request):
     return render(request, 'mentor_dashboard.html')
-=======
 # QR code generation function (same as before)
 def generate_qr_code(url):
     qr = qrcode.QRCode(
@@ -167,4 +161,3 @@ def generate_document(form_dict):
     response = HttpResponse(doc_io.read(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={form_dict["rollno"]}.docx'
     return response
->>>>>>> 51e90b0ae441e7bef4b9448fd74949a9627d1399
