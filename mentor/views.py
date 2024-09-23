@@ -35,7 +35,13 @@ def mentor_signup(request):
 
 @login_required
 def mentor_dashboard(request):
-    return render(request, 'mentor_dashboard.html')
+    students = Student.objects.all()
+    context = {
+        'student_count': students.count(),
+        'students': students,
+        'student_names': [student.name for student in students]
+    }
+    return render(request, 'mentor_dashboard.html',context)
 
 
 
