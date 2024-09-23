@@ -17,6 +17,7 @@
 
     <!-- Sidebar -->
  <!-- Sidebar -->
+<!-- Sidebar -->
 <section id="sidebar">
     <a href="#" class="brand">
         <i class='bx bxs-smile'></i>
@@ -29,12 +30,15 @@
                 <span class="text">Dashboard</span>
             </a>
         </li>
-        <li class="{% if request.path == '/student_detail/' %}active{% endif %}">
+        <!-- Use 'startswith' check for student details to include sub-tabs -->
+        <li class="{% if '/student_detail/' in request.path %}active{% endif %}">
             <a href="/student_detail/">
                 <i class='bx bxs-group'></i>
                 <span class="text">Students Detail</span>
             </a>
         </li>
+        
+        
         <li class="{% if request.path == '/forms/' %}active{% endif %}">
             <a href="/forms/">
                 <i class='bx bxs-message-dots'></i>
@@ -72,6 +76,7 @@
         </li>
     </ul>
 </section>
+
 
     <!-- SIDEBAR -->
     

@@ -3,18 +3,126 @@
 {% block title %}Students Detail{% endblock %}
 
 {% block content %}
-    <body>
-        <a href="SE">
-            <div>SE</div>
-        </a>
-        
-        <a href="TE">
-            <div>TE</div>
-        </a>
-        
-        <a href="BE">
-            <div>BE</div>
-        </a>
-    </body>
+<style>
+    #content main .head-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-gap: 16px;
+  flex-wrap: wrap;
+}
+#content main .head-title .left h1 {
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--dark);
+}
+#content main .head-title .left .breadcrumb {
+  display: flex;
+  align-items: center;
+  grid-gap: 16px;
+}
+#content main .head-title .left .breadcrumb li {
+  color: var(--dark);
+}
+#content main .head-title .left .breadcrumb li a {
+  color: var(--dark-grey);
+  pointer-events: none;
+}
+#content main .head-title .left .breadcrumb li a.active {
+  color: var(--blue);
+  pointer-events: unset;
+}
+#content main .box-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-gap: 24px;
+  margin-top: 36px;
+}
+#content main .box-info li {
+  padding: 24px;
+  background: var(--light);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  grid-gap: 24px;
+}
+#content main .box-info li .bx {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  font-size: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#content main .box-info li:nth-child(1) .bx {
+  background: var(--light-blue);
+  color: var(--blue);
+}
+#content main .box-info li:nth-child(2) .bx {
+  background: var(--light-yellow);
+  color: var(--yellow);
+}
+#content main .box-info li:nth-child(3) .bx {
+  background: var(--light-orange);
+  color: var(--orange);
+}
+#content main .box-info li .text h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--dark);
+}
+#content main .box-info li .text p {
+  color: var(--dark);
+}
+</style>
+<div class="head-title">
+    <div class="left">
+        <h1>Dashboard</h1>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Dashboard</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li>
+                <a class="active" href="#">Student Details</a>
+            </li>
+        </ul>
+    </div>
+   
+</div>
+<ul class="box-info">
+    <li>
+        <a href="SE" style="color: black;">
+        <i class='bx bxs-group'></i>
+        <span class="text">
+           
+                <h3 ><a href="SE" style="color: black;">Second Year</a></h3>
+        </span>
+    </a>
+    </li>
+    <li>
+        <a href="TE" style="color: black;">
+        <i class='bx bxs-group'></i>
+        <span class="text">
+            
+                <h3> <a href="TE" style="color: black;">Third Year</a></h3>
+            </a>
+        </span>
+    </a>
+    </li>
+    <li>
+        <a href="BE" style="color: black;">
+        <i class='bx bxs-group'></i>
+        <span class="text">
+          
+                <h3><a href="BE" style="color: black;">Fourth Year</a></h3>
+            </a>
+        </span>
+    </a>
+    </li>
+</ul>
+       
 {% endblock %}
 
