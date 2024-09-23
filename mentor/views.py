@@ -54,7 +54,8 @@ def student_detail(request):
     context = {
         'student_count': students.count(),
         'students': students,
-        'student_names': [student.name for student in students]
+        'student_names': [student.name for student in students],
+
     }
     
     # Render the template with the context
@@ -186,14 +187,35 @@ def generate_document(form_dict):
 
 def SE(request):
     se_students = Student.objects.filter(year="SE")
+    # students = Student.objects.all()
+    
+    # Create a dictionary to pass to the template
+    context = {
+        'student_count': se_students.count(),
+        'students': se_students,
+        'student_names': [student.name for student in se_students],
+
+    }
     return render(request, 'se.html', {'se_students': se_students})
 
 
 def TE(request):
     te_students = Student.objects.filter(year="TE ")
+    context = {
+        'student_count': te_students.count(),
+        'students': te_students,
+        'student_names': [student.name for student in te_students],
+
+    }
     return render(request, 'te.html', {'te_students': te_students})
 
 
 def BE(request):
     be_students = Student.objects.filter(year="BE")
+    context = {
+        'student_count': be_students.count(),
+        'students': be_students,
+        'student_names': [student.name for student in be_students],
+
+    }
     return render(request, 'be.html', {'be_students': be_students})
