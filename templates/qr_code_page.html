@@ -1,14 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code for {{ student.name }}</title>
-</head>
-<body>
-    <h1>QR Code for {{ student.name }}</h1>
-    <p>Scan the QR code to access the form:</p>
-    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for {{ student.name }}">
-    
-</body>
-</html>
+{% extends 'mentor_dashboard.html' %}
+
+{% block title %}QR Code for {{ student.name }}{% endblock %}
+
+{% block content %}
+    <div class="head-title">
+        <div class="left">
+            <h1>Dashboard</h1>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="{% url 'dashboard_home' %}">Dashboard</a> <!-- Replace with actual URL -->
+                </li>
+                <li><i class='bx bx-chevron-right'></i></li>
+                <li>
+                    <a href="{% url 'student_detail' %}">Student Details</a> <!-- Replace with actual URL -->
+                </li>
+                <li><i class='bx bx-chevron-right'></i></li>
+                <li>
+                    <a class="active" href="#">Second Year</a> <!-- Add URL or make static if needed -->
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="qr-code-section">
+        <h1>QR Code for {{ student.name }}</h1>
+        <p>Scan the QR code to access the form:</p>
+        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for {{ student.name }}">
+    </div>
+{% endblock %}
