@@ -252,3 +252,5 @@ def form_dashboard(request):
 
 def dashboard_home(request):
     return render(request, 'dashboard_home.html')
+
+

@@ -80,12 +80,8 @@ WSGI_APPLICATION = 'mentor_management.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Mentor',  # Replace with your database name
-        'USER': 'postgres',  # Replace with your PostgreSQL username
-        'PASSWORD': '5152',   # Replace with your PostgreSQL password
-        'HOST': 'localhost',           # Set to 'localhost' if running locally
-        'PORT': '5432',                # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
