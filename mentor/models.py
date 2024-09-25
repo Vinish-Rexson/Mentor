@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
+import datetime
 
 class Mentor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -17,6 +19,13 @@ class Student(models.Model):
     roll_number = models.CharField(max_length=10)  # Roll number from CSV
     branch = models.CharField(max_length=50)  # Branch like CE, IT, etc.
     division = models.CharField(max_length=1)  # Div value (e.g., B)
+    token = models.CharField(max_length=100, null=True, blank=True)
+    token_created_at = models.DateTimeField(null=True, blank=True)
+
+    def is_token_expired(self):
+        if not self.token_created_at:
+            return True
+        return timezone.now() > self.token_created_at + datetime.timedelta(minutes=1)
 
     def __str__(self):
         return self.name

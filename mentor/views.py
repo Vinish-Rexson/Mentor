@@ -68,29 +68,6 @@ def dashboard(request):
     return render(request, 'mentor_dashboard.html')
 
 
-
-# QR code generation function (same as before)
-def generate_qr_code(url):
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(url)
-    qr.make(fit=True)
-    
-    img = qr.make_image(fill='black', back_color='white')
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    
-    img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    return img_base64
-
-
-
-
-
 # QR code generation function
 def generate_qr_code(url):
     qr = qrcode.QRCode(
@@ -109,18 +86,36 @@ def generate_qr_code(url):
     img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
     return img_base64
 
+
+
 # View to generate and display QR code
+import secrets
+from django.utils import timezone
+
 def generate_qr(request, student_id):
-    student = get_object_or_404(Student, id=student_id) 
-    # Generate a unique token to append to the URL
-    unique_token = secrets.token_urlsafe()  # Generates a secure random token
-    form_url = request.build_absolute_uri(f"/form/{student.id}/?token={unique_token}")
+    student = get_object_or_404(Student, id=student_id)
+
+    # Check if the token has expired
+    if not student.token or student.is_token_expired():
+        # Generate a new token and update the timestamp
+        student.token = secrets.token_urlsafe()
+        student.token_created_at = timezone.now()
+        student.save()
+
+    form_url = request.build_absolute_uri(f"/form/{student.id}/?token={student.token}")
     qr_code = generate_qr_code(form_url)
-    
     return render(request, 'qr_code_page.html', {'student': student, 'qr_code': qr_code})
+
+
+
 
 def form_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
+    
+    # Validate token
+    token = request.GET.get('token')
+    if not token or token != student.token or student.is_token_expired():
+        return HttpResponse("Invalid or expired token", status=403)
 
     if request.method == 'POST':
         form = StudentSemForm(request.POST)
@@ -135,6 +130,7 @@ def form_student(request, student_id):
         form = StudentSemForm()
 
     return render(request, 'form.html', {'form': form, 'student': student})
+
 
 
 
