@@ -250,3 +250,5 @@ def form_dashboard(request):
     # Render the template with the context
     return render(request, 'form_dashboard.html', context)
 
+def dashboard_home(request):
+    return render(request, 'dashboard_home.html')
