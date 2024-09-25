@@ -8,15 +8,19 @@
             <h1>Dashboard</h1>
             <ul class="breadcrumb">
                 <li>
-                    <a href="{% url 'dashboard_home' %}">Dashboard</a> <!-- Replace with actual URL -->
+                    <a href="#">Dashboard</a>
                 </li>
                 <li><i class='bx bx-chevron-right'></i></li>
                 <li>
-                    <a href="{% url 'student_detail' %}">Student Details</a> <!-- Replace with actual URL -->
+                    <a class="active" href="/student_detail">Student Details</a>
                 </li>
                 <li><i class='bx bx-chevron-right'></i></li>
                 <li>
-                    <a class="active" href="#">Second Year</a> <!-- Add URL or make static if needed -->
+                    <a class="active" href="/student_detail/{{ student.year }}">{{ student.year }}</a>
+                </li>
+                <li><i class='bx bx-chevron-right'></i></li>
+                <li>
+                    <a href="">{{ student.name }}</a>
                 </li>
             </ul>
         </div>
