@@ -109,13 +109,31 @@ def generate_qr(request, student_id):
 
 
 
-def form_student(request, student_id):
+def form_student_generate(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     
     # Validate token
     token = request.GET.get('token')
     if not token or token != student.token or student.is_token_expired():
         return HttpResponse("Invalid or expired token", status=403)
+
+    if request.method == 'POST':
+        form = StudentSemForm(request.POST)
+        if form.is_valid():
+            student_form = form.save(commit=False)
+            student_form.student = student
+            student_form.save()
+            return render(request, 'form_submitted.html', {'rollno': student_form.rollno}) 
+        else:
+            return render(request, 'form.html', {'form': form, 'student': student})
+    else:
+        form = StudentSemForm()
+
+    return render(request, 'form.html', {'form': form, 'student': student})
+
+
+def form_student(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
 
     if request.method == 'POST':
         form = StudentSemForm(request.POST)
