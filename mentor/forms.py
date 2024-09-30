@@ -23,10 +23,12 @@ class MentorSignUpForm(UserCreationForm):
 class StudentSemForm(forms.ModelForm):
     name = forms.CharField(
         max_length=100,
+        
         widget=forms.TextInput(attrs={'placeholder': 'Enter student name'})
     )
     rollno = forms.CharField(
         max_length=100,
+         
         widget=forms.TextInput(attrs={'placeholder': 'Enter student Roll.No'})
     )
     attendance = forms.DecimalField(

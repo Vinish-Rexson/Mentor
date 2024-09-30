@@ -108,7 +108,7 @@ def generate_qr(request, student_id):
 
 
 
-
+#student side
 def form_student_generate(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     
@@ -135,6 +135,8 @@ def form_student_generate(request, student_id):
 def form_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
 
+    
+
     if request.method == 'POST':
         form = StudentSemForm(request.POST)
         if form.is_valid():
@@ -143,6 +145,7 @@ def form_student(request, student_id):
             student_form.save()
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno}) 
         else:
+            print(form.errors)
             return render(request, 'form.html', {'form': form, 'student': student})
     else:
         form = StudentSemForm()

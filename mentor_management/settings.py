@@ -130,3 +130,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'mentor_dashboard'
 LOGOUT_REDIRECT_URL = '/accounts/login'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://2221-2405-201-27-50dc-c0c-30c6-608d-43ea.ngrok-free.app'
+]

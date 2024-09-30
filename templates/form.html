@@ -1,107 +1,213 @@
 {% load static %}
-
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentor Form</title>
     <style>
-        .invoice-box {
-            max-width: 1000px;
-            margin: auto;
-            padding: 30px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-            font-size: 16px;
-            line-height: 24px;
-            font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-            color: #555;
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Your existing styles here */
-        /* Add other styles as needed */
-        input {
-            width: 400px; /* Set the width for all input boxes */
-            height: 40px; /* Set the height for all input boxes */
-            font-size: 16px; /* Adjust the font size for all input boxes */
-            padding: 10px; /* Add padding for all input boxes */
-            border: 1px solid #ccc; /* Optional: border for all input boxes */
-            border-radius: 5px; /* Optional: rounded corners for all input boxes */
+        body {
+            font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+            background-color: #f4f7fc; /* Light background */
+        }
+
+        /* Form container with shadow */
+        .form-wrapper {
+            background-color: #dbe5f1; /* Shaded background */
+            padding: 50px 0; /* Padding for the form's background */
+            overflow: hidden; /* Prevent scroll during form animation */
+        }
+
+        .form-container {
+            background-color: #fff;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for the form */
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form title */
+        h1,
+        h3 {
+            text-align: center;
+            color: #003366;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-in-out; /* Slide-in animation for the title */
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Slide-in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Form label */
+        label {
+            display: block;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for labels */
+        }
+
+        /* Input fields */
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth focus animation */
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for inputs */
+        }
+
+        /* Input hover and focus effects */
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            background-color: #eef6ff; /* Light blue background on focus */
+            border-color: #007bff; /* Blue border on focus */
+            outline: none;
+        }
+
+        /* Submit button */
+        input[type="submit"] {
+            width: 100%;
+            background-color: #003366;
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease; /* Submit button animation */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00274d;
+            transform: scale(1.05); /* Slightly enlarges the button on hover */
+        }
+
+        input[type="submit"]:active {
+            transform: scale(1); /* Returns to normal size when clicked */
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            input[type="submit"] {
+                padding: 12px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <br /><br /><br />
-    <div class="invoice-box">
-        <table cellpadding="0" cellspacing="0">
-            <tr class="top">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td class="title">
-                                <h1>Mentor Form</h1>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Details</h3>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <form method="post" action="{% url 'form_student' student.id %}">
-                        {% csrf_token %}
-                        <table>
-                            <tr class="item">
-                                <td>Student Name</td>
-                                <td>
-                                    <input type="text" name="name" placeholder="Enter student name" required />
-                                </td>
-                            </tr>
-                            <tr class="item">
-                                <td>Student Roll.No</td>
-                                <td>
-                                    <input type="number" name="rollno" placeholder="Enter student Roll.No" required />
-                                </td>
-                            </tr>
-                            <tr class="item">
-                                <td>Sem 3 Attendance</td>
-                                <td>
-                                    <input type="number" name="attendance" placeholder="Enter attendance percentage %" min="0" max="100" step="0.01" required />
-                                </td>
-                            </tr>
-                            <tr class="item">
-                                <td>SEM 3 CGPA</td>
-                                <td>
-                                    <input type="number" name="sem3cgpa" placeholder="Enter CGPA" min="0" max="10" step="0.01" required />
-                                </td>
-                            </tr>
-                            <tr class="item">
-                                <td>Are you a member of any tech or non-tech council/team in college? If yes, give details.</td>
-                                <td>
-                                    <input type="text" name="question1" placeholder="Enter details for council/team" required />
-                                </td>
-                            </tr>
-                            <tr class="item">
-                                <td>Give details of co-curricular events you participated in this semester.</td>
-                                <td>
-                                    <input type="text" name="question2" placeholder="Enter details for co-curricular events" required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="text-align: center;">
-                                    <input type="submit" name="submit" value="Submit Form" />
-                                </td>
-                            </tr>
-                        </table>
-                    </form>
-                </td>
-            </tr>
-        </table>
+
+    <div class="form-wrapper">
+        <div class="form-container">
+            <h1>Mentor Form</h1>
+            <h3>Details</h3>
+
+            <form method="post" action="{% url 'form_student' student.id %}">
+                {% csrf_token %}
+
+                <!-- Student Name Input -->
+                <label for="student-name">Student Name</label>
+                <input type="text" id="student-name" name="name" value="{{ student.name }}" readonly required />
+
+                <!-- Student Roll Number Input -->
+                <label for="student-roll">Student Roll.No</label>
+                <input type="text" id="student-roll" name="rollno" value="{{ student.roll_number }}" readonly required />
+
+                <!-- Attendance Input -->
+                <label for="attendance">Sem 3 Attendance</label>
+                <input type="number" id="attendance" name="attendance" placeholder="Enter attendance percentage %" min="0" max="100" step="0.01" required />
+
+                <!-- CGPA Input -->
+                <label for="cgpa">SEM 3 CGPA</label>
+                <input type="number" id="cgpa" name="sem3cgpa" placeholder="Enter CGPA" min="0" max="10" step="0.01" required />
+
+                <!-- Council Membership Input (multi-line) -->
+                <label for="council">Are you a member of any tech or non-tech council/team in college? If yes, give details.</label>
+                <textarea id="council" name="question1" placeholder="Enter details for council/team" rows="4" required></textarea>
+
+                <!-- Co-curricular Events Input (multi-line) -->
+                <label for="cocurricular">Give details of co-curricular events you participated in this semester.</label>
+                <textarea id="cocurricular" name="question2" placeholder="Enter details for co-curricular events" rows="4" required></textarea>
+
+                <!-- Submit Button -->
+                <input type="submit" name="submit" value="Submit Form" />
+            </form>
+        </div>
     </div>
+
 </body>
+
 </html>

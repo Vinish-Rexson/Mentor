@@ -25,7 +25,7 @@ class Student(models.Model):
     def is_token_expired(self):
         if not self.token_created_at:
             return True
-        return timezone.now() > self.token_created_at + datetime.timedelta(minutes=1)
+        return timezone.now() > self.token_created_at + datetime.timedelta(minutes=20)
 
     def __str__(self):
         return self.name
