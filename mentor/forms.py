@@ -28,6 +28,9 @@ class StudentSemForm(forms.ModelForm):
     )
     rollno = forms.CharField(
         max_length=100,
+        error_messages={
+            'unique': 'This Roll number has already filled the current sem form'  # Customize this as needed
+        },
          
         widget=forms.TextInput(attrs={'placeholder': 'Enter student Roll.No'})
     )
