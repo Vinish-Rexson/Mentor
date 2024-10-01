@@ -259,8 +259,11 @@
                 
                 <!-- Counseling Sessions Date Input -->
                 <label for="date">Counseling Sessions Date(s)</label>
-                <input type="text" id="date" name="date" 
-                    value="{{ date }}" readonly required />
+                <input type="text" id="date" name="date" value="{{ date|default:'No Date Available' }}" readonly required />
+
+                
+
+
 
                 
                 <!-- Council Membership Input -->

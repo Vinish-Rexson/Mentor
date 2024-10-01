@@ -134,15 +134,15 @@ def form_student_generate(request, student_id):
 
 def form_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
-    forms = StudentForm.objects.all()
+    
 
-
-    forms = StudentForm.objects.all()  # Assuming rollno links to the correct form
+    forms = StudentForm.objects.filter(rollno=student.roll_number)  # Assuming rollno links to the correct form
+    formatted_date = ""
+    
     if forms.exists():
         form_instance = forms.first()  # Get the first form instance (customize as needed)
         formatted_date = form_instance.date.strftime("%d/%m/%Y") if form_instance.date else ""
-    else:
-        formatted_date = ""
+        print(formatted_date)
     
 
     if request.method == 'POST':
