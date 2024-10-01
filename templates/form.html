@@ -13,11 +13,13 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
-            background-color: #f4f7fc; /* Light background */
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap');
 
+        body {
+            font-family: "Playfair Display", serif;
+            background-color: #e9eff7; /* Light bluish background */
+            color: #2e3b55; /* Luxury dark blue for text */
+        }
         /* Form container with shadow */
         .form-wrapper {
             background-color: #dbe5f1; /* Shaded background */
@@ -100,6 +102,7 @@
             background-color: #f9f9f9;
             transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth focus animation */
             animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for inputs */
+            font:serif;
         }
 
         /* Input hover and focus effects */
@@ -109,6 +112,7 @@
             background-color: #eef6ff; /* Light blue background on focus */
             border-color: #007bff; /* Blue border on focus */
             outline: none;
+            
         }
 
         /* Submit button */
@@ -220,10 +224,12 @@
                 <!-- Student Roll Number Input -->
                 <label for="student-roll">Student Roll.No</label>
                 <input type="text" id="student-roll" name="rollno" value="{{ student.roll_number }}" readonly required />
-            
+                <!-- Counseling Sessions Date Input -->
+                <label for="date">Counseling Sessions Date's</label>
+                <input type="text" id="date" name="date" value="{{ date|default:'No Date Available' }}" readonly required />
 
                 <!-- CGPA Input -->
-                <label for="cgpa">SEM  CGPA</label>
+                <label for="cgpa">Enter last CGPA </label>
                 <input type="number" id="cgpa" name="semcgpa" placeholder="Enter CGPA" 
                        value="{{ form_data.semcgpa|default:'' }}" min="0" max="10" step="0.01" required />
             
@@ -252,14 +258,12 @@
                         value="{{ form_data.atte_mse|default:'' }}" min="0" max="100" step="0.01" required />
                 
                 <!-- Attendance Input -->
-                <label for="attendance">Sem Attendance</label>
+                <label for="attendance">Total Attendance</label>
                 <input type="number" id="attendance" name="attendance" placeholder="Enter attendance percentage %" 
                         value="{{ form_data.attendance|default:'' }}" min="0" max="100" step="0.01" required />
                             
                 
-                <!-- Counseling Sessions Date Input -->
-                <label for="date">Counseling Sessions Date(s)</label>
-                <input type="text" id="date" name="date" value="{{ date|default:'No Date Available' }}" readonly required />
+                
 
                 
 
@@ -276,18 +280,18 @@
                 
                 <!-- Technical Activities Input -->
                 <label for="technical_activities">Involvement in different technical activities:</label>
-                <textarea id="technical_activities" name="question3" placeholder="Enter details of technical activities" rows="4" required>{{ form_data.question3|default:'' }}</textarea>
+                <textarea id="technical_activities" name="question3" placeholder="List Hackathons, project competitions, idea competition,paper publications, patents publications, inter/intra college technical competitions, etc you participated and/or won in current semester" rows="4" required>{{ form_data.question3|default:'' }}</textarea>
                 
                 <!-- Financial Situation Input -->
                 <label for="financial_situation">How things are going financially:</label>
-                <textarea id="financial_situation" name="question4" placeholder="Enter financial situation details" rows="4">{{ form_data.question4|default:'' }}</textarea>
+                <textarea id="financial_situation" name="question4"  placeholder="It’s okay if you don’t want to talk about it" rows="4">{{ form_data.question4|default:'' }}</textarea>
                 
                 <!-- Technical Courses/Certifications Input -->
                 <label for="technical_courses">Have you undertaken any technical courses/certifications?</label>
                 <textarea id="technical_courses" name="question5" placeholder="Enter details of technical courses" rows="4">{{ form_data.question5|default:'' }}</textarea>
                 
                 <!-- Soft Skill Training Input -->
-                <label for="soft_skill_training">Have you undertaken any soft skill training programme?</label>
+                <label for="soft_skill_training">Have you undertaken any soft skill training programme to mould yourself as per workplace ethics? </label>
                 <textarea id="soft_skill_training" name="question6" placeholder="Enter details of soft skill training" rows="4">{{ form_data.question6|default:'' }}</textarea>
                 
                 <!-- Co-curricular Events Input -->
@@ -300,19 +304,19 @@
                 
                 <!-- Internship Details Input -->
                 <label for="internship">Give details of any internship undertaken:</label>
-                <textarea id="internship" name="question9" placeholder="Enter internship details" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                <textarea id="internship" name="question9" placeholder="if Yes, please give the company name, role offered, duration and stipend details" rows="4">{{ form_data.question9|default:'' }}</textarea>
                 
                 <!-- Entrepreneur Details Input -->
                 <label for="entrepreneur">Are you an entrepreneur?</label>
-                <textarea id="entrepreneur" name="question9" placeholder="Enter entrepreneur details" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                <textarea id="entrepreneur" name="question9" placeholder="if Yes, please give the details including registration letter" rows="4">{{ form_data.question9|default:'' }}</textarea>
                 
                 <!-- Higher Studies Plans Input -->
-                <label for="higher_studies">Are you planning or preparing for Higher studies?</label>
-                <textarea id="higher_studies" name="question10" placeholder="Enter details of higher studies plans" rows="4">{{ form_data.question10|default:'' }}</textarea>
+                <label for="higher_studies">Are you planning or preparing for Higher studies? Or take entrance exams (Y/N). </label>
+                <textarea id="higher_studies" name="question10" placeholder="If yes, give details (exam name and score)" rows="4">{{ form_data.question10|default:'' }}</textarea>
                 
                 <!-- Job Offer Details Input -->
                 <label for="job_offer">Do you have a job offer in hand?</label>
-                <textarea id="job_offer" name="question11" placeholder="Enter job offer details" rows="4">{{ form_data.question11|default:'' }}</textarea>
+                <textarea id="job_offer" name="question11" placeholder="Answer if applicable, please give details" rows="4">{{ form_data.question11|default:'' }}</textarea>
                 
             
                 <!-- Submit Button -->
