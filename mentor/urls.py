@@ -7,7 +7,7 @@ urlpatterns = [
     path('dashboard/', views.mentor_dashboard, name='mentor_dashboard'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('form/<int:student_id>/', views.form_student_generate, name='form_student'),
-    path('form/<int:student_id>', views.form_student, name='form_student'),
+    path('form/<int:student_id>', views.form_student, name='form_student'),##
     path('generate_qr/<int:student_id>/', views.generate_qr, name='generate_qr'),
     path('download/<str:rollno>/', views.download_document, name='download_document'),
     path('', views.Redirect, name='Redirect'),

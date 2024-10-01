@@ -134,7 +134,15 @@ def form_student_generate(request, student_id):
 
 def form_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
+    forms = StudentForm.objects.all()
 
+
+    forms = StudentForm.objects.all()  # Assuming rollno links to the correct form
+    if forms.exists():
+        form_instance = forms.first()  # Get the first form instance (customize as needed)
+        formatted_date = form_instance.date.strftime("%d/%m/%Y") if form_instance.date else ""
+    else:
+        formatted_date = ""
     
 
     if request.method == 'POST':
@@ -146,11 +154,11 @@ def form_student(request, student_id):
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno}) 
         else:
             print(form.errors)
-            return render(request, 'form.html', {'form': form, 'student': student})
+            return render(request, 'form.html', {'form': form, 'student': student, 'date':formatted_date})
     else:
         form = StudentSemForm()
 
-    return render(request, 'form.html', {'form': form, 'student': student})
+    return render(request, 'form.html', {'form': form, 'student': student, 'date':formatted_date})
 
 
 
@@ -165,16 +173,32 @@ def download_document(request, rollno):
 
     # Pick the first or latest entry (customize this logic as needed)
     form = forms.order_by('-id').first()  # Here, we pick the latest one
-
+    
     # Create the form_dict from the selected record
     form_dict = {
-        "name": form.name,
-        "rollno": form.rollno,
-        "attendance": form.attendance,
-        "sem3cgpa": form.sem3cgpa,
-        "question1": form.question1,
-        "question2": form.question2
-    }
+    "name": form.name,
+    "rollno": form.rollno,
+    "attendance": form.attendance,
+    "semcgpa": form.semcgpa,
+    "atte_ise1": form.atte_ise1,
+    "atte_mse": form.atte_mse,
+    "cts": form.cts,
+    "ise1": form.ise1,
+    "mse": form.mse,
+    "question1": form.question1,
+    "question2": form.question2,
+    "question3": form.question3,
+    "question4": form.question4,
+    "question5": form.question5,
+    "question6": form.question6,
+    "question7": form.question7,
+    "question8": form.question8,
+    "question9": form.question9,
+    "question10": form.question10,
+    "question11": form.question11,
+    
+}
+
     
     # Call the document generation function
     return generate_document(form_dict)
@@ -187,18 +211,39 @@ def generate_document(form_dict):
     
     # Load the template using docxtpl
     doc = DocxTemplate(doc_path)
+
+    if 'date' in form_dict and form_dict["date"]:
+        date_object = form_dict["date"]
+        formatted_date = date_object.strftime("%d/%m/%Y")  # Convert to DD/MM/YYYY
+    else:
+        formatted_date = "" 
     
     # Context for the template
     context = {
-        'name': form_dict["name"],
-        'rollno': form_dict["rollno"],
-        'branch': "Comps",            # Static branch value; adjust as needed
-        'semno': "3",                 # Static semester number; adjust as needed
-        'sem3cgpa': form_dict["sem3cgpa"],
-        'line1': form_dict["question1"],  # Counseling/Team info
-        'line2': form_dict["question2"],  # Co-curricular events info
-        'attendance': form_dict["attendance"]
-    }
+    'name': form_dict["name"],
+    'rollno': form_dict["rollno"],
+    'branch': "Comps",               # Static branch value; adjust as needed
+    'semno': "3",                    # Static semester number; adjust as needed
+    'semcgpa': form_dict["semcgpa"],
+    'cts': form_dict["cts"],         # Cognitive Test Score
+    'ise1': form_dict["ise1"],       # ISE 1 performance
+    'mse': form_dict["mse"],         # MSE performance
+    'atte_ise1': form_dict["atte_ise1"],  # Attendance till ISE 1
+    'atte_mse': form_dict["atte_mse"],      # Attendance till MSE
+    'attendance': form_dict["attendance"],
+    'line1': form_dict["question1"],  # Counseling/Team info
+    'line2': form_dict["question2"],  # Co-curricular events info
+    'line3': form_dict["question3"],  # Technical activities
+    'line4': form_dict["question4"],  # Financial situation
+    'line5': form_dict["question5"],  # Technical courses/certifications
+    'line6': form_dict["question6"],  # Soft skills training
+    'line7': form_dict["question7"],  # Co-curricular events
+    'line8': form_dict["question8"],  # Social cause involvement
+    'line9': form_dict["question9"],  # Internship details
+    'line10': form_dict["question10"], # Higher studies plans
+    'line11': form_dict["question11"], # Job offer details
+    'date': formatted_date,
+}
 
     # Render the context into the document
     doc.render(context)

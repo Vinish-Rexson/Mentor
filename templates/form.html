@@ -193,98 +193,6 @@
 
     </style>
 
-{% comment %} this javascript code saves the form using ip address and uniquely for each roll number so if mam opens two different roll numbers form on website or even a 
- student it would save their data {% endcomment %}
- <script>
-    // Set expiration time (1 minute for testing)
-    const EXPIRATION_TIME = 1 * 60 * 1000; // 1 minute in milliseconds
-
-    // Save form data to local storage on input
-    function saveFormData() {
-        const rollNumber = document.getElementById('student-roll').value.trim(); // Get the roll number
-
-        if (rollNumber) { // Check if roll number is not empty
-            const formData = {
-                name: document.getElementById('student-name').value,
-                rollno: rollNumber,
-                attendance: document.getElementById('attendance').value,
-                sem3cgpa: document.getElementById('cgpa').value,
-                question1: document.getElementById('council').value,
-                question2: document.getElementById('cocurricular').value,
-            };
-
-            const dataToStore = {
-                data: formData,
-                timestamp: Date.now() // Store the current timestamp
-            };
-
-            // Save form data to local storage with a unique key based on roll number
-            localStorage.setItem(`formData_${rollNumber}`, JSON.stringify(dataToStore));
-        }
-    }
-
-    // Load form data from local storage on page load
-    function loadFormData() {
-        // Use a timeout to ensure the roll number input is available for the function
-        setTimeout(() => {
-            const rollNumber = document.getElementById('student-roll').value.trim(); // Get the roll number
-
-            if (rollNumber) {
-                const savedData = localStorage.getItem(`formData_${rollNumber}`); // Retrieve data for that roll number
-
-                if (savedData) {
-                    const { data, timestamp } = JSON.parse(savedData);
-                    const now = Date.now();
-
-                    // Check if the data is still valid (within 1 minute)
-                    if (now - timestamp < EXPIRATION_TIME) {
-                        document.getElementById('student-name').value = data.name || '';
-                        document.getElementById('student-roll').value = data.rollno || '';
-                        document.getElementById('attendance').value = data.attendance || '';
-                        document.getElementById('cgpa').value = data.sem3cgpa || '';
-                        document.getElementById('council').value = data.question1 || '';
-                        document.getElementById('cocurricular').value = data.question2 || '';
-                    } else {
-                        console.log("Data has expired and will be removed.");
-                        // Clear the expired data
-                        localStorage.removeItem(`formData_${rollNumber}`);
-                    }
-                }
-            }
-        }, 100); // Delay to allow input to be recognized
-    }
-
-    // Clear form data from local storage on form submit
-    function clearFormData() {
-        const rollNumber = document.getElementById('student-roll').value.trim(); // Get the roll number
-        if (rollNumber) {
-            localStorage.removeItem(`formData_${rollNumber}`); // Remove the data for that roll number
-        }
-    }
-
-    // Attach event listeners
-    window.onload = loadFormData; // Load data on page load
-    window.onbeforeunload = saveFormData; // Save data before the page unloads
-    document.querySelector('form').onsubmit = clearFormData; // Clear data on form submission
-
-    // Optional: Set a timeout to clear the data if 1 minute has passed (for testing)
-    setTimeout(() => {
-        const rollNumber = document.getElementById('student-roll').value.trim(); // Get the roll number
-        if (rollNumber) {
-            console.log("Trial period expired. Data will be cleared.");
-            clearFormData();
-        }
-    }, EXPIRATION_TIME); // 1 minute in milliseconds
-</script>
-
-    
-
-
-
-
-
-
-
 </head>
 
 <body>
@@ -313,23 +221,96 @@
                 <label for="student-roll">Student Roll.No</label>
                 <input type="text" id="student-roll" name="rollno" value="{{ student.roll_number }}" readonly required />
             
-                <!-- Attendance Input -->
-                <label for="attendance">Sem 3 Attendance</label>
-                <input type="number" id="attendance" name="attendance" placeholder="Enter attendance percentage %" 
-                       value="{{ form_data.attendance|default:'' }}" min="0" max="100" step="0.01" required />
-            
+
                 <!-- CGPA Input -->
-                <label for="cgpa">SEM 3 CGPA</label>
-                <input type="number" id="cgpa" name="sem3cgpa" placeholder="Enter CGPA" 
-                       value="{{ form_data.sem3cgpa|default:'' }}" min="0" max="10" step="0.01" required />
+                <label for="cgpa">SEM  CGPA</label>
+                <input type="number" id="cgpa" name="semcgpa" placeholder="Enter CGPA" 
+                       value="{{ form_data.semcgpa|default:'' }}" min="0" max="10" step="0.01" required />
             
-                <!-- Council Membership Input (multi-line) -->
+                <label for="cts">Cognitive Test Score</label>
+                <input type="number" id="cts" name="cts" placeholder="Enter Cognitive Test Score" 
+                        value="{{ form_data.cts|default:'' }}" min="0" max="100" step="0.01" required />
+                
+                <!-- ISE 1 Performance Input -->
+                <label for="ise1">ISE 1 Performance</label>
+                <input type="number" id="ise1" name="ise1" placeholder="Enter ISE 1 Score" 
+                        value="{{ form_data.ise1|default:'' }}" min="0" max="100" step="0.01" required />
+                
+                <!-- MSE Performance Input -->
+                <label for="mse">MSE Performance</label>
+                <input type="number" id="mse" name="mse" placeholder="Enter MSE Score" 
+                        value="{{ form_data.mse|default:'' }}" min="0" max="100" step="0.01" required />
+                
+                <!-- Attendance till ISE1 Input -->
+                <label for="atte_ise1">Attendance % Till ISE 1</label>
+                <input type="number" id="atte_ise1" name="atte_ise1" placeholder="Enter Attendance Till ISE 1" 
+                        value="{{ form_data.atte_ise1|default:'' }}" min="0" max="100" step="0.01" required />
+                
+                <!-- Attendance till MSE Input -->
+                <label for="atte_mse">Attendance % Till MSE</label>
+                <input type="number" id="atte_mse" name="atte_mse" placeholder="Enter Attendance Till MSE" 
+                        value="{{ form_data.atte_mse|default:'' }}" min="0" max="100" step="0.01" required />
+                
+                <!-- Attendance Input -->
+                <label for="attendance">Sem Attendance</label>
+                <input type="number" id="attendance" name="attendance" placeholder="Enter attendance percentage %" 
+                        value="{{ form_data.attendance|default:'' }}" min="0" max="100" step="0.01" required />
+                            
+                
+                <!-- Counseling Sessions Date Input -->
+                <label for="date">Counseling Sessions Date(s)</label>
+                <input type="text" id="date" name="date" 
+                    value="{{ date }}" readonly required />
+
+                
+                <!-- Council Membership Input -->
                 <label for="council">Are you a member of any tech or non-tech council/team in college? If yes, give details.</label>
                 <textarea id="council" name="question1" placeholder="Enter details for council/team" rows="4" required>{{ form_data.question1|default:'' }}</textarea>
-            
-                <!-- Co-curricular Events Input (multi-line) -->
-                <label for="cocurricular">Give details of co-curricular events you participated in this semester.</label>
-                <textarea id="cocurricular" name="question2" placeholder="Enter details for co-curricular events" rows="4" required>{{ form_data.question2|default:'' }}</textarea>
+                
+                <!-- Self-Initiatives Input -->
+                <label for="self_initiative">Mention Self-initiative's if taken any:</label>
+                <textarea id="self_initiative" name="question2" placeholder="Enter details for self-initiatives" rows="4" required>{{ form_data.question2|default:'' }}</textarea>
+                
+                <!-- Technical Activities Input -->
+                <label for="technical_activities">Involvement in different technical activities:</label>
+                <textarea id="technical_activities" name="question3" placeholder="Enter details of technical activities" rows="4" required>{{ form_data.question3|default:'' }}</textarea>
+                
+                <!-- Financial Situation Input -->
+                <label for="financial_situation">How things are going financially:</label>
+                <textarea id="financial_situation" name="question4" placeholder="Enter financial situation details" rows="4">{{ form_data.question4|default:'' }}</textarea>
+                
+                <!-- Technical Courses/Certifications Input -->
+                <label for="technical_courses">Have you undertaken any technical courses/certifications?</label>
+                <textarea id="technical_courses" name="question5" placeholder="Enter details of technical courses" rows="4">{{ form_data.question5|default:'' }}</textarea>
+                
+                <!-- Soft Skill Training Input -->
+                <label for="soft_skill_training">Have you undertaken any soft skill training programme?</label>
+                <textarea id="soft_skill_training" name="question6" placeholder="Enter details of soft skill training" rows="4">{{ form_data.question6|default:'' }}</textarea>
+                
+                <!-- Co-curricular Events Input -->
+                <label for="co_curricular_events">Give details of co-curricular events you participated in this semester:</label>
+                <textarea id="co_curricular_events" name="question7" placeholder="Enter details of co-curricular events" rows="4">{{ form_data.question7|default:'' }}</textarea>
+                
+                <!-- Social Cause Input -->
+                <label for="social_cause">Are you a part of any social cause?</label>
+                <textarea id="social_cause" name="question8" placeholder="Enter details of social cause" rows="4">{{ form_data.question8|default:'' }}</textarea>
+                
+                <!-- Internship Details Input -->
+                <label for="internship">Give details of any internship undertaken:</label>
+                <textarea id="internship" name="question9" placeholder="Enter internship details" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                
+                <!-- Entrepreneur Details Input -->
+                <label for="entrepreneur">Are you an entrepreneur?</label>
+                <textarea id="entrepreneur" name="question9" placeholder="Enter entrepreneur details" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                
+                <!-- Higher Studies Plans Input -->
+                <label for="higher_studies">Are you planning or preparing for Higher studies?</label>
+                <textarea id="higher_studies" name="question10" placeholder="Enter details of higher studies plans" rows="4">{{ form_data.question10|default:'' }}</textarea>
+                
+                <!-- Job Offer Details Input -->
+                <label for="job_offer">Do you have a job offer in hand?</label>
+                <textarea id="job_offer" name="question11" placeholder="Enter job offer details" rows="4">{{ form_data.question11|default:'' }}</textarea>
+                
             
                 <!-- Submit Button -->
                 <input type="submit" name="submit" value="Submit Form" />
@@ -338,8 +319,74 @@
         </div>
     </div>
 
-</body>
 
+    <script>
+        window.addEventListener('load', function() {
+            const form = document.querySelector('form');
+            const rollnoInput = document.querySelector('input[name="rollno"]');
+            const excludedFields = ['name', 'rollno', 'date'];
+    
+            // Function to generate a unique key based on roll number
+            function generateKey() {
+                return `form_data_${rollnoInput.value}`;
+            }
+    
+            // Load saved data from localStorage
+            function loadFormData() {
+                const savedData = localStorage.getItem(generateKey());
+                if (savedData) {
+                    console.log("Saved data found:", JSON.parse(savedData));
+                    const parsedData = JSON.parse(savedData);
+                    for (const [key, value] of Object.entries(parsedData)) {
+                        if (!excludedFields.includes(key) && form[key]) {
+                            form[key].value = value;
+                        }
+                    }
+                } else {
+                    console.log("No saved data found for rollno:", rollnoInput.value);
+                }
+            }
+    
+            // Save form data into localStorage
+            function saveFormData() {
+                const formData = {};
+                Array.from(form.elements).forEach(field => {
+                    if (!excludedFields.includes(field.name)) {
+                        formData[field.name] = field.value;
+                    }
+                });
+                localStorage.setItem(generateKey(), JSON.stringify(formData));
+                console.log("Form data saved for rollno:", rollnoInput.value);
+            }
+    
+            // Clear form data from localStorage after submission
+            form.addEventListener('submit', function() {
+                localStorage.removeItem(generateKey());
+                console.log("Form data cleared for rollno:", rollnoInput.value);
+            });
+    
+            // Auto-save every minute
+            function autoSave() {
+                setInterval(saveFormData, 60000); // Save every 1 minute (60000 ms)
+            }
+    
+            // Trigger save on input change
+            form.addEventListener('input', function() {
+                saveFormData();
+            });
+    
+            // Load saved data when page is loaded
+            loadFormData();
+    
+            // Initiate auto-save
+            autoSave();
+        });
+    </script>
+    
+
+
+
+</body>
 </html>
 
 
@@ -356,41 +403,3 @@
 
 
 
-{% comment %} js code for storing form till end  {% endcomment %}
-{% comment %} <script>
-        // Save form data to local storage on input
-        function saveFormData() {
-            const formData = {
-                name: document.getElementById('student-name').value,
-                rollno: document.getElementById('student-roll').value,
-                attendance: document.getElementById('attendance').value,
-                sem3cgpa: document.getElementById('cgpa').value,
-                question1: document.getElementById('council').value,
-                question2: document.getElementById('cocurricular').value,
-            };
-            localStorage.setItem('formData', JSON.stringify(formData));
-        }
-
-        // Load form data from local storage on page load
-        function loadFormData() {
-            const savedData = localStorage.getItem('formData');
-            if (savedData) {
-                const formData = JSON.parse(savedData);
-                document.getElementById('student-name').value = formData.name || '';
-                document.getElementById('student-roll').value = formData.rollno || '';
-                document.getElementById('attendance').value = formData.attendance || '';
-                document.getElementById('cgpa').value = formData.sem3cgpa || '';
-                document.getElementById('council').value = formData.question1 || '';
-                document.getElementById('cocurricular').value = formData.question2 || '';
-            }
-        }
-
-        // Clear form data from local storage on form submit
-        function clearFormData() {
-            localStorage.removeItem('formData');
-        }
-
-        // Attach event listeners
-        window.onload = loadFormData;
-        window.onbeforeunload = saveFormData;
-    </script> {% endcomment %}

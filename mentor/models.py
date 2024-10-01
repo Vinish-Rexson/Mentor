@@ -35,9 +35,28 @@ class Student(models.Model):
 class StudentForm(models.Model):
     name = models.CharField(max_length=255)
     rollno = models.CharField(max_length=100, unique=True) 
-    attendance = models.DecimalField(max_digits=5,decimal_places=2, default=0.00)
-    sem3cgpa = models.DecimalField(max_digits=5,decimal_places=2, default=0.00)
-    question1 = models.TextField()
-    question2 = models.TextField()
+    atte_ise1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    atte_mse = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    attendance = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cts = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    ise1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    mse = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    semcgpa = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    counseling_dates = models.TextField(null=True, blank=True)
+    
+
+    question1 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question2 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question3 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question4 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question5 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question6 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question7 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question8 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question9 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question10 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question11 = models.TextField(null=True, blank=True)  # Allow NULL values
+    date = models.DateField(default=timezone.now)
+
     def __str__(self):
-        return (str(self.rollno))
+        return str(self.rollno)
