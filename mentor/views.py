@@ -108,7 +108,7 @@ def generate_qr(request, student_id, mentor_id):
         student.save()
 
     # Generate the form URL with student_id, mentor_id, and token
-    form_url = request.build_absolute_uri(f"/form/{student.id}/{mentor.id}/?token={student.token}")
+    form_url = request.build_absolute_uri(f"/form/generate/{student.id}/{mentor.id}/?token={student.token}")
     
     # Generate the QR code for the URL
     qr_code = generate_qr_code(form_url)
@@ -334,22 +334,24 @@ def SE(request):
 
 def TE(request):
     te_students = Student.objects.filter(year="TE ")
+    mentor = request.user
     context = {
         'student_count': te_students.count(),
         'students': te_students,
         'student_names': [student.name for student in te_students],
-
+        'mentor': mentor,
     }
     return render(request, 'te.html', {'te_students': te_students})
 
 
 def BE(request):
     be_students = Student.objects.filter(year="BE")
+    mentor = request.user
     context = {
         'student_count': be_students.count(),
         'students': be_students,
         'student_names': [student.name for student in be_students],
-
+        'mentor': mentor,
     }
     return render(request, 'be.html', {'be_students': be_students})
 
