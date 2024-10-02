@@ -108,7 +108,7 @@ def generate_qr(request, student_id, mentor_id):
         student.save()
 
     # Generate the form URL with student_id, mentor_id, and token
-    form_url = request.build_absolute_uri(f"/form/generate/{student.id}/{mentor.id}/?token={student.token}")
+    form_url = request.build_absolute_uri(f"/form/{student.id}/{mentor.id}/?token={student.token}")
     
     # Generate the QR code for the URL
     qr_code = generate_qr_code(form_url)
