@@ -132,18 +132,17 @@ def form_student_generate(request, student_id):
     return render(request, 'form.html', {'form': form, 'student': student})
 
 
+from django.shortcuts import render, get_object_or_404
+from .models import Student
+from .forms import StudentSemForm
+from datetime import datetime
+
 def form_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
-    
 
-    forms = StudentForm.objects.filter(rollno=student.roll_number)  # Assuming rollno links to the correct form
-    formatted_date = ""
-    
-    if forms.exists():
-        form_instance = forms.first()  # Get the first form instance (customize as needed)
-        formatted_date = form_instance.date.strftime("%d/%m/%Y") if form_instance.date else ""
-        print(formatted_date)
-    
+    # Get the current date in both formats
+    display_date = datetime.now().strftime("%d/%m/%Y")  # For display (DD/MM/YYYY)
+    form_date = datetime.now().strftime("%Y-%m-%d")  # For form submission (YYYY-MM-DD)
 
     if request.method == 'POST':
         form = StudentSemForm(request.POST)
@@ -151,14 +150,24 @@ def form_student(request, student_id):
             student_form = form.save(commit=False)
             student_form.student = student
             student_form.save()
-            return render(request, 'form_submitted.html', {'rollno': student_form.rollno}) 
+            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
         else:
-            print(form.errors)
-            return render(request, 'form.html', {'form': form, 'student': student, 'date':formatted_date})
+            return render(request, 'form.html', {
+                'form': form,
+                'student': student,
+                'date': form_date,  # Pass the form-friendly date for submission
+                'display_date': display_date,  # Pass the display-friendly date
+                'errors': form.errors
+            })
     else:
         form = StudentSemForm()
 
-    return render(request, 'form.html', {'form': form, 'student': student, 'date':formatted_date})
+    return render(request, 'form.html', {
+        'form': form,
+        'student': student,
+        'date': form_date,  # Pass the form-friendly date for submission
+        'display_date': display_date  # Pass the display-friendly date for the user
+    })
 
 
 
@@ -196,7 +205,7 @@ def download_document(request, rollno):
     "question9": form.question9,
     "question10": form.question10,
     "question11": form.question11,
-    
+    "date": form.date,
 }
 
     
