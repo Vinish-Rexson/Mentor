@@ -69,6 +69,14 @@ def dashboard(request):
 
 
 # QR code generation function
+import qrcode
+import base64
+from io import BytesIO
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+import secrets
+
+# Function to generate QR code
 def generate_qr_code(url):
     qr = qrcode.QRCode(
         version=1,
@@ -87,33 +95,52 @@ def generate_qr_code(url):
     return img_base64
 
 
-
-# View to generate and display QR code
-import secrets
-from django.utils import timezone
-
-def generate_qr(request, student_id):
+# View to generate and display QR code with student_id and mentor_id
+def generate_qr(request, student_id, mentor_id):
     student = get_object_or_404(Student, id=student_id)
+    mentor = get_object_or_404(User, id=mentor_id)  # Get mentor object
 
-    # Check if the token has expired
+    # Check if the token has expired or doesn't exist
     if not student.token or student.is_token_expired():
         # Generate a new token and update the timestamp
         student.token = secrets.token_urlsafe()
         student.token_created_at = timezone.now()
         student.save()
 
-    form_url = request.build_absolute_uri(f"/form/{student.id}/?token={student.token}")
-    qr_code = generate_qr_code(form_url)
-    return render(request, 'qr_code_page.html', {'student': student, 'qr_code': qr_code})
-
-
-
-#student side
-def form_student_generate(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
+    # Generate the form URL with student_id, mentor_id, and token
+    form_url = request.build_absolute_uri(f"/form/{student.id}/{mentor.id}/?token={student.token}")
     
-    # Validate token
-    token = request.GET.get('token')
+    # Generate the QR code for the URL
+    qr_code = generate_qr_code(form_url)
+    
+    return render(request, 'qr_code_page.html', {
+        'student': student,
+        'mentor': mentor,  # Pass mentor info to the template if needed
+        'qr_code': qr_code
+    })
+
+
+
+
+# student side
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.utils import timezone
+
+def form_student_generate(request, student_id, mentor_id):
+    student = get_object_or_404(Student, id=student_id)
+    mentor = get_object_or_404(User, id=mentor_id)
+
+    # Get the current date in both formats
+    display_date = timezone.now().strftime("%d/%m/%Y")
+    form_date = timezone.now().strftime("%Y-%m-%d")
+
+    # Validate token from GET or POST
+    token = request.GET.get('token') or request.POST.get('token')
+    print(f"Token in request: {token}")
+    print(f"Token in student: {student.token}")
+    print(f"Is token expired: {student.is_token_expired()}")
+
     if not token or token != student.token or student.is_token_expired():
         return HttpResponse("Invalid or expired token", status=403)
 
@@ -122,41 +149,60 @@ def form_student_generate(request, student_id):
         if form.is_valid():
             student_form = form.save(commit=False)
             student_form.student = student
-            student_form.save()
-            return render(request, 'form_submitted.html', {'rollno': student_form.rollno}) 
-        else:
-            return render(request, 'form.html', {'form': form, 'student': student})
-    else:
-        form = StudentSemForm()
-
-    return render(request, 'form.html', {'form': form, 'student': student})
-
-
-from django.shortcuts import render, get_object_or_404
-from .models import Student
-from .forms import StudentSemForm
-from datetime import datetime
-
-def form_student(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
-
-    # Get the current date in both formats
-    display_date = datetime.now().strftime("%d/%m/%Y")  # For display (DD/MM/YYYY)
-    form_date = datetime.now().strftime("%Y-%m-%d")  # For form submission (YYYY-MM-DD)
-
-    if request.method == 'POST':
-        form = StudentSemForm(request.POST)
-        if form.is_valid():
-            student_form = form.save(commit=False)
-            student_form.student = student
+            student_form.mentor = mentor
             student_form.save()
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
         else:
             return render(request, 'form.html', {
                 'form': form,
                 'student': student,
-                'date': form_date,  # Pass the form-friendly date for submission
-                'display_date': display_date,  # Pass the display-friendly date
+                'mentor': mentor,
+                'date': form_date,
+                'display_date': display_date,
+                'token': token  # Pass the token to the template
+            })
+    else:
+        form = StudentSemForm()
+
+    return render(request, 'form.html', {
+        'form': form,
+        'student': student,
+        'mentor': mentor,
+        'date': form_date,
+        'display_date': display_date,
+        'token': token  # Pass the token to the template
+    })
+
+
+
+
+
+from django.utils import timezone
+
+def form_student(request, student_id, mentor_id):
+    student = get_object_or_404(Student, id=student_id)
+    mentor = get_object_or_404(User, id=mentor_id)  # Fetch the mentor based on the ID in the URL
+
+    # Get the current date in both formats
+    display_date = timezone.now().strftime("%d/%m/%Y")
+    form_date = timezone.now().strftime("%Y-%m-%d")
+
+    if request.method == 'POST':
+        form = StudentSemForm(request.POST)
+        if form.is_valid():
+            student_form = form.save(commit=False)
+            student_form.student = student
+            student_form.mentor = mentor  # Set the mentor based on the URL
+            student_form.save()
+
+            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
+        else:
+            return render(request, 'form.html', {
+                'form': form,
+                'student': student,
+                'mentor': mentor,  # Pass the mentor (user) to the template
+                'date': form_date,
+                'display_date': display_date,
                 'errors': form.errors
             })
     else:
@@ -165,9 +211,12 @@ def form_student(request, student_id):
     return render(request, 'form.html', {
         'form': form,
         'student': student,
-        'date': form_date,  # Pass the form-friendly date for submission
-        'display_date': display_date  # Pass the display-friendly date for the user
+        'mentor': mentor,  # Pass the mentor to the template
+        'date': form_date,
+        'display_date': display_date
     })
+
+
 
 
 
@@ -206,6 +255,7 @@ def download_document(request, rollno):
     "question10": form.question10,
     "question11": form.question11,
     "date": form.date,
+    "mentor_name":form.mentor_name,
 }
 
     
@@ -252,6 +302,7 @@ def generate_document(form_dict):
     'line10': form_dict["question10"], # Higher studies plans
     'line11': form_dict["question11"], # Job offer details
     'date': formatted_date,
+    'mentor_name': form_dict["mentor_name"],
 }
 
     # Render the context into the document
@@ -270,17 +321,18 @@ def generate_document(form_dict):
 
 
 def SE(request):
-    se_students = Student.objects.filter(year="SE")
-    # students = Student.objects.all()
-    
-    # Create a dictionary to pass to the template
+    se_students = Student.objects.filter(year__iexact="SE")  # using __iexact for case-insensitivity
+    mentor = request.user
+
     context = {
         'student_count': se_students.count(),
         'students': se_students,
         'student_names': [student.name for student in se_students],
-
+        'mentor': mentor,
     }
-    return render(request, 'se.html', {'se_students': se_students})
+
+    return render(request, 'se.html', context)
+
 
 
 def TE(request):

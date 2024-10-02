@@ -35,6 +35,7 @@ class Student(models.Model):
 class StudentForm(models.Model):
     name = models.CharField(max_length=255)
     rollno = models.CharField(max_length=100, unique=True) 
+    mentor_name = models.CharField(max_length=255)
     atte_ise1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     atte_mse = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     attendance = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)

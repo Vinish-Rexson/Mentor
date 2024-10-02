@@ -99,7 +99,11 @@ class StudentSemForm(forms.ModelForm):
     )
     date = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Counseling Dates', 'readonly': 'readonly'}),
-        required=False
+        required=True
+    )
+    mentor_name = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=True
     )
 
     class Meta:
@@ -108,6 +112,6 @@ class StudentSemForm(forms.ModelForm):
             'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
             'cts', 'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
             'question3', 'question4', 'question5', 'question6', 
-            'question7', 'question8', 'question9', 'question10', 'question11','date'
+            'question7', 'question8', 'question9', 'question10', 'question11','date','mentor_name'
         ]
 

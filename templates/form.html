@@ -204,9 +204,12 @@
     <div class="form-wrapper">
         <div class="form-container">
             <h1>Mentor Form</h1>
-            <h3>Details</h3>
-
-            <form method="post" action="{% url 'form_student' student.id %}">
+            {% if mentor %}
+                <h3>Mentor Name: {{ mentor.username }}</h3>
+            {% else %}
+                <h3>Mentor Name: None</h3>
+            {% endif %}
+            <form method="post" action="{% url 'form_student' student.id mentor.id%}">
                 {% csrf_token %}
             
                 <!-- Student Name Input -->
@@ -317,8 +320,11 @@
                 <!-- Job Offer Details Input -->
                 <label for="job_offer">Do you have a job offer in hand?</label>
                 <textarea id="job_offer" name="question11" placeholder="Answer if applicable, please give details" rows="4">{{ form_data.question11|default:'' }}</textarea>
+
+                <input type="hidden" name="mentor_name" value="{{ mentor.username }}" />
+
+                <input type="hidden" name="token" value="{{ token }}">
                 
-            
                 <!-- Submit Button -->
                 <input type="submit" name="submit" value="Submit Form" />
             </form>
