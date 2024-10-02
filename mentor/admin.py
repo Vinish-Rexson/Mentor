@@ -11,3 +11,11 @@ admin.site.register(Student, StudentAdmin)
 class StudentFormAdmin(admin.ModelAdmin):
     pass
 admin.site.register(StudentForm, StudentFormAdmin)
+
+
+@admin.register(MentorshipData)
+class MentorshipDataAdmin(admin.ModelAdmin):
+    # Customize how the model is displayed in the admin panel
+    list_display = ('name', 'roll_number', 'division', 'faculty_mentor', 'be_student_mentor')
+    search_fields = ('name', 'roll_number', 'faculty_mentor', 'be_student_mentor')
+    list_filter = ('division',)

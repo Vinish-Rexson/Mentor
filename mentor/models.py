@@ -60,3 +60,17 @@ class StudentForm(models.Model):
 
     def __str__(self):
         return str(self.rollno)
+
+
+
+
+class MentorshipData(models.Model):
+    name = models.CharField(max_length=255)
+    roll_number = models.CharField(max_length=50)
+    division = models.CharField(max_length=10)
+    faculty_mentor = models.CharField(max_length=255, null=True, blank=True)
+    be_student_mentor = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
