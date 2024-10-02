@@ -333,27 +333,32 @@ def SE(request):
 
 
 def TE(request):
-    te_students = Student.objects.filter(year="TE ")
+    te_students = Student.objects.filter(year__iexact="TE ")  # using __iexact for case-insensitivity
+    print(te_students)
     mentor = request.user
+
     context = {
         'student_count': te_students.count(),
         'students': te_students,
         'student_names': [student.name for student in te_students],
         'mentor': mentor,
     }
-    return render(request, 'te.html', {'te_students': te_students})
+
+    return render(request, 'te.html', context)
 
 
 def BE(request):
-    be_students = Student.objects.filter(year="BE")
+    be_students = Student.objects.filter(year__iexact="BE")  # using __iexact for case-insensitivity
     mentor = request.user
+
     context = {
         'student_count': be_students.count(),
         'students': be_students,
         'student_names': [student.name for student in be_students],
         'mentor': mentor,
     }
-    return render(request, 'be.html', {'be_students': be_students})
+
+    return render(request, 'be.html', context)
 
 def form_dashboard(request):
     return render(request, 'form_dashboard.html')

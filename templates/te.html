@@ -207,26 +207,26 @@
       </ul>
     
       <div class="student-list">
-          {% for student in te_students %}
-              <div class="student-item">
+        {% for student in students %}
+            <div class="student-item">
                 <div class="bx">
-                  <i class='bx bxs-user'></i> <!-- Icon for student -->
-              </div>
-                  <a href="javascript:void(0);">{{ student.name }}</a>
-                  <div class="dropdown" id="dropdown-{{ student.id }}">
-                      <strong>Details:</strong>
-                      <p>Gender: {{ student.gender }}</p>
-                      <p>Roll.No: {{ student.roll_number }}</p>
-                      <p>Branch: {{ student.branch }}</p>
-                      <p>Section: {{ student.division }}</p>
-                      <a href="{% url 'form_student' student.id mentor.id %}" class="btn-add-form">Add a Form</a><br>
-                      <a href="{% url 'generate_qr' student.id mentor.id %}" class="btn-view-qr">View QR Code</a><br>
-                  </div>
-              </div>
-          {% empty %}
-              <div>No students available</div>
-          {% endfor %}
-      </div>
+                    <i class='bx bxs-user'></i> <!-- Icon for student -->
+                </div>
+                <a href="javascript:void(0);">{{ student.name }}</a>
+                <div class="dropdown" id="dropdown-{{ student.id }}">
+                    <strong>Details:</strong>
+                    <p>Gender: {{ student.gender }}</p>
+                    <p>Roll No: {{ student.roll_number }}</p>
+                    <p>Branch: {{ student.branch }}</p>
+                    <p>Section: {{ student.division }}</p>
+                    <a href="{% url 'form_student' student.id mentor.id %}" class="btn-add-form">Add a Form</a><br>
+                    <a href="{% url 'generate_qr' student.id mentor.id %}" class="btn-view-qr">View QR Code</a><br>
+                </div>
+            </div>
+        {% empty %}
+            <div>No students available</div>
+        {% endfor %}
+    </div> 
   </div>
 </div>
 
