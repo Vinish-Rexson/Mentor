@@ -137,9 +137,6 @@ def form_student_generate(request, student_id, mentor_id):
 
     # Validate token from GET or POST
     token = request.GET.get('token') or request.POST.get('token')
-    print(f"Token in request: {token}")
-    print(f"Token in student: {student.token}")
-    print(f"Is token expired: {student.is_token_expired()}")
 
     if not token or token != student.token or student.is_token_expired():
         return HttpResponse("Invalid or expired token", status=403)
