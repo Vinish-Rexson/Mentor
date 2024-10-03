@@ -1,4 +1,8 @@
+{% extends 'base.html' %}
 {% load static %}
+
+
+{% block content %}
 <html lang="en">
 
 <head>
@@ -231,39 +235,34 @@
                 <label for="date">Counseling Sessions Date's</label>
                 <input type="text" id="date" name="date" value="{{ date|default:'No Date Available' }}" readonly required />
 
-                <!-- CGPA Input -->
+                            <!-- CGPA Input -->
                 <label for="cgpa">Enter last CGPA </label>
-                <input type="number" id="cgpa" name="semcgpa" placeholder="Enter CGPA" 
-                       value="{{ form_data.semcgpa|default:'' }}" min="0" max="10" step="0.01" required />
-            
+                <textarea id="cgpa" name="semcgpa" placeholder="Enter CGPA" rows="1" required>{{ form_data.semcgpa|default:'' }}</textarea>
+
+                <!-- Cognitive Test Score -->
                 <label for="cts">Cognitive Test Score</label>
-                <input type="number" id="cts" name="cts" placeholder="Enter Cognitive Test Score" 
-                        value="{{ form_data.cts|default:'' }}" min="0" max="100" step="0.01" required />
-                
+                <textarea id="cts" name="cts" placeholder="Enter Cognitive Test Score" rows="1" required>{{ form_data.cts|default:'' }}</textarea>
+
                 <!-- ISE 1 Performance Input -->
                 <label for="ise1">ISE 1 Performance</label>
-                <input type="number" id="ise1" name="ise1" placeholder="Enter ISE 1 Score" 
-                        value="{{ form_data.ise1|default:'' }}" min="0" max="100" step="0.01" required />
-                
+                <textarea id="ise1" name="ise1" placeholder="Enter ISE 1 Score" rows="1" required>{{ form_data.ise1|default:'' }}</textarea>
+
                 <!-- MSE Performance Input -->
                 <label for="mse">MSE Performance</label>
-                <input type="number" id="mse" name="mse" placeholder="Enter MSE Score" 
-                        value="{{ form_data.mse|default:'' }}" min="0" max="100" step="0.01" required />
-                
+                <textarea id="mse" name="mse" placeholder="Enter MSE Score" rows="1" required>{{ form_data.mse|default:'' }}</textarea>
+
                 <!-- Attendance till ISE1 Input -->
                 <label for="atte_ise1">Attendance % Till ISE 1</label>
-                <input type="number" id="atte_ise1" name="atte_ise1" placeholder="Enter Attendance Till ISE 1" 
-                        value="{{ form_data.atte_ise1|default:'' }}" min="0" max="100" step="0.01" required />
-                
+                <textarea id="atte_ise1" name="atte_ise1" placeholder="Enter Attendance Till ISE 1" rows="1" required>{{ form_data.atte_ise1|default:'' }}</textarea>
+
                 <!-- Attendance till MSE Input -->
                 <label for="atte_mse">Attendance % Till MSE</label>
-                <input type="number" id="atte_mse" name="atte_mse" placeholder="Enter Attendance Till MSE" 
-                        value="{{ form_data.atte_mse|default:'' }}" min="0" max="100" step="0.01" required />
-                
+                <textarea id="atte_mse" name="atte_mse" placeholder="Enter Attendance Till MSE" rows="1" required>{{ form_data.atte_mse|default:'' }}</textarea>
+
                 <!-- Attendance Input -->
                 <label for="attendance">Total Attendance</label>
-                <input type="number" id="attendance" name="attendance" placeholder="Enter attendance percentage %" 
-                        value="{{ form_data.attendance|default:'' }}" min="0" max="100" step="0.01" required />
+                <textarea id="attendance" name="attendance" placeholder="Enter attendance percentage %" rows="1" required>{{ form_data.attendance|default:'' }}</textarea>
+
                             
                 
                 
@@ -311,15 +310,15 @@
                 
                 <!-- Entrepreneur Details Input -->
                 <label for="entrepreneur">Are you an entrepreneur?</label>
-                <textarea id="entrepreneur" name="question9" placeholder="if Yes, please give the details including registration letter" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                <textarea id="entrepreneur" name="question10" placeholder="if Yes, please give the details including registration letter" rows="4">{{ form_data.question9|default:'' }}</textarea>
                 
                 <!-- Higher Studies Plans Input -->
                 <label for="higher_studies">Are you planning or preparing for Higher studies? Or take entrance exams (Y/N). </label>
-                <textarea id="higher_studies" name="question10" placeholder="If yes, give details (exam name and score)" rows="4">{{ form_data.question10|default:'' }}</textarea>
+                <textarea id="higher_studies" name="question11" placeholder="If yes, give details (exam name and score)" rows="4">{{ form_data.question10|default:'' }}</textarea>
                 
                 <!-- Job Offer Details Input -->
                 <label for="job_offer">Do you have a job offer in hand?</label>
-                <textarea id="job_offer" name="question11" placeholder="Answer if applicable, please give details" rows="4">{{ form_data.question11|default:'' }}</textarea>
+                <textarea id="job_offer" name="question12" placeholder="Answer if applicable, please give details" rows="4">{{ form_data.question11|default:'' }}</textarea>
 
                 <input type="hidden" name="mentor_name" value="{{ mentor.username }}" />
 
@@ -401,6 +400,7 @@
 
 </body>
 </html>
+{% endblock %}
 
 
 

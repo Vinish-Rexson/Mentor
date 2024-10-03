@@ -150,7 +150,7 @@ def form_student_generate(request, student_id, mentor_id):
             student_form.save()
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
         else:
-            return render(request, 'form.html', {
+            return render(request, 'form_student.view.html', {
                 'form': form,
                 'student': student,
                 'mentor': mentor,
@@ -161,7 +161,7 @@ def form_student_generate(request, student_id, mentor_id):
     else:
         form = StudentSemForm()
 
-    return render(request, 'form.html', {
+    return render(request, 'form_student_view.html', {
         'form': form,
         'student': student,
         'mentor': mentor,
@@ -251,6 +251,7 @@ def download_document(request, rollno):
     "question9": form.question9,
     "question10": form.question10,
     "question11": form.question11,
+    "question12": form.question12,
     "date": form.date,
     "mentor_name":form.mentor_name,
 }
@@ -296,8 +297,9 @@ def generate_document(form_dict):
     'line7': form_dict["question7"],  # Co-curricular events
     'line8': form_dict["question8"],  # Social cause involvement
     'line9': form_dict["question9"],  # Internship details
-    'line10': form_dict["question10"], # Higher studies plans
-    'line11': form_dict["question11"], # Job offer details
+    'line10': form_dict["question10"],#entrepreneur
+    'line11': form_dict["question11"],  # Higher studies plans
+    'line12':form_dict["question12"],#joboffer
     'date': formatted_date,
     'mentor_name': form_dict["mentor_name"],
 }
@@ -334,7 +336,7 @@ def SE(request):
 
 def TE(request):
     te_students = Student.objects.filter(year__iexact="TE ")  # using __iexact for case-insensitivity
-    print(te_students)
+    
     mentor = request.user
 
     context = {

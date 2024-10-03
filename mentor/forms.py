@@ -97,6 +97,9 @@ class StudentSemForm(forms.ModelForm):
     question11 = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Question 11 detail'})
     )
+    question12 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Question 12 detail'})
+    )
     date = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Counseling Dates', 'readonly': 'readonly'}),
         required=True

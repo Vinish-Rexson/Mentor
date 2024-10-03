@@ -57,6 +57,7 @@ class StudentForm(models.Model):
     question9 = models.TextField(null=True, blank=True)  # Allow NULL values
     question10 = models.TextField(null=True, blank=True)  # Allow NULL values
     question11 = models.TextField(null=True, blank=True)  # Allow NULL values
+    question12 = models.TextField(null=True, blank=True)  # Allow NULL values
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
