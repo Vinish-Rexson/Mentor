@@ -315,17 +315,17 @@
 
                 <h1>Self-Observations (By mentee)</h1>
                 <label for="Strengths">Strengths</label>
-                <textarea id="Strengths" name="Strengths" placeholder=" " rows="4">{{ form_data.question11 }}</textarea>
+                <textarea id="Strengths" name="Strengths" placeholder=" " rows="4">{{ form_data.Strengths|default:form.Strengths.value }}</textarea>
                 <label for="Weakness">Weakness</label>
-                <textarea id="Weakness" name="Weakness" placeholder=" " rows="4">{{ form_data.question11}}</textarea>
+                <textarea id="Weakness" name="Weakness" placeholder=" " rows="4">{{ form_data.Weakness|default:form.Weakness.value}}</textarea>
                 <label for="Opportunities">Opportunities</label>
-                <textarea id="Opportunities" name="Opportunities" placeholder=" " rows="4">{{ form_data.question11 }}</textarea>
+                <textarea id="Opportunities" name="Opportunities" placeholder=" " rows="4">{{ form_data.Opportunities|default:form.Challenges.value }}</textarea>
                 <label for="Challenges">Challenges</label>
-                <textarea id="Challenges" name="Challenges" placeholder=" " rows="4">{{ form_data.question11  }}</textarea>
+                <textarea id="Challenges" name="Challenges" placeholder=" " rows="4">{{ form_data.Challenges|default:form.Strengths.value  }}</textarea>
                 <label for="nao">Non-Academic Observations:</label>
-                <textarea id="nao" name="nao" placeholder=" " rows="4">{{ form_data.question11}}</textarea>
+                <textarea id="nao" name="nao" placeholder=" " rows="4">{{ form_data.nao|default:form.nao.value}}</textarea>
                 <label for="ao">Academic Observations</label>
-                <textarea id="ao" name="ao" placeholder=" " rows="4">{{ form_data.question11}}</textarea> 
+                <textarea id="ao" name="ao" placeholder=" " rows="4">{{ form_data.ao|default:form.ao.value}}</textarea> 
 
 
                 <input type="hidden" name="mentor_name" value="{{ mentor.username }}" />

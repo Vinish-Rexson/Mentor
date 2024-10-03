@@ -108,19 +108,19 @@ class StudentSemForm(forms.ModelForm):
 
 
 
-    strengths = forms.CharField(
+    Strengths = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'placeholder': 'Strengths', 'rows': 4})
     )
-    weaknesses = forms.CharField(
+    Weakness = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'placeholder': 'Weakness', 'rows': 4})
     )
-    opportunities = forms.CharField(
+    Opportunities = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'placeholder': 'Opportunities', 'rows': 4})
     )
-    challenges = forms.CharField(
+    Challenges = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'placeholder': 'Challenges', 'rows': 4})
     )
@@ -141,8 +141,8 @@ class StudentSemForm(forms.ModelForm):
             'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
             'cts', 'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
             'question3', 'question4', 'question5', 'question6', 
-            'question7', 'question8', 'question9', 'question10', 'question11','date','mentor_name',
-            'strengths', 'weaknesses', 'opportunities', 'challenges', 'nao', 'ao',
+            'question7', 'question8', 'question9', 'question10', 'question11','question12','date','mentor_name',
+            'Strengths', 'Weakness', 'Opportunities', 'Challenges', 'nao', 'ao',
         ]
 
 
