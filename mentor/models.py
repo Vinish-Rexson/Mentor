@@ -58,6 +58,13 @@ class StudentForm(models.Model):
     question10 = models.TextField(null=True, blank=True)  # Allow NULL values
     question11 = models.TextField(null=True, blank=True)  # Allow NULL values
     question12 = models.TextField(null=True, blank=True)  # Allow NULL values
+    Strengths = models.TextField(null=True, blank=True)  
+    Weakness = models.TextField(null=True, blank=True)  
+    Opportunities = models.TextField(null=True, blank=True)  
+    Challenges = models.TextField(null=True, blank=True)  
+    nao = models.TextField(null=True, blank=True)  
+    ao = models.TextField(null=True, blank=True)  
+
     date = models.DateField(default=timezone.now)
 
     def __str__(self):

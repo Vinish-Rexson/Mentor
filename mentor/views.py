@@ -188,16 +188,30 @@ def form_student(request, student_id, mentor_id):
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
 
+    try:
+        # Check if a form entry for the given student already exists
+        student_form_instance = StudentForm.objects.get(rollno=student.roll_number)
+        print("Existing form instance found for student:", student_form_instance)  # Debugging statement
+    except StudentForm.DoesNotExist:
+        student_form_instance = None
+        print("No existing form instance found for student:", student.roll_number)  # Debugging statement
+
     if request.method == 'POST':
-        form = StudentSemForm(request.POST)
+        if student_form_instance:
+            form = StudentSemForm(request.POST, instance=student_form_instance)
+        else:
+            form = StudentSemForm(request.POST)
+
         if form.is_valid():
             student_form = form.save(commit=False)
             student_form.student = student
-            student_form.mentor = mentor  # Set the mentor based on the URL
+            student_form.mentor_name = mentor.username  # Set the mentor name
             student_form.save()
+            print("Form successfully saved for student:", student_form.rollno)  # Debugging statement
 
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
         else:
+            print("Form errors:", form.errors)  # Debugging statement
             return render(request, 'form.html', {
                 'form': form,
                 'student': student,
@@ -207,7 +221,13 @@ def form_student(request, student_id, mentor_id):
                 'errors': form.errors
             })
     else:
-        form = StudentSemForm()
+        # If there is an existing form, populate it, else use an empty form
+        if student_form_instance:
+            form = StudentSemForm(instance=student_form_instance)
+            print("Populating form with existing data for student:", student_form_instance)  # Debugging statement
+        else:
+            form = StudentSemForm()
+            print("Creating a new form for student:", student.roll_number)  # Debugging statement
 
     return render(request, 'form.html', {
         'form': form,
@@ -216,6 +236,7 @@ def form_student(request, student_id, mentor_id):
         'date': form_date,
         'display_date': display_date
     })
+
 
 
 def download_document(request, rollno):
@@ -251,6 +272,12 @@ def download_document(request, rollno):
     "question10": form.question10,
     "question11": form.question11,
     "question12": form.question12,
+    "Strengths":form.Strengths,
+    "Weakness" : form.Weakness, 
+    "Opportunities" : form.Opportunities,
+    "Challenges" : form.Challenges,  
+    "nao" : form.nao, 
+    "ao" : form.ao,
     "date": form.date,
     "mentor_name":form.mentor_name,
 }
@@ -299,6 +326,13 @@ def generate_document(form_dict):
     'line10': form_dict["question10"],#entrepreneur
     'line11': form_dict["question11"],  # Higher studies plans
     'line12':form_dict["question12"],#joboffer
+    'box1':form_dict["Strengths"],
+    'box2':form_dict["Weakness"],
+    'box3':form_dict["Opportunities"],
+    'box4':form_dict["Challenges"],
+    'box5':form_dict["nao"],
+    'box6':form_dict["ao"],
+
     'date': formatted_date,
     'mentor_name': form_dict["mentor_name"],
 }
@@ -372,7 +406,7 @@ def generate_follow_document(form_dict):
     'name': form_dict["name"],
     'rollno': form_dict["rollno"],
     'branch': "Comps",               # Static branch value; adjust as needed
-    'semno': "3",                    # Static semester number; adjust as needed
+    'sem': "3",                    # Static semester number; adjust as needed
     'semcgpa': form_dict["semcgpa"],
     'ise1': form_dict["ise1"],       # ISE 1 performance
     'mse': form_dict["mse"],         # MSE performance

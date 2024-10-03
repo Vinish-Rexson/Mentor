@@ -106,13 +106,43 @@ class StudentSemForm(forms.ModelForm):
         required=True
     )
 
+
+
+    strengths = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Strengths', 'rows': 4})
+    )
+    weaknesses = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Weakness', 'rows': 4})
+    )
+    opportunities = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Opportunities', 'rows': 4})
+    )
+    challenges = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Challenges', 'rows': 4})
+    )
+    nao = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Non-Academic Observations', 'rows': 4})
+    )
+    ao = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Academic Observations', 'rows': 4})
+    )
+
+
+
     class Meta:
         model = StudentForm  # Ensure this is the correct model name
         fields = [
             'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
             'cts', 'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
             'question3', 'question4', 'question5', 'question6', 
-            'question7', 'question8', 'question9', 'question10', 'question11','date','mentor_name'
+            'question7', 'question8', 'question9', 'question10', 'question11','date','mentor_name',
+            'strengths', 'weaknesses', 'opportunities', 'challenges', 'nao', 'ao',
         ]
 
 
