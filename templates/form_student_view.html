@@ -213,7 +213,7 @@
             {% else %}
                 <h3>Mentor Name: None</h3>
             {% endif %}
-            <form method="post" action="{% url 'form_student' student.id mentor.id%}">
+            <form method="post" action="{% url 'form_student_generate' student.id mentor.id%}">
                 {% csrf_token %}
             
                 <!-- Student Name Input -->
