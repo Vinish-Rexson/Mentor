@@ -134,7 +134,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://05f9-2409-40c0-101a-12f4-5d6c-3316-9b44-a54b.ngrok-free.app'
+    'https://514d-2409-40c0-1-a2bb-6172-375c-354e-202e.ngrok-free.app'
 ]
 
 

@@ -219,8 +219,10 @@
                     <p>Roll No: {{ student.roll_number }}</p>
                     <p>Branch: {{ student.branch }}</p>
                     <p>Section: {{ student.division }}</p>
-                    <a href="{% url 'form_student' student.id mentor.id %}" class="btn-add-form">Add a Form</a><br>
-                    <a href="{% url 'generate_qr' student.id mentor.id %}" class="btn-view-qr">View QR Code</a><br>
+                    <a href="{% url 'form_student' student.id mentor.id %}" class="btn-add-form">Add a Mentor Form</a><br>
+                    <a href="{% url 'generate_qr' student.id mentor.id %}" class="btn-view-qr">Form QR Code</a><br>
+                    <a href="{% url 'followup_form_student' student.id mentor.id %}" class="btn-add-form">Add a Followup Form</a><br>
+                    <a href="{% url 'generate_qr_followup' student.id mentor.id %}" class="btn-view-qr">Followup form  QR Code </a><br>
                 </div>
             </div>
         {% empty %}

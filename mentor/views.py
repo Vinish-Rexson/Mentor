@@ -122,6 +122,10 @@ def generate_qr(request, student_id, mentor_id):
 
 
 
+
+
+
+
 # student side
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
@@ -212,11 +216,6 @@ def form_student(request, student_id, mentor_id):
         'date': form_date,
         'display_date': display_date
     })
-
-
-
-
-
 
 
 def download_document(request, rollno):
@@ -319,6 +318,126 @@ def generate_document(form_dict):
 
 
 
+
+
+
+
+
+
+def followup_form_student_generate(request, student_id, mentor_id):
+    student = get_object_or_404(Student, id=student_id)
+    mentor = get_object_or_404(User, id=mentor_id)
+
+    # Get the current date in both formats
+    display_date = timezone.now().strftime("%d/%m/%Y")
+    form_date = timezone.now().strftime("%Y-%m-%d")
+
+    # Validate token from GET or POST
+    token = request.GET.get('token') or request.POST.get('token')
+
+    if not token or token != student.token or student.is_token_expired():
+        return HttpResponse("Invalid or expired token", status=403)
+
+    if request.method == 'POST':
+        form = StudentFollowup_Form(request.POST)
+        if form.is_valid():
+            student_form = form.save(commit=False)
+            student_form.student = student
+            student_form.mentor = mentor
+            student_form.save()
+            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
+        else:
+            return render(request, 'followup_form_student_view.html', {
+                'form': form,
+                'student': student,
+                'mentor': mentor,
+                'date': form_date,
+                'display_date': display_date,
+                'token': token  # Pass the token to the template
+            })
+    else:
+        form = StudentFollowup_Form()
+
+    return render(request, 'followup_form_student_view.html', {
+        'form': form,
+        'student': student,
+        'mentor': mentor,
+        'date': form_date,
+        'display_date': display_date,
+        'token': token  # Pass the token to the template
+    })
+
+
+
+
+
+from django.utils import timezone
+
+def followup_form_student(request, student_id, mentor_id):
+    student = get_object_or_404(Student, id=student_id)
+    mentor = get_object_or_404(User, id=mentor_id)  # Fetch the mentor based on the ID in the URL
+
+    # Get the current date in both formats
+    display_date = timezone.now().strftime("%d/%m/%Y")
+    form_date = timezone.now().strftime("%Y-%m-%d")
+
+    if request.method == 'POST':
+        form = StudentSemForm(request.POST)
+        if form.is_valid():
+            student_form = form.save(commit=False)
+            student_form.student = student
+            student_form.mentor = mentor  # Set the mentor based on the URL
+            student_form.save()
+
+            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
+        else:
+            return render(request, 'followup_form.html', {
+                'form': form,
+                'student': student,
+                'mentor': mentor,  # Pass the mentor (user) to the template
+                'date': form_date,
+                'display_date': display_date,
+                'errors': form.errors
+            })
+    else:
+        form = StudentSemForm()
+
+    return render(request, 'followup_form.html', {
+        'form': form,
+        'student': student,
+        'mentor': mentor,  # Pass the mentor to the template
+        'date': form_date,
+        'display_date': display_date
+    })
+
+
+
+def generate_qr_followup(request, student_id, mentor_id):
+    student = get_object_or_404(Student, id=student_id)
+    mentor = get_object_or_404(User, id=mentor_id)  # Get mentor object
+
+    # Check if the token has expired or doesn't exist
+    if not student.token or student.is_token_expired():
+        # Generate a new token and update the timestamp
+        student.token = secrets.token_urlsafe()
+        student.token_created_at = timezone.now()
+        student.save()
+
+    # Generate the form URL with student_id, mentor_id, and token
+    form_url = request.build_absolute_uri(f"/followup_form/generate/{student.id}/{mentor.id}/?token={student.token}")
+    
+    # Generate the QR code for the URL
+    qr_code = generate_qr_code(form_url)
+    
+    return render(request, 'qr_code_page.html', {
+        'student': student,
+        'mentor': mentor,  # Pass mentor info to the template if needed
+        'qr_code': qr_code
+    })
+
+
+
+
 def SE(request):
     se_students = Student.objects.filter(year__iexact="SE")  # using __iexact for case-insensitivity
     mentor = request.user
@@ -331,7 +450,6 @@ def SE(request):
     }
 
     return render(request, 'se.html', context)
-
 
 
 def TE(request):

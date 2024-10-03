@@ -12,6 +12,10 @@ class StudentFormAdmin(admin.ModelAdmin):
     pass
 admin.site.register(StudentForm, StudentFormAdmin)
 
+class StudentFollowup_FormAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(StudentFollowup_Form, StudentFollowup_FormAdmin)
+
 
 @admin.register(MentorshipData)
 class MentorshipDataAdmin(admin.ModelAdmin):

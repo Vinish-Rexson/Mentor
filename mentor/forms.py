@@ -21,7 +21,7 @@ class MentorSignUpForm(UserCreationForm):
 
 
 from django import forms
-from .models import StudentForm  # Ensure this import matches your actual model name
+from .models import StudentForm,StudentFollowup_Form  # Ensure this import matches your actual model name
 
 class StudentSemForm(forms.ModelForm):
     name = forms.CharField(
@@ -118,3 +118,82 @@ class StudentSemForm(forms.ModelForm):
             'question7', 'question8', 'question9', 'question10', 'question11','date','mentor_name'
         ]
 
+
+
+
+
+class StudentFollowup_Form(forms.ModelForm):
+    name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter student name'})
+    )
+    rollno = forms.CharField(
+        max_length=100,
+        error_messages={
+            'unique': 'This Roll number has already filled the current sem form'  # Customize this as needed
+        },
+        widget=forms.TextInput(attrs={'placeholder': 'Enter student Roll.No'})
+    )
+    semcgpa = forms.DecimalField(  # Changed to match the model
+        max_digits=5, decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter CGPA', 'min': 0, 'max': 10, 'step': 0.01})
+    )
+    atte_ise1 = forms.DecimalField(
+        max_digits=5, decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter attendance for ISE1', 'min': 0, 'max': 100, 'step': 0.01})
+    )
+    atte_mse = forms.DecimalField(
+        max_digits=5, decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter attendance for MSE', 'min': 0, 'max': 100, 'step': 0.01})
+    )
+    attendance = forms.DecimalField(
+        max_digits=5, decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter attendance percentage %', 'min': 0, 'max': 100, 'step': 0.01})
+    )
+    ise1 = forms.DecimalField(
+        max_digits=5, decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter ISE1 score', 'min': 0, 'max': 100, 'step': 0.01})
+    )
+    mse = forms.DecimalField(
+        max_digits=5, decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter MSE score', 'min': 0, 'max': 100, 'step': 0.01})
+    )
+    
+    question1 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Enter details for council/team'})
+    )
+    question2 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Enter details for co-curricular events'})
+    )
+    question3 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Question 3 detail'})
+    )
+    question4 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Question 4 detail'})
+    )
+    question5 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Question 5 detail'})
+    )
+    question6 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Question 6 detail'})
+    )
+    question7 = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Question 7 detail'})
+    )
+    date = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Counseling Dates', 'readonly': 'readonly'}),
+        required=True
+    )
+    mentor_name = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=True
+    )
+
+    class Meta:
+        model = StudentFollowup_Form  # Ensure this is the correct model name
+        fields = [
+            'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
+             'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
+            'question3', 'question4', 'question5', 'question6', 
+            'question7','date','mentor_name'
+        ]

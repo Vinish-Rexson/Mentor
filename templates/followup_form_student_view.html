@@ -1,0 +1,393 @@
+<!-- this is form that will be seen to students -->
+{% load static %}
+
+
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Form</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap');
+
+        body {
+            font-family: "Playfair Display", serif;
+            background-color: #e9eff7; /* Light bluish background */
+            color: #2e3b55; /* Luxury dark blue for text */
+        }
+        /* Form container with shadow */
+        .form-wrapper {
+            background-color: #dbe5f1; /* Shaded background */
+            padding: 50px 0; /* Padding for the form's background */
+            overflow: hidden; /* Prevent scroll during form animation */
+        }
+
+        .form-container {
+            background-color: #fff;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for the form */
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form title */
+        h1,
+        h3 {
+            text-align: center;
+            color: #003366;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-in-out; /* Slide-in animation for the title */
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Slide-in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Form label */
+        label {
+            display: block;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for labels */
+        }
+
+        /* Input fields */
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth focus animation */
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation for inputs */
+            font:serif;
+        }
+
+        /* Input hover and focus effects */
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            background-color: #eef6ff; /* Light blue background on focus */
+            border-color: #007bff; /* Blue border on focus */
+            outline: none;
+            
+        }
+
+        /* Submit button */
+        input[type="submit"] {
+            width: 100%;
+            background-color: #003366;
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease; /* Submit button animation */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00274d;
+            transform: scale(1.05); /* Slightly enlarges the button on hover */
+        }
+
+        input[type="submit"]:active {
+            transform: scale(1); /* Returns to normal size when clicked */
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            input[type="submit"] {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+
+
+
+
+        .errorlist {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+        
+        .error {
+            background-color: rgba(255, 0, 0, 0.1); /* Light red background */
+            color: #d8000c; /* Darker red for text */
+            border: 1px solid #d8000c; /* Dark red border */
+            padding: 10px;
+            margin-top: 5px; /* Space above the error message */
+            border-radius: 5px; /* Slightly rounded corners */
+            
+        }
+
+        
+        
+        
+        
+
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="form-wrapper">
+        <div class="form-container">
+            <h1>Mentor Form</h1>
+            {% if mentor %}
+                <h3>Mentor Name: {{ mentor.username }}</h3>
+            {% else %}
+                <h3>Mentor Name: None</h3>
+            {% endif %}
+            <form method="post" action="{% url 'followup_form_student' student.id mentor.id%}">
+                {% csrf_token %}
+            
+                <!-- Student Name Input -->
+                <label for="student-name">Student Name</label>
+                <input type="text" id="student-name" name="name" value="{{ student.name }}" readonly required />
+
+                {% if form.rollno.errors %}
+                 <ul class="errorlist">
+                {% for error in form.rollno.errors %}
+                 <li class="error">{{ error }}</li>
+                 {% endfor %}
+                </ul>
+                {% endif %}
+            
+                <!-- Student Roll Number Input -->
+                <label for="student-roll">Student Roll.No</label>
+                <input type="text" id="student-roll" name="rollno" value="{{ student.roll_number }}" readonly required />
+                <!-- Counseling Sessions Date Input -->
+                <label for="date">Counseling Sessions Date's</label>
+                <input type="text" id="date" name="date" value="{{ date|default:'No Date Available' }}" readonly required />
+
+                <!-- CGPA Input -->
+                <label for="cgpa">Enter last CGPA </label>
+                <textarea id="cgpa" name="semcgpa" placeholder="Enter CGPA" rows="1" required>{{ form_data.semcgpa|default:'' }}</textarea>
+
+                <!-- Cognitive Test Score -->
+                <label for="cts">Cognitive Test Score</label>
+                <textarea id="cts" name="cts" placeholder="Enter Cognitive Test Score" rows="1" required>{{ form_data.cts|default:'' }}</textarea>
+
+                <!-- ISE 1 Performance Input -->
+                <label for="ise1">ISE 1 Performance</label>
+                <textarea id="ise1" name="ise1" placeholder="Enter ISE 1 Score" rows="1" required>{{ form_data.ise1|default:'' }}</textarea>
+
+                <!-- MSE Performance Input -->
+                <label for="mse">MSE Performance</label>
+                <textarea id="mse" name="mse" placeholder="Enter MSE Score" rows="1" required>{{ form_data.mse|default:'' }}</textarea>
+
+                <!-- Attendance till ISE1 Input -->
+                <label for="atte_ise1">Attendance % Till ISE 1</label>
+                <textarea id="atte_ise1" name="atte_ise1" placeholder="Enter Attendance Till ISE 1" rows="1" required>{{ form_data.atte_ise1|default:'' }}</textarea>
+
+                <!-- Attendance till MSE Input -->
+                <label for="atte_mse">Attendance % Till MSE</label>
+                <textarea id="atte_mse" name="atte_mse" placeholder="Enter Attendance Till MSE" rows="1" required>{{ form_data.atte_mse|default:'' }}</textarea>
+
+                <!-- Attendance Input -->
+                <label for="attendance">Total Attendance</label>
+                <textarea id="attendance" name="attendance" placeholder="Enter attendance percentage %" rows="1" required>{{ form_data.attendance|default:'' }}</textarea>
+
+                            
+                
+                
+
+                
+
+
+
+                
+                <!-- Technical Activities Input -->
+                <label for="technical_activities">Involvement in different technical activities:</label>
+                <textarea id="technical_activities" name="question1" placeholder="List Hackathons, project competitions, idea competition,paper publications, patents publications, inter/intra college technical competitions, etc you participated and/or won in current semester" rows="4" required>{{ form_data.question3|default:'' }}</textarea>
+                <!-- Technical Courses/Certifications Input -->
+                <label for="technical_courses">Have you undertaken any technical courses/certifications?</label>
+                <textarea id="technical_courses" name="question2" placeholder="Enter details of technical courses" rows="4">{{ form_data.question5|default:'' }}</textarea>  
+                <!-- Soft Skill Training Input -->
+                <label for="soft_skill_training">Have you undertaken any soft skill training programme to mould yourself as per workplace ethics? </label>
+                <textarea id="soft_skill_training" name="question3" placeholder="Enter details of soft skill training" rows="4">{{ form_data.question6|default:'' }}</textarea>
+                
+                 <!-- Co-curricular Events Input -->
+                 <label for="co_curricular_events">Give details of co-curricular events you participated in this semester:</label>
+                 <textarea id="co_curricular_events" name="question4" placeholder="Enter details of co-curricular events" rows="4">{{ form_data.question7|default:'' }}</textarea>
+                 
+                <!-- Social Cause Input -->
+                <label for="social_cause">Are you a part of any social cause?</label>
+                <textarea id="social_cause" name="question5" placeholder="Enter details of social cause" rows="4">{{ form_data.question8|default:'' }}</textarea>
+                <!-- Internship Details Input -->
+                <label for="internship">Give details of any internship undertaken:</label>
+                <textarea id="internship" name="question6" placeholder="if Yes, please give the company name, role offered, duration and stipend details" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                <!-- Financial Situation Input -->
+                <label for="financial_situation">How things are going financially:</label>
+                <textarea id="financial_situation" name="question7"  placeholder="It’s okay if you don’t want to talk about it" rows="4">{{ form_data.question4|default:'' }}</textarea>                
+                
+                <input type="hidden" name="mentor_name" value="{{ mentor.username }}" />
+                <input type="hidden" name="token" value="{{ token }}">
+                
+                <!-- Submit Button -->
+                <input type="submit" name="submit" value="Submit Form" />
+            </form>
+            
+        </div>
+    </div>
+
+
+    <script>
+        window.addEventListener('load', function() {
+            const form = document.querySelector('form');
+            const rollnoInput = document.querySelector('input[name="rollno"]');
+            const excludedFields = ['name', 'rollno', 'date'];
+    
+            // Function to generate a unique key based on roll number
+            function generateKey() {
+                return `form_data_${rollnoInput.value}`;
+            }
+    
+            // Load saved data from localStorage
+            function loadFormData() {
+                const savedData = localStorage.getItem(generateKey());
+                if (savedData) {
+                    console.log("Saved data found:", JSON.parse(savedData));
+                    const parsedData = JSON.parse(savedData);
+                    for (const [key, value] of Object.entries(parsedData)) {
+                        if (!excludedFields.includes(key) && form[key]) {
+                            form[key].value = value;
+                        }
+                    }
+                } else {
+                    console.log("No saved data found for rollno:", rollnoInput.value);
+                }
+            }
+    
+            // Save form data into localStorage
+            function saveFormData() {
+                const formData = {};
+                Array.from(form.elements).forEach(field => {
+                    if (!excludedFields.includes(field.name)) {
+                        formData[field.name] = field.value;
+                    }
+                });
+                localStorage.setItem(generateKey(), JSON.stringify(formData));
+                console.log("Form data saved for rollno:", rollnoInput.value);
+            }
+    
+            // Clear form data from localStorage after submission
+            form.addEventListener('submit', function() {
+                localStorage.removeItem(generateKey());
+                console.log("Form data cleared for rollno:", rollnoInput.value);
+            });
+    
+            // Auto-save every minute
+            function autoSave() {
+                setInterval(saveFormData, 60000); // Save every 1 minute (60000 ms)
+            }
+    
+            // Trigger save on input change
+            form.addEventListener('input', function() {
+                saveFormData();
+            });
+    
+            // Load saved data when page is loaded
+            loadFormData();
+    
+            // Initiate auto-save
+            autoSave();
+        });
+    </script>
+    
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
