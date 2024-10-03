@@ -66,7 +66,7 @@ class StudentForm(models.Model):
 
 
 
-class StudentFollowup_Form(models.Model):
+class StudentFollowupForm(models.Model):
     name = models.CharField(max_length=255)
     rollno = models.CharField(max_length=100, unique=True) 
     mentor_name = models.CharField(max_length=255)

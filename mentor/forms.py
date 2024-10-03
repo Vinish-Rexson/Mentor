@@ -20,9 +20,6 @@ class MentorSignUpForm(UserCreationForm):
 
 
 
-from django import forms
-from .models import StudentForm,StudentFollowup_Form  # Ensure this import matches your actual model name
-
 class StudentSemForm(forms.ModelForm):
     name = forms.CharField(
         max_length=255,
@@ -123,7 +120,7 @@ class StudentSemForm(forms.ModelForm):
 
 
 from django import forms
-from .models import StudentFollowup_Form  # Replace this with the actual model
+from .models import StudentFollowupForm  # Replace this with the actual model
 
 class StudentFollowup_Form(forms.ModelForm):
     name = forms.CharField(
@@ -192,7 +189,7 @@ class StudentFollowup_Form(forms.ModelForm):
     )
 
     class Meta:
-        model = StudentFollowup_Form  # This should be your actual model
+        model = StudentFollowupForm  # This should be your actual model
         fields = [
             'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
             'ise1', 'mse', 'semcgpa', 'question1', 'question2', 

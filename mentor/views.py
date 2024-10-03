@@ -317,12 +317,95 @@ def generate_document(form_dict):
     return response
 
 
+def download_follow_document(request, rollno):
+    # Fetch all entries with the given rollno
+    forms = StudentFollowupForm.objects.filter(rollno=rollno)
+
+    if not forms.exists():
+        return HttpResponse("No record found.", status=404)
+
+    # Pick the first or latest entry (customize this logic as needed)
+    form = forms.order_by('-id').first()  # Here, we pick the latest one
+    
+    # Create the form_dict from the selected record
+    form_dict = {
+    "name": form.name,
+    "rollno": form.rollno,
+    "attendance": form.attendance,
+    "semcgpa": form.semcgpa,
+    "atte_ise1": form.atte_ise1,
+    "atte_mse": form.atte_mse,
+    "ise1": form.ise1,
+    "mse": form.mse,
+    "question1": form.question1,
+    "question2": form.question2,
+    "question3": form.question3,
+    "question4": form.question4,
+    "question5": form.question5,
+    "question6": form.question6,
+    "question7": form.question7,
+    "date": form.date,
+    "mentor_name":form.mentor_name,
+}
+
+    
+    # Call the document generation function
+    return generate_follow_document(form_dict)
+
+
+
+def generate_follow_document(form_dict):
+    # Find the template document (adjust the path according to your project structure)
+    doc_path = finders.find('followup_form.docx')
+    
+    # Load the template using docxtpl
+    doc = DocxTemplate(doc_path)
+
+    if 'date' in form_dict and form_dict["date"]:
+        date_object = form_dict["date"]
+        formatted_date = date_object.strftime("%d/%m/%Y")  # Convert to DD/MM/YYYY
+    else:
+        formatted_date = "" 
+    
+    # Context for the template
+    context = {
+    'name': form_dict["name"],
+    'rollno': form_dict["rollno"],
+    'branch': "Comps",               # Static branch value; adjust as needed
+    'semno': "3",                    # Static semester number; adjust as needed
+    'semcgpa': form_dict["semcgpa"],
+    'ise1': form_dict["ise1"],       # ISE 1 performance
+    'mse': form_dict["mse"],         # MSE performance
+    'atte_ise1': form_dict["atte_ise1"],  # Attendance till ISE 1
+    'atte_mse': form_dict["atte_mse"],      # Attendance till MSE
+    'attendance': form_dict["attendance"],
+    'line1': form_dict["question1"],  # Counseling/Team info
+    'line2': form_dict["question2"],  # Co-curricular events info
+    'line3': form_dict["question3"],  # Technical activities
+    'line4': form_dict["question4"],  # Financial situation
+    'line5': form_dict["question5"],  # Technical courses/certifications
+    'line6': form_dict["question6"],  # Soft skills training
+    'line7': form_dict["question7"],  # Co-curricular events
+    'date': formatted_date,
+    'mentor_name': form_dict["mentor_name"],
+}
+
+    # Render the context into the document
+    doc.render(context)
+    
+    # Save the document to a BytesIO object
+    doc_io = BytesIO()
+    doc.save(doc_io)
+    doc_io.seek(0)
+    
+    # Return the generated document in the response
+    response = HttpResponse(doc_io.read(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = f'attachment; filename={form_dict["rollno"]}.docx'
+    return response
 
 
 
 
-
-from .forms import StudentFollowup_Form
 
 
 def followup_form_student_generate(request, student_id, mentor_id):
@@ -346,7 +429,7 @@ def followup_form_student_generate(request, student_id, mentor_id):
             student_form.student = student
             student_form.mentor = mentor
             student_form.save()
-            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
+            return render(request, 'follow_form_submitted.html', {'rollno': student_form.rollno})
         else:
             return render(request, 'followup_form_student_view.html', {
                 'form': form,
@@ -391,7 +474,7 @@ def followup_form_student(request, student_id, mentor_id):
             student_form.mentor = mentor  # Set the mentor based on the URL
             student_form.save()
 
-            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
+            return render(request, 'follow_form_submitted.html', {'rollno': student_form.rollno})
         else:
             # Handling the case when form is not valid
             return render(request, 'followup_form.html', {

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Submitted</title>
+</head>
+<body>
+    
+    <h1>Your form has been submitted. The document will download automatically.</h1>
+    <h1>If the download doesn't start, <a id="downloadLink" href="#">click here</a>.</h1>
+
+    <script>
+        window.onload = function() {
+            // Auto-trigger file download
+            var downloadUrl = "{% url 'download_follow_document' rollno=rollno %}";
+            document.getElementById('downloadLink').href = downloadUrl;
+            window.location.href = downloadUrl;
+        };
+    </script>
+</body>
+</html>

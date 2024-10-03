@@ -16,6 +16,7 @@ urlpatterns = [
     path('generate_qr_followup/<int:student_id>/<int:mentor_id>/', views.generate_qr_followup, name='generate_qr_followup'),
     
     path('download/<str:rollno>/', views.download_document, name='download_document'),
+    path('follow/download/<str:rollno>/', views.download_follow_document, name='download_follow_document'),
     path('', views.Redirect, name='Redirect'),
     path('student_detail/', views.student_detail, name='student_detail'),
     path('student_detail/SE', views.SE, name='SE'),
