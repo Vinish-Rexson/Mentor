@@ -322,6 +322,7 @@ def generate_document(form_dict):
 
 
 
+from .forms import StudentFollowup_Form
 
 
 def followup_form_student_generate(request, student_id, mentor_id):
@@ -382,8 +383,9 @@ def followup_form_student(request, student_id, mentor_id):
     form_date = timezone.now().strftime("%Y-%m-%d")
 
     if request.method == 'POST':
-        form = StudentSemForm(request.POST)
+        form = StudentFollowup_Form(request.POST)
         if form.is_valid():
+            print("valid")
             student_form = form.save(commit=False)
             student_form.student = student
             student_form.mentor = mentor  # Set the mentor based on the URL
@@ -391,16 +393,18 @@ def followup_form_student(request, student_id, mentor_id):
 
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
         else:
+            # Handling the case when form is not valid
             return render(request, 'followup_form.html', {
                 'form': form,
                 'student': student,
                 'mentor': mentor,  # Pass the mentor (user) to the template
                 'date': form_date,
                 'display_date': display_date,
-                'errors': form.errors
+                'errors': form.errors  # Display form errors
             })
     else:
-        form = StudentSemForm()
+        # Corrected the form instantiation to use StudentFollowup_Form
+        form = StudentFollowup_Form()
 
     return render(request, 'followup_form.html', {
         'form': form,

@@ -122,6 +122,9 @@ class StudentSemForm(forms.ModelForm):
 
 
 
+from django import forms
+from .models import StudentFollowup_Form  # Replace this with the actual model
+
 class StudentFollowup_Form(forms.ModelForm):
     name = forms.CharField(
         max_length=255,
@@ -130,11 +133,11 @@ class StudentFollowup_Form(forms.ModelForm):
     rollno = forms.CharField(
         max_length=100,
         error_messages={
-            'unique': 'This Roll number has already filled the current sem form'  # Customize this as needed
+            'unique': 'This Roll number has already filled the current sem form'
         },
         widget=forms.TextInput(attrs={'placeholder': 'Enter student Roll.No'})
     )
-    semcgpa = forms.DecimalField(  # Changed to match the model
+    semcgpa = forms.DecimalField(
         max_digits=5, decimal_places=2,
         widget=forms.NumberInput(attrs={'placeholder': 'Enter CGPA', 'min': 0, 'max': 10, 'step': 0.01})
     )
@@ -158,7 +161,6 @@ class StudentFollowup_Form(forms.ModelForm):
         max_digits=5, decimal_places=2,
         widget=forms.NumberInput(attrs={'placeholder': 'Enter MSE score', 'min': 0, 'max': 100, 'step': 0.01})
     )
-    
     question1 = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Enter details for council/team'})
     )
@@ -190,10 +192,10 @@ class StudentFollowup_Form(forms.ModelForm):
     )
 
     class Meta:
-        model = StudentFollowup_Form  # Ensure this is the correct model name
+        model = StudentFollowup_Form  # This should be your actual model
         fields = [
             'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
-             'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
+            'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
             'question3', 'question4', 'question5', 'question6', 
-            'question7','date','mentor_name'
+            'question7', 'date', 'mentor_name'
         ]
