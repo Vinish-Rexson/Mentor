@@ -532,7 +532,7 @@ def SE(request):
 
 
 def TE(request):
-    te_students = Student.objects.filter(year__iexact="TE")
+    te_students = Student.objects.filter(year__iexact="TE ")
     mentor = request.user
 
     context = {
