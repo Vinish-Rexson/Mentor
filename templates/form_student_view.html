@@ -319,6 +319,19 @@
                 <!-- Job Offer Details Input -->
                 <label for="job_offer">Do you have a job offer in hand?</label>
                 <textarea id="job_offer" name="question12" placeholder="Answer if applicable, please give details" rows="4">{{ form_data.question11|default:'' }}</textarea>
+                
+
+                <h1>Self-Observations (By mentee)</h1>
+                <label for="Strengths">Strengths</label>
+                <textarea id="Strengths" name="Strengths" placeholder=" " rows="4">{{ form_data.Strengths }}</textarea>
+                <label for="Weakness">Weakness</label>
+                <textarea id="Weakness" name="Weakness" placeholder=" " rows="4">{{ form_data.Weakness}}</textarea>
+                <label for="Opportunities">Opportunities</label>
+                <textarea id="Opportunities" name="Opportunities" placeholder=" " rows="4">{{ form_data.Opportunities }}</textarea>
+                <label for="Challenges">Challenges</label>
+                <textarea id="Challenges" name="Challenges" placeholder=" " rows="4">{{ form_data.Challenges  }}</textarea>
+
+
 
                 <input type="hidden" name="mentor_name" value="{{ mentor.username }}" />
 

@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib.staticfiles import finders
 
 from .forms import *
+from .forms import StudentFollowup_Form
 from .models import *
 
 from io import BytesIO
@@ -370,6 +371,8 @@ def download_follow_document(request, rollno):
         "question7": form.question7,
         "date": form.date,
         "mentor_name": form.mentor_name,
+        "nao": form.nao,
+        "ao":form.ao,
     }
     return generate_follow_document(form_dict)
 
@@ -404,6 +407,8 @@ def generate_follow_document(form_dict):
         'line7': form_dict["question7"],
         'date': formatted_date,
         'mentor_name': form_dict["mentor_name"],
+        'box1':form_dict["nao"],
+        'box2':form_dict["ao"],
     }
 
     doc.render(context)
@@ -468,16 +473,30 @@ def followup_form_student(request, student_id, mentor_id):
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
 
+    try:
+        # Check if a follow-up form entry for the given student already exists
+        followup_form_instance = StudentFollowupForm.objects.get(rollno=student.roll_number)
+        print("Existing follow-up form instance found for student:", followup_form_instance)  # Debugging statement
+    except StudentFollowupForm.DoesNotExist:
+        followup_form_instance = None
+        print("No existing follow-up form instance found for student:", student)  # Debugging statement
+
     if request.method == 'POST':
-        form = StudentFollowup_Form(request.POST)
+        if followup_form_instance:
+            form = StudentFollowup_Form(request.POST, instance=followup_form_instance)
+        else:
+            form = StudentFollowup_Form(request.POST)
+
         if form.is_valid():
             student_form = form.save(commit=False)
             student_form.student = student
             student_form.mentor = mentor
             student_form.save()
+            print("Follow-up form successfully saved for student:", student_form.student)  # Debugging statement
 
             return render(request, 'follow_form_submitted.html', {'rollno': student_form.rollno})
         else:
+            print("Follow-up form errors:", form.errors)  # Debugging statement
             return render(request, 'followup_form.html', {
                 'form': form,
                 'student': student,
@@ -487,7 +506,13 @@ def followup_form_student(request, student_id, mentor_id):
                 'errors': form.errors
             })
     else:
-        form = StudentFollowup_Form()
+        # If there is an existing follow-up form, populate it, else use an empty form
+        if followup_form_instance:
+            form = StudentFollowup_Form(instance=followup_form_instance)
+            print("Populating follow-up form with existing data for student:", followup_form_instance)  # Debugging statement
+        else:
+            form = StudentFollowup_Form()
+            print("Creating a new follow-up form for student:", student)  # Debugging statement
 
     return render(request, 'followup_form.html', {
         'form': form,
@@ -496,6 +521,7 @@ def followup_form_student(request, student_id, mentor_id):
         'date': form_date,
         'display_date': display_date
     })
+
 
 
 def generate_qr_followup(request, student_id, mentor_id):

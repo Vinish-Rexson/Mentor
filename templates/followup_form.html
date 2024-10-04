@@ -237,56 +237,59 @@
 
                             <!-- CGPA Input -->
                 <label for="cgpa">Enter last CGPA </label>
-                <textarea id="cgpa" name="semcgpa" placeholder="Enter CGPA" rows="1" required>{{ form_data.semcgpa|default:'' }}</textarea>
+                <textarea id="cgpa" name="semcgpa" placeholder="Enter CGPA" rows="1" required>{{ form_data.semcgpa|default:form.semcgpa.value }}</textarea>
 
-                <!-- Cognitive Test Score -->
-                <label for="cts">Cognitive Test Score</label>
-                <textarea id="cts" name="cts" placeholder="Enter Cognitive Test Score" rows="1" required>{{ form_data.cts|default:'' }}</textarea>
+            
 
                 <!-- ISE 1 Performance Input -->
                 <label for="ise1">ISE 1 Performance</label>
-                <textarea id="ise1" name="ise1" placeholder="Enter ISE 1 Score" rows="1" required>{{ form_data.ise1|default:'' }}</textarea>
+                <textarea id="ise1" name="ise1" placeholder="Enter ISE 1 Score" rows="1" required>{{ form_data.ise1|default:form.ise1.value }}</textarea>
 
                 <!-- MSE Performance Input -->
                 <label for="mse">MSE Performance</label>
-                <textarea id="mse" name="mse" placeholder="Enter MSE Score" rows="1" required>{{ form_data.mse|default:'' }}</textarea>
+                <textarea id="mse" name="mse" placeholder="Enter MSE Score" rows="1" required>{{ form_data.mse|default:form.mse.value }}</textarea>
 
                 <!-- Attendance till ISE1 Input -->
                 <label for="atte_ise1">Attendance % Till ISE 1</label>
-                <textarea id="atte_ise1" name="atte_ise1" placeholder="Enter Attendance Till ISE 1" rows="1" required>{{ form_data.atte_ise1|default:'' }}</textarea>
+                <textarea id="atte_ise1" name="atte_ise1" placeholder="Enter Attendance Till ISE 1" rows="1" required>{{ form_data.atte_ise1|default:form.atte_ise1.value }}</textarea>
 
                 <!-- Attendance till MSE Input -->
                 <label for="atte_mse">Attendance % Till MSE</label>
-                <textarea id="atte_mse" name="atte_mse" placeholder="Enter Attendance Till MSE" rows="1" required>{{ form_data.atte_mse|default:'' }}</textarea>
+                <textarea id="atte_mse" name="atte_mse" placeholder="Enter Attendance Till MSE" rows="1" required>{{ form_data.atte_mse|default:form.atte_mse.value }}</textarea>
 
                 <!-- Attendance Input -->
                 <label for="attendance">Total Attendance</label>
-                <textarea id="attendance" name="attendance" placeholder="Enter attendance percentage %" rows="1" required>{{ form_data.attendance|default:'' }}</textarea>
+                <textarea id="attendance" name="attendance" placeholder="Enter attendance percentage %" rows="1" required>{{ form_data.attendance|default:form.attendance.value }}</textarea>
                 
                 <!-- Technical Activities Input -->
                 <label for="technical_activities">Involvement in different technical activities:</label>
-                <textarea id="technical_activities" name="question1" placeholder="List Hackathons, project competitions, idea competition,paper publications, patents publications, inter/intra college technical competitions, etc you participated and/or won in current semester" rows="4" required>{{ form_data.question3|default:'' }}</textarea>
+                <textarea id="technical_activities" name="question1" placeholder="List Hackathons, project competitions, idea competition,paper publications, patents publications, inter/intra college technical competitions, etc you participated and/or won in current semester" rows="4" required>{{ form_data.question1|default:form.question1.value }}</textarea>
                 <!-- Technical Courses/Certifications Input -->
                 <label for="technical_courses">Have you undertaken any technical courses/certifications?</label>
-                <textarea id="technical_courses" name="question2" placeholder="Enter details of technical courses" rows="4">{{ form_data.question5|default:'' }}</textarea>  
+                <textarea id="technical_courses" name="question2" placeholder="Enter details of technical courses" rows="4">{{ form_data.question2|default:form.question2.value }}</textarea>  
                 <!-- Soft Skill Training Input -->
                 <label for="soft_skill_training">Have you undertaken any soft skill training programme to mould yourself as per workplace ethics? </label>
-                <textarea id="soft_skill_training" name="question3" placeholder="Enter details of soft skill training" rows="4">{{ form_data.question6|default:'' }}</textarea>
+                <textarea id="soft_skill_training" name="question3" placeholder="Enter details of soft skill training" rows="4">{{ form_data.question3|default:form.question3.value }}</textarea>
                 
                  <!-- Co-curricular Events Input -->
                  <label for="co_curricular_events">Give details of co-curricular events you participated in this semester:</label>
-                 <textarea id="co_curricular_events" name="question4" placeholder="Enter details of co-curricular events" rows="4">{{ form_data.question7|default:'' }}</textarea>
+                 <textarea id="co_curricular_events" name="question4" placeholder="Enter details of co-curricular events" rows="4">{{ form_data.question4|default:form.question4.value }}</textarea>
                  
                 <!-- Social Cause Input -->
                 <label for="social_cause">Are you a part of any social cause?</label>
-                <textarea id="social_cause" name="question5" placeholder="Enter details of social cause" rows="4">{{ form_data.question8|default:'' }}</textarea>
+                <textarea id="social_cause" name="question5" placeholder="Enter details of social cause" rows="4">{{ form_data.question5|default:form.question5.value }}</textarea>
                 <!-- Internship Details Input -->
                 <label for="internship">Give details of any internship undertaken:</label>
-                <textarea id="internship" name="question6" placeholder="if Yes, please give the company name, role offered, duration and stipend details" rows="4">{{ form_data.question9|default:'' }}</textarea>
+                <textarea id="internship" name="question6" placeholder="if Yes, please give the company name, role offered, duration and stipend details" rows="4">{{ form_data.question6|default:form.question6.value }}</textarea>
                 <!-- Financial Situation Input -->
                 <label for="financial_situation">How things are going financially:</label>
-                <textarea id="financial_situation" name="question7"  placeholder="It’s okay if you don’t want to talk about it" rows="4">{{ form_data.question4|default:'' }}</textarea>
+                <textarea id="financial_situation" name="question7"  placeholder="It’s okay if you don’t want to talk about it" rows="4">{{ form_data.question7|default:form.question7.value }}</textarea>
                 
+                <h1>Non-Academic Observations:</h1>
+                <label for="nao">Non-Academic Observations:</label>
+                <textarea id="nao" name="nao" placeholder=" " rows="4">{{ form_data.nao|default:form.nao.value}}</textarea>
+                <label for="ao">Academic Observations</label>
+                <textarea id="ao" name="ao" placeholder=" " rows="4">{{ form_data.ao|default:form.ao.value}}</textarea> 
                 
 
                 <input type="hidden" name="mentor_name" value="{{ mentor.username }}" />

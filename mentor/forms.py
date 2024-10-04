@@ -211,11 +211,19 @@ class StudentFollowup_Form(forms.ModelForm):
     )
     date = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Counseling Dates', 'readonly': 'readonly'}),
-        required=True
+        required=False,
     )
     mentor_name = forms.CharField(
         widget=forms.HiddenInput(),
-        required=True
+        required=False
+    )
+    nao = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Non-Academic Observations', 'rows': 4})
+    )
+    ao = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Academic Observations', 'rows': 4})
     )
 
     class Meta:
@@ -224,5 +232,5 @@ class StudentFollowup_Form(forms.ModelForm):
             'name', 'rollno', 'atte_ise1', 'atte_mse', 'attendance', 
             'ise1', 'mse', 'semcgpa', 'question1', 'question2', 
             'question3', 'question4', 'question5', 'question6', 
-            'question7', 'date', 'mentor_name'
+            'question7', 'date', 'mentor_name','nao','ao',
         ]
