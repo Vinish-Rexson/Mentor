@@ -25,6 +25,7 @@ urlpatterns = [
     path('form_dashboard/', views.form_dashboard, name='form_dashboard'),
     path('sessions/create/', views.create_session, name='create_session'),
     path('sessions/', views.session_list, name='session_list'),
+    
 ]
 
 

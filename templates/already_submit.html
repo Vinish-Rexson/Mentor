@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Already Submitted</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 50% 50%, #0f2027, #203a43, #2c5364);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Ensures the container takes full height of the viewport */
+            width: 100%;  /* Takes the full width */
+            position: relative; /* Ensures any absolute elements can be positioned correctly */
+        }
+        
+
+        /* Robot character animation */
+        .robot {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+            height: 300px;
+            background: url('Graident Ai Robot.jpg') no-repeat center/contain;
+
+            transform: rotateY(0deg);
+            animation: rotate 4s infinite ease-in-out;
+        }
+
+        /* 3D robot effect */
+        @keyframes rotate {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(10deg); }
+            100% { transform: rotateY(0deg); }
+        }
+
+        .speech-box {
+            background: rgba(0, 0, 0, 0.8);  /* Darker, semi-transparent background */
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 22px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+            position: relative;
+            animation: appear 1s ease-out;
+            color: #e0f7fa;  /* Light blue text for better contrast */
+        }
+
+        /* Speech bubble animation */
+        @keyframes appear {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Speech box tail */
+        .speech-box:before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid rgba(0, 0, 0, 0.8);
+        }
+
+        /* Highlight student's name */
+        .highlight-name {
+            color: #76ff03;  /* Neon green to stand out */
+            font-weight: bold;
+        }
+
+        /* Interactive buttons */
+        .options {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .options button {
+            background-color: #00796b;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .options button:hover {
+            background-color: #004d40;
+        }
+
+        /* Background effects */
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0px, transparent 1px),
+                        repeating-linear-gradient(rgba(255, 255, 255, 0.1) 0px, transparent 1px);
+            background-size: 50px 50px;
+            animation: move-grid 10s linear infinite;
+        }
+
+        @keyframes move-grid {
+            from { background-position: 0 0; }
+            to { background-position: 100px 100px; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="grid"></div>
+
+<div class="container">
+    <div class="robot"></div> <!-- The robot guide character -->
+
+    <div class="speech-box">
+        Hey <span class="highlight-name">{{student.name}}</span>, I see your form is already submitted!<br>
+        Would you like to ask more questions or reach out to your mentor?
+    </div>
+
+    <div class="options">
+        <button>Ask a Question</button>
+        <button>Contact Mentor</button>
+    </div>
+</div>
+
+</body>
+</html>
