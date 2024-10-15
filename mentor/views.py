@@ -37,7 +37,10 @@ def mentor_signup(request):
 
 @login_required
 def mentor_dashboard(request):
-    students = Student.objects.all()
+    mentor = request.user
+    username = mentor.username
+    readable_name = username.replace('_', ' ').title()
+    students = MentorshipData.objects.filter(faculty_mentor=readable_name)
     context = {
         'student_count': students.count(),
         'students': students,
@@ -48,7 +51,7 @@ def mentor_dashboard(request):
 def student_detail(request):
     
     # Fetch all students from the database
-    students = Student.objects.all()
+    students = MentorshipData.objects.all()
     
     # Create a dictionary to pass to the template
     context = {
@@ -86,7 +89,7 @@ def generate_qr_code(url):
 
 # View to generate and display QR code with student_id and mentor_id
 def generate_qr(request, student_id, mentor_id):
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)  # Get mentor object
 
     # Check if the token has expired or doesn't exist
@@ -111,7 +114,7 @@ def generate_qr(request, student_id, mentor_id):
 
 def form_student_generate(request, student_id, mentor_id):
     # Fetch the student and mentor based on their IDs
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)
 
     # Get current date for display
@@ -170,7 +173,7 @@ def form_student_generate(request, student_id, mentor_id):
     })
 
 def form_student(request, student_id, mentor_id):
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)  # Fetch the mentor based on the ID in the URL
 
     # Get the current date in both formats
@@ -337,7 +340,7 @@ def generate_document(form_dict):
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
-from .models import Student, StudentFollowupForm
+from .models import MentorshipData, StudentFollowupForm
 from .forms import StudentFollowup_Form
 from io import BytesIO
 from docxtpl import DocxTemplate
@@ -422,7 +425,7 @@ def generate_follow_document(form_dict):
 
 
 def followup_form_student_generate(request, student_id, mentor_id):
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
@@ -468,7 +471,7 @@ def followup_form_student_generate(request, student_id, mentor_id):
 
 
 def followup_form_student(request, student_id, mentor_id):
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
@@ -525,7 +528,7 @@ def followup_form_student(request, student_id, mentor_id):
 
 
 def generate_qr_followup(request, student_id, mentor_id):
-    student = get_object_or_404(Student, id=student_id)
+    student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)
 
     if not student.token or student.is_token_expired():
@@ -544,8 +547,10 @@ def generate_qr_followup(request, student_id, mentor_id):
 
 
 def SE(request):
-    se_students = Student.objects.filter(year__iexact="SE")
     mentor = request.user
+    username = mentor.username
+    readable_name = username.replace('_', ' ').title()
+    se_students = MentorshipData.objects.filter(year__iexact="SE",faculty_mentor=readable_name)
 
     context = {
         'student_count': se_students.count(),
@@ -558,8 +563,10 @@ def SE(request):
 
 
 def TE(request):
-    te_students = Student.objects.filter(year__iexact="TE ")
     mentor = request.user
+    username = mentor.username
+    readable_name = username.replace('_', ' ').title()
+    te_students = MentorshipData.objects.filter(year__iexact="TE",faculty_mentor=readable_name)
 
     context = {
         'student_count': te_students.count(),
@@ -572,8 +579,10 @@ def TE(request):
 
 
 def BE(request):
-    be_students = Student.objects.filter(year__iexact="BE")
     mentor = request.user
+    username = mentor.username
+    readable_name = username.replace('_', ' ').title()
+    be_students = MentorshipData.objects.filter(year__iexact="BE",faculty_mentor=readable_name)
 
     context = {
         'student_count': be_students.count(),
@@ -582,11 +591,11 @@ def BE(request):
         'mentor': mentor,
     }
 
-    return render(request, 'be.html', context)
+    return render(request, 'se.html', context)
 
 
 def form_dashboard(request):
-    students = Student.objects.all()
+    students = MentorshipData.objects.all()
 
     context = {
         'student_count': students.count(),
@@ -597,5 +606,30 @@ def form_dashboard(request):
     return render(request, 'form_dashboard.html', context)
 
 
-def dashboard_home(request):
-    return render(request, 'dashboard_home.html')
+
+
+from django.shortcuts import render, redirect
+from .models import Session
+from .forms import SessionForm
+
+def create_session(request):
+    if request.method == 'POST':
+        form = SessionForm(request.POST)
+        if form.is_valid():
+            session = form.save(commit=False)
+            # Convert the additional_info text to a dictionary if needed
+            additional_info_text = form.cleaned_data['additional_info']
+            # Here you can parse the text into a dictionary if you want, or store it directly
+            session.additional_info = {"note": additional_info_text}  # Example structure
+            session.save()
+            return redirect('session_list')  # Redirect to the session list after creation
+    else:
+        form = SessionForm()
+    
+    return render(request, 'create_session.html', {'form': form})
+
+
+@login_required
+def session_list(request):
+    sessions = Session.objects.filter(mentor=request.user)
+    return render(request, 'session_list.html', {'sessions': sessions})

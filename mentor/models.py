@@ -109,7 +109,58 @@ class MentorshipData(models.Model):
     division = models.CharField(max_length=10)
     faculty_mentor = models.CharField(max_length=255, null=True, blank=True)
     be_student_mentor = models.CharField(max_length=255, null=True, blank=True)
+    year = models.CharField(max_length=10)
+    token = models.CharField(max_length=100, null=True, blank=True)
+    token_created_at = models.DateTimeField(null=True, blank=True)
+
+    def is_token_expired(self):
+        if not self.token_created_at:
+            return True
+        return timezone.now() > self.token_created_at + datetime.timedelta(minutes=20)
 
     def __str__(self):
         return self.name
 
+
+
+from django.db import models
+from django.contrib.auth import get_user_model
+from .managers import DynamicFieldsManager  # Import the DynamicFieldsManager
+
+User = get_user_model()
+
+class Session(models.Model):
+    # Static fields for session information
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sessions")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Dynamic fields for flexibility
+    additional_info = models.JSONField(default=dict)
+
+    # Custom manager to handle dynamic field logic
+    objects = DynamicFieldsManager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Dynamically set attributes from additional_info on initialization
+        for key, value in self.additional_info.items():
+            setattr(self, key, value)
+
+    def save(self, *args, **kwargs):
+        # Before saving, ensure additional_info matches dynamic attributes
+        for attr in self.additional_info.keys():
+            if hasattr(self, attr):
+                self.additional_info[attr] = getattr(self, attr)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Session: {self.title}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['mentor']),
+            models.Index(fields=['created_at']),
+        ]

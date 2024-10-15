@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Session</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+        }
+        .notepad {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: monospace;
+            resize: none;  /* Prevent resizing */
+            overflow-y: auto;  /* Add scrollbar if needed */
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create New Session</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.title.label }} {{ form.title }}<br>
+        {{ form.description.label }} {{ form.description }}<br>
+        {{ form.mentor.label }} {{ form.mentor }}<br>
+        <label for="id_additional_info">Additional Info:</label><br>
+        <textarea id="id_additional_info" class="notepad" name="additional_info" placeholder="Enter additional information here...">{{ form.additional_info.value }}</textarea><br>
+        <button type="submit">Create Session</button>
+    </form>
+    <a href="{% url 'session_list' %}">Back to Session List</a>
+</body>
+</html>
+<script>
+    // Autosave functionality
+    const textarea = document.getElementById('id_additional_info');
+    
+    // Load saved content from local storage
+    window.onload = function() {
+        const savedContent = localStorage.getItem('notepadContent');
+        if (savedContent) {
+            textarea.value = savedContent;
+        }
+    };
+
+    // Save content to local storage on input
+    textarea.addEventListener('input', function() {
+        localStorage.setItem('notepadContent', textarea.value);
+    });
+
+    // Clear local storage when form is submitted
+    document.querySelector('form').addEventListener('submit', function() {
+        localStorage.removeItem('notepadContent');
+    });
+</script>

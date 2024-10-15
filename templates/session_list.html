@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session List</title>
+    <style>
+        /* Add some basic styles for better presentation */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        pre {
+            white-space: pre-wrap; /* Wrap long text */
+            word-wrap: break-word; /* Break long words */
+        }
+    </style>
+</head>
+<body>
+    <h1>Session List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Mentor</th>
+                <th>Created At</th>
+                <th>Additional Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr>
+                <td>{{ session.title }}</td>
+                <td>{{ session.description }}</td>
+                <td>{{ session.mentor.username }}</td>  <!-- Assuming mentor is a User model -->
+                <td>{{ session.created_at }}</td>
+                <td>
+                    {% for key, value in session.additional_info.items %}
+                        <strong>{{ key }}:</strong> {{ value }}<br>
+                    {% empty %}
+                        No additional info available.
+                    {% endfor %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No sessions available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

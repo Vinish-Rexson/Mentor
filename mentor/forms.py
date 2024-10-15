@@ -234,3 +234,24 @@ class StudentFollowup_Form(forms.ModelForm):
             'question3', 'question4', 'question5', 'question6', 
             'question7', 'date', 'mentor_name','nao','ao',
         ]
+
+
+
+from django import forms
+from .models import Session
+
+class SessionForm(forms.ModelForm):
+    class Meta:
+        model = Session
+        fields = ['title', 'description', 'mentor', 'additional_info']
+
+    additional_info = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Enter additional information here...',
+            'rows': 10,
+            'cols': 50,
+            'style': 'font-family: monospace; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: none;'
+        }),
+        required=False,
+        help_text='You can add additional details in this field.'
+    )

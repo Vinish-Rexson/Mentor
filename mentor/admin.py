@@ -23,3 +23,15 @@ class MentorshipDataAdmin(admin.ModelAdmin):
     list_display = ('name', 'roll_number', 'division', 'faculty_mentor', 'be_student_mentor')
     search_fields = ('name', 'roll_number', 'faculty_mentor', 'be_student_mentor')
     list_filter = ('division',)
+
+
+
+from django.contrib import admin
+from .models import Session
+
+class SessionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'mentor', 'created_at', 'updated_at')
+    search_fields = ('title', 'description', 'additional_info')
+    list_filter = ('mentor', 'created_at')
+
+admin.site.register(Session, SessionAdmin)

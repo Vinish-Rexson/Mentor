@@ -23,7 +23,8 @@ urlpatterns = [
     path('student_detail/TE', views.TE, name='TE'),
     path('student_detail/BE', views.BE, name='BE'),
     path('form_dashboard/', views.form_dashboard, name='form_dashboard'),
-    path('dashboard/', views.dashboard_home, name='dashboard_home'),
+    path('sessions/create/', views.create_session, name='create_session'),
+    path('sessions/', views.session_list, name='session_list'),
 ]
 
 

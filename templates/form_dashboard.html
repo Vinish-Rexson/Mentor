@@ -18,8 +18,6 @@
                 Branch: {{ student.branch }}<br>
                 Section: {{ student.division }}<br>
                 Gender: {{ student.gender }}<br>
-				<a href="{% url 'form_student' student.id %}" class="btn-add-form">Add a Form</a><br>
-            	<a href="{% url 'generate_qr' student.id %}" class="btn-view-qr">View QR Code</a><br>
             </div>
         </li>
     {% empty %}
