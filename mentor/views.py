@@ -565,7 +565,7 @@ def SE(request):
     mentor = request.user
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
-    se_students = MentorshipData.objects.filter(year__iexact="SE",faculty_mentor=readable_name)
+    se_students = MentorshipData.objects.filter(year__iexact="SE", faculty_mentor=readable_name)
 
     context = {
         'student_count': se_students.count(),
@@ -573,16 +573,29 @@ def SE(request):
         'student_names': [student.name for student in se_students],
         'mentor': mentor,
     }
-
+    
     return render(request, 'se.html', context)
+from django.shortcuts import get_object_or_404
+
+def student_profile(request, student_id):
+    student = get_object_or_404(MentorshipData, id=student_id)
+    # student = get_object_or_404(Student, id=student_id)
+    mentor = request.user
+    
+    context = {
+        'student': student,
+        'mentor': mentor,   
+    }
+    
+    return render(request, 'student_profile.html', context)
 
 
 def TE(request):
     mentor = request.user
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
-    te_students = MentorshipData.objects.filter(year__iexact="TE",faculty_mentor=readable_name)
-
+    # te_students = MentorshipData.objects.filter(year__iexact="TE",faculty_mentor=readable_name)
+    te_students = Student.objects.filter(year = "TE ")
     context = {
         'student_count': te_students.count(),
         'students': te_students,
@@ -597,7 +610,8 @@ def BE(request):
     mentor = request.user
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
-    be_students = MentorshipData.objects.filter(year__iexact="BE",faculty_mentor=readable_name)
+    # be_students = MentorshipData.objects.filter(year__iexact="BE",faculty_mentor=readable_name)
+    be_students = Student.objects.filter(year = "BE")
 
     context = {
         'student_count': be_students.count(),
@@ -648,3 +662,5 @@ def create_session(request):
 def session_list(request):
     sessions = Session.objects.filter(mentor=request.user)
     return render(request, 'session_list.html', {'sessions': sessions})
+
+

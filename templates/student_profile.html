@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Profile: {{ student.name }}{% endblock %}
+
+{% block content %}
+<style>
+    .student-profile {
+        padding: 24px;
+        background: var(--light);
+        border-radius: 20px;
+        max-width: 600px;
+        margin: 36px auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-profile h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 16px;
+    }
+
+    .student-profile p {
+        font-size: 16px;
+        color: var(--dark-grey);
+        margin-bottom: 8px;
+    }
+
+    .student-profile .buttons {
+        margin-top: 24px;
+    }
+
+    .student-profile .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 5px;
+        background-color: var(--blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .student-profile .btn:hover {
+        background-color: var(--dark-blue);
+    }
+</style>
+
+<div class="head-title">
+    <div class="left">
+        <h1>Student Profile</h1>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Dashboard</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li>
+                <a class="active" href="/student_detail">Student Details</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li>
+                <a class="active" href="#">Second Year</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li><a class="active" href="#">{{ student.name }}</a></li>
+        </ul>
+
+        
+    </div>
+</div>
+
+<div class="student-profile">
+    <h2>{{ student.name }}</h2>
+    <!-- <p><strong>Gender:</strong> {{ student.gender }}</p> -->
+    <p><strong>Roll No:</strong> {{ student.roll_number }}</p>
+    <!-- <p><strong>Branch:</strong> {{ student.branch }}</p> -->
+    <p><strong>Division:</strong> {{ student.division }}</p>
+    
+    <div class="buttons">
+        <a href="{% url 'form_student' student.id mentor.id %}" class="btn">Add a Mentor Form</a>
+        <a href="{% url 'generate_qr' student.id mentor.id %}" class="btn">Form QR Code</a>
+        <a href="{% url 'followup_form_student' student.id mentor.id %}" class="btn">Add a Followup Form</a>
+        <a href="{% url 'generate_qr_followup' student.id mentor.id %}" class="btn">Followup form QR Code</a>
+    </div>
+</div>
+{% endblock %}
