@@ -133,8 +133,8 @@ def form_student_generate(request, student_id, mentor_id):
 
     if existing_submission:
         # If the form was already submitted, return an HttpResponse
-        return HttpResponse(f"Form already submitted for roll number {student.roll_number}.", status=403)
-
+        # return HttpResponse(f"Form already submitted for roll number {student.roll_number}.", status=403)
+        return render(request,"already_submit.html",{'student':student})
     if request.method == 'POST':
         # If it's a POST request, populate the form with POST data
         form = StudentSemForm(request.POST)
@@ -201,7 +201,15 @@ def form_student(request, student_id, mentor_id):
             student_form.save()
             print("Form successfully saved for student:", student_form.rollno)  # Debugging statement
 
-            return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
+             # Render the same form.html template with a success message
+            return render(request, 'form.html', {
+                'form': form,
+                'student': student,
+                'mentor': mentor,  # Pass the mentor (user) to the template
+                'date': form_date,
+                'display_date': display_date,
+                'success_message': 'Form has been successfully updated for roll number ' + student_form.rollno  # Success message
+            })
         else:
             print("Form errors:", form.errors)  # Debugging statement
             return render(request, 'form.html', {
@@ -495,9 +503,16 @@ def followup_form_student(request, student_id, mentor_id):
             student_form.student = student
             student_form.mentor = mentor
             student_form.save()
-            print("Follow-up form successfully saved for student:", student_form.student)  # Debugging statement
+            return render(request, 'followup_form.html', {
+                'form': form,
+                'student': student,
+                'mentor': mentor,  # Pass the mentor (user) to the template
+                'date': form_date,
+                'display_date': display_date,
+                'success_message': 'Follow Form has been successfully updated for roll number ' + student_form.rollno  # Success message
+            })  # Debugging statement
 
-            return render(request, 'follow_form_submitted.html', {'rollno': student_form.rollno})
+            # return render(request, 'follow_form_submitted.html', {'rollno': student_form.rollno})
         else:
             print("Follow-up form errors:", form.errors)  # Debugging statement
             return render(request, 'followup_form.html', {

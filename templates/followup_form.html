@@ -193,7 +193,20 @@
             
         }
 
-        
+        .alert-success {
+    color: #155724; /* Text color */
+    background-color: #d4edda; /* Light green background */
+    border-color: #c3e6cb; /* Border color */
+    padding: 15px; /* Padding around the text */
+    border: 1px solid transparent; /* Border size */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    margin-top: 20px; /* Space above the message */
+    text-align: center; /* Center align the message */
+    width: 100%; /* Take full width */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
         
         
         
@@ -212,6 +225,11 @@
                 <h3>Mentor Name: {{ mentor.username }}</h3>
             {% else %}
                 <h3>Mentor Name: None</h3>
+            {% endif %}
+            {% if success_message %}
+                <div class="alert alert-success">
+                    {{ success_message }}
+                </div>
             {% endif %}
             <form method="post" action="{% url 'followup_form_student' student.id mentor.id%}">
                 {% csrf_token %}
