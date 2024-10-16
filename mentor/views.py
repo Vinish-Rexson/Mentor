@@ -437,8 +437,8 @@ def followup_form_student_generate(request, student_id, mentor_id):
     existing_submission = StudentFollowupForm.objects.filter(rollno=student.roll_number).first()
 
     if existing_submission:
-        return HttpResponse(f"Follow-up form already submitted for {student.name} (Roll No: {student.roll_number}).", status=403)
-
+        # return HttpResponse(f"Follow-up form already submitted for {student.name} (Roll No: {student.roll_number}).", status=403)
+        return render(request,"already_submit.html",{'student':student})
     if request.method == 'POST':
         form = StudentFollowup_Form(request.POST)
         if form.is_valid():
