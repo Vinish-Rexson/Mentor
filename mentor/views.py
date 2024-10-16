@@ -541,7 +541,7 @@ def followup_form_student(request, student_id, mentor_id):
     })
 
 
-
+@login_required
 def generate_qr_followup(request, student_id, mentor_id):
     student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)
@@ -560,7 +560,7 @@ def generate_qr_followup(request, student_id, mentor_id):
         'qr_code': qr_code
     })
 
-
+@login_required
 def SE(request):
     mentor = request.user
     username = mentor.username
@@ -577,19 +577,7 @@ def SE(request):
     return render(request, 'se.html', context)
 from django.shortcuts import get_object_or_404
 
-def student_profile(request, student_id):
-    student = get_object_or_404(MentorshipData, id=student_id)
-    # student = get_object_or_404(Student, id=student_id)
-    mentor = request.user
-    
-    context = {
-        'student': student,
-        'mentor': mentor,   
-    }
-    
-    return render(request, 'student_profile.html', context)
-
-
+@login_required
 def TE(request):
     mentor = request.user
     username = mentor.username
@@ -605,7 +593,7 @@ def TE(request):
 
     return render(request, 'te.html', context)
 
-
+@login_required
 def BE(request):
     mentor = request.user
     username = mentor.username
@@ -623,6 +611,19 @@ def BE(request):
     return render(request, 'se.html', context)
 
 
+@login_required
+def student_profile(request, student_id):
+    student = get_object_or_404(MentorshipData, id=student_id)
+    # student = get_object_or_404(Student, id=student_id)
+    mentor = request.user
+    
+    context = {
+        'student': student,
+        'mentor': mentor,   
+    }
+    
+    return render(request, 'student_profile.html', context)
+@login_required
 def form_dashboard(request):
     students = MentorshipData.objects.all()
 
@@ -668,12 +669,172 @@ def create_session(request):
 
 
 
-
-
-
 @login_required
 def session_list(request):
     sessions = Session.objects.filter(mentor=request.user)
     return render(request, 'session_list.html', {'sessions': sessions})
+
+
+# views.py
+from django.shortcuts import render
+from .models import StudentForm, MentorshipData
+from django.http import JsonResponse
+
+def progress(request):
+    # Query SE, TE, and BE students from MentorshipData
+    se_students = MentorshipData.objects.filter(year="SE").values_list('roll_number', flat=True)
+    te_students = MentorshipData.objects.filter(year="TE").values_list('roll_number', flat=True)
+    be_students = MentorshipData.objects.filter(year="BE").values_list('roll_number', flat=True)
+
+    # Fetch attendance data for SE, TE, and BE students from StudentForm
+    attendance_data_se = StudentForm.objects.filter(rollno__in=se_students).values('atte_ise1', 'atte_mse', 'attendance')
+    attendance_data_te = StudentForm.objects.filter(rollno__in=te_students).values('atte_ise1', 'atte_mse', 'attendance')
+    attendance_data_be = StudentForm.objects.filter(rollno__in=be_students).values('atte_ise1', 'atte_mse', 'attendance')
+
+    # Prepare chart data
+    chart_data_se = {
+        "labels": ["ISE 1", "MSE", "Overall Attendance"],
+        "datasets": [
+            {
+                'label': 'SE Attendance',
+                'data': [
+                    sum(student['atte_ise1'] for student in attendance_data_se),
+                    sum(student['atte_mse'] for student in attendance_data_se),
+                    sum(student['attendance'] for student in attendance_data_se),
+                ],
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+            }
+        ]
+    }
+
+    chart_data_te = {
+        "labels": ["ISE 1", "MSE", "Overall Attendance"],
+        "datasets": [
+            {
+                'label': 'TE Attendance',
+                'data': [
+                    sum(student['atte_ise1'] for student in attendance_data_te),
+                    sum(student['atte_mse'] for student in attendance_data_te),
+                    sum(student['attendance'] for student in attendance_data_te),
+                ],
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+            }
+        ]
+    }
+
+    chart_data_be = {
+        "labels": ["ISE 1", "MSE", "Overall Attendance"],
+        "datasets": [
+            {
+                'label': 'BE Attendance',
+                'data': [
+                    sum(student['atte_ise1'] for student in attendance_data_be),
+                    sum(student['atte_mse'] for student in attendance_data_be),
+                    sum(student['attendance'] for student in attendance_data_be),
+                ],
+                'backgroundColor': 'rgba(75, 192, 192, 0.5)',
+            }
+        ]
+    }
+
+    return render(request, 'progress.html', {
+        'chart_data_se': chart_data_se,
+        'chart_data_te': chart_data_te,
+        'chart_data_be': chart_data_be,
+    })
+
+# def attendance_data_view(request):
+#     # Query SE, TE, and BE students from MentorshipData
+#     se_students = MentorshipData.objects.filter(year="SE").values_list('roll_number', flat=True)
+#     te_students = MentorshipData.objects.filter(year="TE").values_list('roll_number', flat=True)
+#     be_students = MentorshipData.objects.filter(year="BE").values_list('roll_number', flat=True)
+
+#     # Fetch attendance data for SE, TE, and BE students from StudentForm
+#     attendance_data_se = StudentForm.objects.filter(rollno__in=se_students).values('atte_ise1', 'atte_mse', 'attendance')
+#     attendance_data_te = StudentForm.objects.filter(rollno__in=te_students).values('atte_ise1', 'atte_mse', 'attendance')
+#     attendance_data_be = StudentForm.objects.filter(rollno__in=be_students).values('atte_ise1', 'atte_mse', 'attendance')
+
+#     # Prepare chart data
+#     chart_data = {
+#         "labels": ["ISE 1", "MSE", "Overall Attendance"],
+#         "datasets": [
+#             {
+#                 'label': 'SE Attendance',
+#                 'data': [
+#                     sum(student['atte_ise1'] for student in attendance_data_se),
+#                     sum(student['atte_mse'] for student in attendance_data_se),
+#                     sum(student['attendance'] for student in attendance_data_se),
+#                 ],
+#                 'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+#             },
+#             {
+#                 'label': 'TE Attendance',
+#                 'data': [
+#                     sum(student['atte_ise1'] for student in attendance_data_te),
+#                     sum(student['atte_mse'] for student in attendance_data_te),
+#                     sum(student['attendance'] for student in attendance_data_te),
+#                 ],
+#                 'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+#             },
+#             {
+#                 'label': 'BE Attendance',
+#                 'data': [
+#                     sum(student['atte_ise1'] for student in attendance_data_be),
+#                     sum(student['atte_mse'] for student in attendance_data_be),
+#                     sum(student['attendance'] for student in attendance_data_be),
+#                 ],
+#                 'backgroundColor': 'rgba(75, 192, 192, 0.5)',
+#             },
+#         ]
+#     }
+    
+#     return JsonResponse(chart_data)
+
+
+
+from django.http import JsonResponse
+
+def attendance_data_view(request):
+    # Function to get attendance data for a specific year
+    def get_attendance_data(year):
+        # Query students for the given year
+        students = MentorshipData.objects.filter(year=year).values_list('roll_number', flat=True)
+
+        # Fetch attendance data from the follow-up form
+        followup_attendance = StudentFollowupForm.objects.filter(rollno__in=students).values('atte_ise1', 'atte_mse', 'attendance')
+
+        # Fetch attendance data from the main form
+        main_attendance = StudentForm.objects.filter(rollno__in=students).values('atte_ise1', 'atte_mse', 'attendance')
+
+        # Combine both attendance datasets
+        combined_attendance = list(followup_attendance) + list(main_attendance)
+
+        # Prepare chart data
+        return {
+            "labels": ["ISE 1", "MSE", "Overall Attendance"],
+            "datasets": [
+                {
+                    'label': f'{year} Attendance',
+                    'data': [
+                        sum(student['atte_ise1'] for student in combined_attendance),
+                        sum(student['atte_mse'] for student in combined_attendance),
+                        sum(student['attendance'] for student in combined_attendance),
+                    ],
+                    'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                }
+            ]
+        }
+
+    # Getting data for SE, TE, and BE
+    chart_data_se = get_attendance_data('SE')
+    chart_data_te = get_attendance_data('TE')
+    chart_data_be = get_attendance_data('BE')
+    
+    # Prepare the final response
+    return JsonResponse({
+        'se': chart_data_se,
+        'te': chart_data_te,
+        'be': chart_data_be
+    })
 
 

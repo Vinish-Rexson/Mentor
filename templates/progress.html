@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+
+{% block title %}Ettarra Coffee House Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Scoped General Theme */
+        .admin-dashboard body {
+            font-family: 'Arial', sans-serif; /* Changed to a simpler font */
+            background: #e9f5fb; /* Light shade background color (light blue) */
+            margin: 0;
+            padding: 0;
+            color: #333; /* Darker text for better readability */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Scoped Header */
+        .admin-dashboard header {
+            width: 100%;
+            background: linear-gradient(to right, #009688, #4db6ac); /* Gradient background for header */
+            text-align: center;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: none; /* Removed shadow */
+        }
+        .admin-dashboard header h1 {
+            font-size: 2em; /* Smaller font size */
+            color: #fff; /* White text for contrast */
+            margin: 0; /* Removed margin */
+        }
+
+        /* Scoped Chart Layout */
+        .admin-dashboard .chart-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 charts per row */
+            gap: 20px; /* Reduced gap */
+            width: 90%;
+            margin: 20px 0; /* Reduced margin */
+        }
+
+        .admin-dashboard .chart-box {
+            padding: 10px; /* Reduced padding */
+            border-radius: 10px; /* More subtle rounding */
+            background: #fff; /* Plain white background */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: transform 0.2s, box-shadow 0.2s; /* Transition for effects */
+        }
+
+        .admin-dashboard .chart-box:hover {
+            transform: scale(1.02); /* Slight scale on hover */
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Slightly enhanced shadow on hover */
+        }
+
+        .admin-dashboard .chart-box h2 {
+            text-align: center;
+            font-size: 1.2em; /* Smaller font size */
+            margin-bottom: 10px; /* Reduced margin */
+            color: #666; /* Softer color */
+        }
+
+        /* Scoped Responsive */
+        @media (max-width: 992px) {
+            .admin-dashboard .chart-container {
+                grid-template-columns: repeat(2, 1fr); /* 2 charts per row */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-dashboard .chart-container {
+                grid-template-columns: 1fr; /* 1 chart per row */
+            }
+        }
+    </style>
+
+
+
+    <!-- Chart Grid -->
+    <div class="chart-container">
+
+
+        <div class="chart-box">
+            <h2>Attendance Monitoring of your students</h2>
+            <canvas id="attendanceChart" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>Sales by Outlet</h2>
+            <canvas id="salesByOutlet" height="200"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Event Attendance by Outlet</h2>
+            <canvas id="attendanceByOutlet" height="200"></canvas>
+        </div>
+        
+        <!-- Second Row -->
+        <div class="chart-box">
+            <h2>Customer Satisfaction</h2>
+            <canvas id="customerSatisfaction" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>Revenue by Event Type</h2>
+            <canvas id="revenueByEventType" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>Repeat Customer Rate</h2>
+            <canvas id="repeatCustomerRate" height="200"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Sales by Outlet Bar Chart
+        const salesByOutletCtx = document.getElementById('salesByOutlet').getContext('2d');
+        const salesByOutletChart = new Chart(salesByOutletCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Outlet 1', 'Outlet 2', 'Outlet 3', 'Outlet 4'],
+                datasets: [{
+                    label: 'Sales ($)',
+                    data: [5000, 3000, 4000, 7000],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Toned-down color
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        fetch("{% url 'attendance_data_view' %}")
+        .then(response => response.json())
+        .then(data => {
+            // Set up the context for the chart
+            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+    
+            // Create the chart with data for all years (SE, TE, BE)
+            const attendanceChart = new Chart(attendanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.se.labels,  // Assuming all years have the same labels
+                    datasets: [
+                        {
+                            label: 'SE Attendance',
+                            data: data.se.datasets[0].data, // Data for SE
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        },
+                        {
+                            label: 'TE Attendance',
+                            data: data.te.datasets[0].data, // Data for TE
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        },
+                        {
+                            label: 'BE Attendance',
+                            data: data.be.datasets[0].data, // Data for BE
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    
+    
+
+        // Event Attendance by Outlet Bar Chart
+        const attendanceByOutletCtx = document.getElementById('attendanceByOutlet').getContext('2d');
+        const attendanceByOutletChart = new Chart(attendanceByOutletCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Outlet 1', 'Outlet 2', 'Outlet 3', 'Outlet 4'],
+                datasets: [{
+                    label: 'Attendance',
+                    data: [200, 150, 300, 250],
+                    backgroundColor: 'rgba(255, 206, 86, 0.5)', 
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Customer Satisfaction Horizontal Bar Chart
+        const customerSatisfactionCtx = document.getElementById('customerSatisfaction').getContext('2d');
+        const customerSatisfactionChart = new Chart(customerSatisfactionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Excellent', 'Good', 'Average', 'Poor'],
+                datasets: [{
+                    label: 'Satisfaction',
+                    data: [200, 150, 100, 50],
+                    backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(255, 99, 132, 0.5)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal bar chart
+                scales: {
+                    x: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Revenue by Event Type Pie Chart
+        const revenueByEventTypeCtx = document.getElementById('revenueByEventType').getContext('2d');
+        const revenueByEventTypeChart = new Chart(revenueByEventTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Event Type 1', 'Event Type 2', 'Event Type 3'],
+                datasets: [{
+                    label: 'Revenue by Event Type',
+                    data: [3000, 2000, 1500],
+                    backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(75, 192, 192, 0.5)'],
+                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+
+        // Repeat Customer Rate Line Chart
+        const repeatCustomerRateCtx = document.getElementById('repeatCustomerRate').getContext('2d');
+        const repeatCustomerRateChart = new Chart(repeatCustomerRateCtx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'Repeat Customer Rate (%)',
+                    data: [60, 65, 70, 75, 80, 85],
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    fill: true,
+                    tension: 0.1 // Smoother line
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</div>
+{% endblock %}
