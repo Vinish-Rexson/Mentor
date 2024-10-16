@@ -4,61 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Session</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-        }
-        h1 {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
             color: #333;
         }
-        .notepad {
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-field {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, textarea {
             width: 100%;
-            height: 300px;
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 10px;
-            font-family: monospace;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        textarea {
+            height: 300px;
             resize: none;  /* Prevent resizing */
             overflow-y: auto;  /* Add scrollbar if needed */
         }
         button {
             margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block; /* Center align button */
+            margin: 20px auto 0; /* Add top margin for spacing */
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <h1>Create New Session</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.title.label }} {{ form.title }}<br>
-        {{ form.description.label }} {{ form.description }}<br>
-        {{ form.mentor.label }} {{ form.mentor }}<br>
-        <label for="id_additional_info">Additional Info:</label><br>
-        <textarea id="id_additional_info" class="notepad" name="additional_info" placeholder="Enter additional information here...">{{ form.additional_info.value }}</textarea><br>
-        <button type="submit">Create Session</button>
-    </form>
-    <a href="{% url 'session_list' %}">Back to Session List</a>
+    
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-field">
+                {{ form.title.label_tag }}<br>
+                {{ form.title }}
+            </div>
+
+            <div class="form-field">
+                {{ form.description.label_tag }}<br>
+                {{ form.description }}
+            </div>
+
+            <div class="form-field">
+                <label for="id_additional_info">Additional Info:</label><br>
+                <textarea id="id_additional_info" class="notepad" name="additional_info" placeholder="Enter additional information here...">{{ form.additional_info.value }}</textarea>
+            </div>
+            
+            <button type="submit">Create Session</button>
+        </form>
+        
+        <a href="{% url 'session_list' %}" class="back-link">Back to Session List</a>
+    </div>
+
+    <script>
+        // Autosave functionality
+        const textarea = document.getElementById('id_additional_info');
+        
+        // Load saved content from local storage
+        window.onload = function() {
+            const savedContent = localStorage.getItem('notepadContent');
+            if (savedContent) {
+                textarea.value = savedContent;
+            }
+        };
+
+        // Save content to local storage on input
+        textarea.addEventListener('input', function() {
+            localStorage.setItem('notepadContent', textarea.value);
+        });
+
+        // Clear local storage when form is submitted
+        document.querySelector('form').addEventListener('submit', function() {
+            localStorage.removeItem('notepadContent');
+        });
+    </script>
 </body>
 </html>
-<script>
-    // Autosave functionality
-    const textarea = document.getElementById('id_additional_info');
-    
-    // Load saved content from local storage
-    window.onload = function() {
-        const savedContent = localStorage.getItem('notepadContent');
-        if (savedContent) {
-            textarea.value = savedContent;
-        }
-    };
-
-    // Save content to local storage on input
-    textarea.addEventListener('input', function() {
-        localStorage.setItem('notepadContent', textarea.value);
-    });
-
-    // Clear local storage when form is submitted
-    document.querySelector('form').addEventListener('submit', function() {
-        localStorage.removeItem('notepadContent');
-    });
-</script>

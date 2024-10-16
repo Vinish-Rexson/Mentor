@@ -46,6 +46,14 @@
                 <span class="text">Forms</span>
             </a>
         </li>
+        
+        <li class="{% if request.path == '/sessions/' %}active{% endif %}">
+            <a href="/sessions/">
+                <i class='bx bxs-message-dots'></i>
+                <span class="text">Session</span>
+            </a>
+        </li>
+
         <li class="{% if request.path == '/progress_report/' %}active{% endif %}">
             <a href="/progress_report/">
                 <i class='bx bxs-doughnut-chart'></i>

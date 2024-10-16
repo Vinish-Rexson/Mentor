@@ -638,24 +638,37 @@ def form_dashboard(request):
 
 
 from django.shortcuts import render, redirect
-from .models import Session
+from django.contrib import messages
+import json
 from .forms import SessionForm
 
+@login_required
 def create_session(request):
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
             session = form.save(commit=False)
-            # Convert the additional_info text to a dictionary if needed
+            session.mentor = request.user  # Set the logged-in user as mentor
+            
             additional_info_text = form.cleaned_data['additional_info']
-            # Here you can parse the text into a dictionary if you want, or store it directly
-            session.additional_info = {"note": additional_info_text}  # Example structure
+            
+            try:
+                additional_info_dict = json.loads(additional_info_text)
+                session.additional_info = additional_info_dict
+            except (ValueError, TypeError):
+                session.additional_info = {"note": additional_info_text}
+                messages.warning(request, "Additional Info was not valid JSON, stored as a note.")
+            
             session.save()
-            return redirect('session_list')  # Redirect to the session list after creation
+            return redirect('session_list')
     else:
         form = SessionForm()
-    
+
     return render(request, 'create_session.html', {'form': form})
+
+
+
+
 
 
 @login_required
