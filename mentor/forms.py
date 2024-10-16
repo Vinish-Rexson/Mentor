@@ -243,7 +243,8 @@ from .models import Session
 class SessionForm(forms.ModelForm):
     class Meta:
         model = Session
-        fields = ['title', 'description', 'mentor', 'additional_info']
+        # Remove 'mentor' from the fields, as it will be set automatically in the view
+        fields = ['title', 'description', 'additional_info']
 
     additional_info = forms.CharField(
         widget=forms.Textarea(attrs={
@@ -255,3 +256,4 @@ class SessionForm(forms.ModelForm):
         required=False,
         help_text='You can add additional details in this field.'
     )
+
