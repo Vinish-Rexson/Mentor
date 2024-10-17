@@ -38,14 +38,14 @@ def mentor_signup(request):
 @login_required
 def mentor_dashboard(request):
     mentor = request.user
-    username = mentor.username
-    readable_name = username.replace('_', ' ').title()
+    readable_name = mentor.username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
     
     # Call recents and unpack it directly into context
     recent_forms = recents(request)
     
     context = {
+        'mentor': mentor,
         'student_count': students.count(),
         'students': students,
         'student_names': [student.name for student in students],
@@ -54,6 +54,7 @@ def mentor_dashboard(request):
     }
     
     return render(request, 'mentor_dashboard.html', context)
+
 
 
 @login_required

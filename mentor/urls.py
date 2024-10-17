@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('signup/', views.mentor_signup, name='mentor_signup'),
     path('dashboard/', views.mentor_dashboard, name='mentor_dashboard'),
+    
     path('accounts/', include('django.contrib.auth.urls')),
     path('form/generate/<int:student_id>/<int:mentor_id>/', views.form_student_generate, name='form_student_generate'),
     path('form/<int:student_id>/<int:mentor_id>/', views.form_student, name='form_student'),
@@ -28,6 +29,9 @@ urlpatterns = [
     path('student_profile/<int:student_id>/', views.student_profile, name='student_profile'),
     path('progress_report/',views.progress,name = 'progress_report'),
     path('attendance-data/', views.attendance_data_view, name='attendance_data_view'),
+
+
+    
 ]
 
 
