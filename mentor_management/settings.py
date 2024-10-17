@@ -137,5 +137,4 @@ CSRF_TRUSTED_ORIGINS = [
     'https://9693-152-58-48-116.ngrok-free.app'
 ]
 
-
-
+X_FRAME_OPTIONS = 'SAMEORIGIN'

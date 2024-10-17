@@ -219,7 +219,7 @@ def form_student_generate(request, student_id, mentor_id):
 def form_student(request, student_id, mentor_id):
     student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)  # Fetch the mentor based on the ID in the URL
-
+    preview = request.GET.get('preview', 'false').lower() == 'true'
     # Get the current date in both formats
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
@@ -266,7 +266,8 @@ def form_student(request, student_id, mentor_id):
                 'mentor': mentor,  # Pass the mentor (user) to the template
                 'date': form_date,
                 'display_date': display_date,
-                'success_message': 'Form has been successfully updated for roll number ' + student_form.rollno  # Success message
+                'success_message': 'Form has been successfully updated for roll number ' + student_form.rollno, # Success message,
+                'preview': preview,
             })
         else:
             print("Form errors:", form.errors)  # Debugging statement
@@ -276,7 +277,8 @@ def form_student(request, student_id, mentor_id):
                 'mentor': mentor,  # Pass the mentor (user) to the template
                 'date': form_date,
                 'display_date': display_date,
-                'errors': form.errors
+                'errors': form.errors,
+                'preview': preview,
             })
     else:
         # If there is an existing form, populate it, else use an empty form
@@ -292,7 +294,8 @@ def form_student(request, student_id, mentor_id):
         'student': student,
         'mentor': mentor,  # Pass the mentor to the template
         'date': form_date,
-        'display_date': display_date
+        'display_date': display_date,
+        'preview': preview,
     })
 
 

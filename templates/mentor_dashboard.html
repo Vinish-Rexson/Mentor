@@ -8,53 +8,71 @@
         width: 100%;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-gap: 30px;
+        grid-gap: 10px;
         margin-top: 36px;
         padding: 0 24px;
     }
     
     .form-item {
-        padding: 24px;
+        padding: 0;
         background: var(--light);
         border-radius: 20px;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        text-align: center;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         width: 100%;
         max-width: 100%;
+        overflow: hidden;
         transition: transform 0.3s ease-in-out;
+        position: relative;  /* Added for positioning the label */
     }
     
     .form-item:hover {
         transform: translateY(-10px);
     }
 
-    .form-item .bx {
-        width: 80px;
-        height: 80px;
-        border-radius: 10px;
-        font-size: 36px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 16px;
-        background: var(--light-blue);
-        color: var(--blue);
+    .form-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
     }
-    
-    .form-item h3 {
-        font-size: 24px;
+
+    .preview-container {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .form-item iframe {
+        width: 180%;
+        height: 180%;
+        border: none;
+        transform: scale(0.55);
+        transform-origin: center;
+        position: absolute;
+        top: -40%;
+        left: -40%;
+        pointer-events: none; /* This prevents interaction with the iframe content */
+    }
+
+    .form-info {
+        padding: 16px;
+        text-align: left;
+        background-color: #e3f2fd;
+    }
+
+    .form-info h3 {
+        font-size: 18px;
         font-weight: 600;
         margin-bottom: 8px;
         color: var(--dark);
     }
     
-    .form-item p {
-        font-size: 16px;
+    .form-info p {
+        font-size: 14px;
         color: var(--dark-grey);
-        margin-bottom: 8px;
+        margin-bottom: 4px;
     }
     
     .form-item.no-data {
@@ -75,87 +93,216 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 20px;
+        padding: 0 24px;
+    }
+
+    .dashboard-container {
+        padding: 20px;
+        background-color: transparent;
+    }
+
+    .section-wrapper {
+        margin-top: 40px;  /* Increased top margin */
+        margin-bottom: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        padding: 15px 20px;
+        background-color: #e3f2fd;
+        border-bottom: 2px solid #bbdefb;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .section-content {
+        padding: 20px;
+        border-radius: 12px 12px 0 0;
+        background-color: t
+    }
+
+    .recent {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* Increased minmax value */
+        grid-gap: 30px;  /* Increased gap */
+        margin-top: 0;
+    }
+
+    .form-item {
+        background: #ffffff;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .form-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .form-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .form-info {
+        padding: 12px;
+    }
+
+    .form-info h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #34495e;
+    }
+    
+    .form-info p {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-bottom: 2px;
+    }
+    
+    .form-item.no-data {
+        background: #e3f2fd;
+        border: 2px dashed #bbdefb;
+        color: #2c3e50;
+        padding: 15px;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .recent {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .recency-label {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 3px 8px;
+        font-size: 12px;
+        border-radius: 12px;
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    .form-item:first-child .recency-label {
+        background-color: #4caf50;
+        color: white;
+    }
 </style>
 
-<div class="head-title">
-    <div class="left">
-        <h1>Dashboard</h1>
-        <ul class="breadcrumb">
-            <li>
-                <a href="#">Dashboard</a>
-            </li>
-            <li><i class='bx bx-chevron-right'></i></li>
-            <li>
-                <a class="active" href="#">Home</a>
-            </li>
-        </ul>
-    </div>
-    <a href="#" class="btn-download">
-        <i class='bx bxs-cloud-download'></i>
-        <span class="text">Download PDF</span>
-    </a>
-</div>
-
-<ul class="box-info">
-    <li>
-        <i class='bx bxs-calendar-check'></i>
-        <span class="text">
-            <h3>{{ student_count }}</h3>
-            <p>Total Students</p>
-        </span>
-    </li>
-    <li>
-        <i class='bx bxs-group'></i>
-        <span class="text">
-            <h3>{{ total_reports }}</h3> <!-- Make this dynamic if possible -->
-            <p>Total Reports</p>
-        </span>
-    </li>
-    <li>
-        <i class='bx bxs-dollar-circle'></i>
-        <span class="text">
-            <h3>70%</h3>
-            <p>Avg Academy Rate</p>
-        </span>
-    </li>
-</ul>
-
-<div class="recent">
-    <!-- Loop through the recent main forms -->
-    {% for form in recent_mainform %}
-    <div class="form-item">
-        <div class="bx">
-            <i class='bx bxs-user'></i>
+<div class="dashboard-container">
+    <div class="head-title">
+        <div class="left">
+            <h1>Dashboard</h1>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="#">Dashboard</a>
+                </li>
+                <li><i class='bx bx-chevron-right'></i></li>
+                <li>
+                    <a class="active" href="#">Home</a>
+                </li>
+            </ul>
         </div>
-        <h3>{{ form.name }}</h3>
-        <p>Date: {{ form.date }}</p>
-        <p>Roll No: {{ form.rollno }}</p>
-        <a href="{% url 'form_student' form.student.id mentor.id %}" class="btn">Add a Mentor Form</a>  
+        <a href="#" class="btn-download">
+            <i class='bx bxs-cloud-download'></i>
+            <span class="text">Download PDF</span>
+        </a>
     </div>
-    {% empty %}
-    <div class="form-item no-data">
-        <p>No recent main forms available</p>
-    </div>
-    {% endfor %}
-</div>
 
-<div class="recent">
-    <!-- Loop through the recent follow-up forms -->
-    {% for followup in recent_followupform %}
-    <div class="form-item">
-        <div class="bx">
-            <i class='bx bxs-user'></i>
+    <ul class="box-info">
+        <li>
+            <i class='bx bxs-calendar-check'></i>
+            <span class="text">
+                <h3>{{ student_count }}</h3>
+                <p>Total Students</p>
+            </span>
+        </li>
+        <li>
+            <i class='bx bxs-group'></i>
+            <span class="text">
+                <h3>{{ total_reports }}</h3>
+                <p>Total Reports</p>
+            </span>
+        </li>
+        <li>
+            <i class='bx bxs-dollar-circle'></i>
+            <span class="text">
+                <h3>70%</h3>
+                <p>Avg Academy Rate</p>
+            </span>
+        </li>
+    </ul>
+
+    <div class="section-wrapper">
+        <h2 class="section-title">Recent Main Forms</h2>
+        <div class="section-content">
+            <div class="recent">
+                {% for form in recent_mainform %}
+                <div class="form-item">
+                    <span class="recency-label">{% if forloop.first %}Latest{% else %}{{ forloop.counter }} days ago{% endif %}</span>
+                    <a href="{% url 'form_student' form.student.id mentor.id %}" class="form-link">
+                        <div class="preview-container">
+                            <iframe src="{% url 'form_student' form.student.id mentor.id %}?preview=true" title="Mentor Form Preview"></iframe>
+                        </div>
+                        <div class="form-info">
+                            <h3>{{ form.name }}</h3>
+                            <p>Date: {{ form.date|date:"d/m/Y h:i A" }}</p>
+                            <p>Roll No: {{ form.rollno }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="form-item no-data">
+                    <p>No recent main forms available</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        <h3>{{ followup.name }}</h3>
-        <p>Date: {{ followup.date }}</p>
-        <p>Roll No: {{ followup.rollno }}</p>
-        <a href="{% url 'followup_form_student' followup.students.id mentor.id %}" class="btn">Add a Followup Form</a>
     </div>
-    {% empty %}
-    <div class="form-item no-data">
-        <p>No recent follow-up forms available</p>
+
+    <div class="section-wrapper">
+        <h2 class="section-title">Recent Follow-up Forms</h2>
+        <div class="section-content">
+            <div class="recent">
+                {% for followup in recent_followupform %}
+                <div class="form-item">
+                    <span class="recency-label">{% if forloop.first %}Latest{% else %}{{ forloop.counter }} days ago{% endif %}</span>
+                    <a href="{% url 'followup_form_student' followup.student.id mentor.id %}" class="form-link">
+                        <div class="preview-container">
+                            <iframe src="{% url 'followup_form_student' followup.student.id mentor.id %}?preview=true" title="Followup Form Preview"></iframe>
+                        </div>
+                        <div class="form-info">
+                            <h3>{{ followup.name }}</h3>
+                            <p>Date: {{ followup.date|date:"d/m/Y h:i A" }}</p>
+                            <p>Roll No: {{ followup.rollno }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="form-item no-data">
+                    <p>No recent follow-up forms available</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-    {% endfor %}
 </div>
 
 {% endblock %}
