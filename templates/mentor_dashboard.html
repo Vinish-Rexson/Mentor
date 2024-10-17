@@ -130,7 +130,7 @@
         <h3>{{ form.name }}</h3>
         <p>Date: {{ form.date }}</p>
         <p>Roll No: {{ form.rollno }}</p>
-        <a href="{% url 'form_student' form.id mentor.id %}" class="btn">Add a Mentor Form</a>  
+        <a href="{% url 'form_student' form.student.id mentor.id %}" class="btn">Add a Mentor Form</a>  
     </div>
     {% empty %}
     <div class="form-item no-data">
@@ -149,7 +149,7 @@
         <h3>{{ followup.name }}</h3>
         <p>Date: {{ followup.date }}</p>
         <p>Roll No: {{ followup.rollno }}</p>
-        <a href="{% url 'followup_form_student' followup.id mentor.id %}" class="btn">Add a Follow-up Form</a>
+        <a href="{% url 'followup_form_student' followup.students.id mentor.id %}" class="btn">Add a Followup Form</a>
     </div>
     {% empty %}
     <div class="form-item no-data">

@@ -40,8 +40,10 @@ def mentor_signup(request):
 @login_required
 def mentor_dashboard(request, student_id=None):
     mentor = request.user
-    students = MentorshipData.objects.filter(faculty_mentor__iexact=mentor.username.replace('_', ' '))  # Match case-insensitive
+    # Fetch the students related to this mentor
+    students = MentorshipData.objects.filter(faculty_mentor__iexact=mentor.username.replace('_', ' '))
     
+    # Fetch a specific student if student_id is provided
     student = None
     if student_id:
         student = get_object_or_404(MentorshipData, id=student_id)
@@ -53,13 +55,14 @@ def mentor_dashboard(request, student_id=None):
         'student': student,
         'mentor': mentor,
         'student_count': students.count(),
-        'students': students,
+        'students': students,  # Pass the students to the template
         'student_names': [student.name for student in students],
-        'recent_mainform': recent_forms['mainform'],        # Main form
-        'recent_followupform': recent_forms['followupform'] # Follow-up form
+        'recent_mainform': recent_forms['mainform'],
+        'recent_followupform': recent_forms['followupform'],
     }
 
     return render(request, 'mentor_dashboard.html', context)
+
 
 
 

@@ -33,6 +33,7 @@ class Student(models.Model):
     
 
 class StudentForm(models.Model):
+    student = models.ForeignKey('MentorshipData', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     rollno = models.CharField(max_length=100, unique=True) 
     mentor_name = models.CharField(max_length=255)
@@ -74,6 +75,7 @@ class StudentForm(models.Model):
 
 
 class StudentFollowupForm(models.Model):
+    student = models.ForeignKey('MentorshipData', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     rollno = models.CharField(max_length=100, unique=True) 
     mentor_name = models.CharField(max_length=255)
