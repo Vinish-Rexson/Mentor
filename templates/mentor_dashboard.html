@@ -3,6 +3,85 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+<style>
+    .recent {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 30px;
+        margin-top: 36px;
+        padding: 0 24px;
+    }
+    
+    /* Styling for each form item */
+    .form-item {
+        padding: 24px;
+        background: var(--light);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 100%;
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .form-item:hover {
+        transform: translateY(-10px);
+    }
+
+    /* Icon box inside the form item */
+    .form-item .bx {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        font-size: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 16px;
+        background: var(--light-blue);
+        color: var(--blue);
+    }
+    
+    /* Heading (name) inside the form item */
+    .form-item h3 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark);
+    }
+    
+    /* Paragraph for date */
+    .form-item p {
+        font-size: 16px;
+        color: var(--dark-grey);
+        margin-bottom: 8px;
+    }
+    
+    /* No data available styling */
+    .form-item.no-data {
+        background: var(--light-grey);
+        border: 2px dashed var(--grey);
+        color: var(--grey);
+        padding: 20px;
+    }
+
+    /* Responsive design: adjust grid for smaller screens */
+    @media (max-width: 1024px) {
+        .recent {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .recent {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 
 
@@ -48,4 +127,47 @@
                 </span>
             </li>
         </ul>
+
+        
+        <div class="recent">
+            <!-- Loop through the recent main forms -->
+            
+            {% for form in recent_mainform %}
+              <div class="form-item">
+                  <div class="bx">
+                      <i class='bx bxs-user'></i>
+                  </div>
+                  <h3>{{ form.name }}</h3>
+                  <p>Date: {{ form.date }}</p>
+                  
+                  <p>Roll No: {{form.rollno}}</p>
+              </div>
+            {% empty %}
+              <div class="form-item no-data">
+                  <p>No recent main forms available</p>
+              </div>
+            {% endfor %}
+        </div>
+        
+        <div class="recent">
+            <!-- Loop through the recent follow-up forms -->
+            {% for followup in recent_followupform %}
+              <div class="form-item">
+                  <div class="bx">
+                      <i class='bx bxs-user'></i>
+                  </div>
+                  <h3>{{ followup.name }}</h3>
+                  <p>Date: {{ followup.date }}</p>
+                  <p>Roll No: {{form.rollno}}</p>
+              </div>
+            {% empty %}
+              <div class="form-item no-data">
+                  <p>No recent follow-up forms available</p>
+              </div>
+            {% endfor %}
+            
+            
+        </div>
+        
+        
 {% endblock %}

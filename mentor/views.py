@@ -41,12 +41,32 @@ def mentor_dashboard(request):
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
+    
+    # Call recents and unpack it directly into context
+    recent_forms = recents(request)
+    
     context = {
         'student_count': students.count(),
         'students': students,
-        'student_names': [student.name for student in students]
+        'student_names': [student.name for student in students],
+        'recent_mainform': recent_forms['mainform'],        # Main form
+        'recent_followupform': recent_forms['followupform'] # Follow-up form
     }
-    return render(request, 'mentor_dashboard.html',context)
+    
+    return render(request, 'mentor_dashboard.html', context)
+
+
+@login_required
+def recents(request):
+    latest_forms = StudentForm.objects.all().order_by('-date')[:3]  # Now orders by both date and time
+    latest_followupforms = StudentFollowupForm.objects.order_by('-date')[:3]
+    recents = {
+        'mainform': latest_forms,
+        'followupform': latest_followupforms
+    }
+    return recents
+
+
 
 def student_detail(request):
     
@@ -120,7 +140,7 @@ def form_student_generate(request, student_id, mentor_id):
     # Get current date for display
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
-
+    form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
     # Validate the token from GET or POST
     token = request.GET.get('token') or request.POST.get('token')
     
@@ -145,6 +165,7 @@ def form_student_generate(request, student_id, mentor_id):
             student_form.name = student.name  # Automatically set student name
             student_form.rollno = student.roll_number  # Automatically set student roll number
             student_form.mentor_name = mentor.username  # Automatically set mentor's name
+            student_form.date = form_datetime#pass current datetime to form models to pass recent forms
             student_form.save()  # Save the form to the database
             
             
@@ -191,6 +212,7 @@ def form_student(request, student_id, mentor_id):
     # Get the current date in both formats
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
+    form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
 
     try:
         # Check if a form entry for the given student already exists
@@ -210,6 +232,7 @@ def form_student(request, student_id, mentor_id):
             student_form = form.save(commit=False)
             student_form.student = student
             student_form.mentor_name = mentor.username  # Set the mentor name
+            student_form.date = form_datetime#pass current datetime to form models to pass recent forms
             student_form.save()
             print("Form successfully saved for student:", student_form.rollno)  # Debugging statement
 
@@ -461,6 +484,7 @@ def followup_form_student_generate(request, student_id, mentor_id):
     mentor = get_object_or_404(User, id=mentor_id)
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
+    form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
     token = request.GET.get('token') or request.POST.get('token')
 
     if not token or token != student.token or student.is_token_expired():
@@ -478,6 +502,7 @@ def followup_form_student_generate(request, student_id, mentor_id):
             student_form.student = student
             student_form.mentor = mentor
             student_form.save()
+            student_form.date = form_datetime #pass current datetime to form models to pass recent forms
 
             student1, created = Student1.objects.get_or_create(mentorship_data=student)
             # Set the fields you want to save to Student1
@@ -518,6 +543,7 @@ def followup_form_student(request, student_id, mentor_id):
     mentor = get_object_or_404(User, id=mentor_id)
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
+    form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
 
     try:
         # Check if a follow-up form entry for the given student already exists
@@ -537,6 +563,7 @@ def followup_form_student(request, student_id, mentor_id):
             student_form = form.save(commit=False)
             student_form.student = student
             student_form.mentor = mentor
+            student_form.date = form_datetime#pass current datetime to form models to pass recent forms
             student_form.save()
 
 

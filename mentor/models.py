@@ -65,7 +65,7 @@ class StudentForm(models.Model):
     nao = models.TextField(null=True, blank=True)  
     ao = models.TextField(null=True, blank=True)  
 
-    date = models.DateField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return str(self.rollno)
@@ -93,7 +93,7 @@ class StudentFollowupForm(models.Model):
     question5 = models.TextField(null=True, blank=True)  # Allow NULL values
     question6 = models.TextField(null=True, blank=True)  # Allow NULL values
     question7 = models.TextField(null=True, blank=True)  # Allow NULL values
-    date = models.DateField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now)
     nao = models.TextField(null=True, blank=True)  
     ao = models.TextField(null=True, blank=True) 
 
