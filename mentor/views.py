@@ -35,20 +35,20 @@ def mentor_signup(request):
 
     return render(request, 'signup.html', {'form': form})
 
+
+
 @login_required
 def mentor_dashboard(request, student_id=None):
     mentor = request.user
+    students = MentorshipData.objects.filter(faculty_mentor__iexact=mentor.username.replace('_', ' '))  # Match case-insensitive
+    
+    student = None
     if student_id:
         student = get_object_or_404(MentorshipData, id=student_id)
-    else:
-        student = None  # or handle this case as needed
-    
-    readable_name = mentor.username.replace('_', ' ').title()
-    students = MentorshipData.objects.filter(faculty_mentor=readable_name)
-    
+
     # Call recents and unpack it directly into context
     recent_forms = recents(request)
-    
+
     context = {
         'student': student,
         'mentor': mentor,
@@ -58,8 +58,9 @@ def mentor_dashboard(request, student_id=None):
         'recent_mainform': recent_forms['mainform'],        # Main form
         'recent_followupform': recent_forms['followupform'] # Follow-up form
     }
-    
+
     return render(request, 'mentor_dashboard.html', context)
+
 
 
 
@@ -688,7 +689,7 @@ def BE(request):
         'mentor': mentor,
     }
 
-    return render(request, 'se.html', context)
+    return render(request, 'be.html', context)
 
 
 @login_required
