@@ -36,8 +36,13 @@ def mentor_signup(request):
     return render(request, 'signup.html', {'form': form})
 
 @login_required
-def mentor_dashboard(request):
+def mentor_dashboard(request, student_id=None):
     mentor = request.user
+    if student_id:
+        student = get_object_or_404(MentorshipData, id=student_id)
+    else:
+        student = None  # or handle this case as needed
+    
     readable_name = mentor.username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
     
@@ -45,6 +50,7 @@ def mentor_dashboard(request):
     recent_forms = recents(request)
     
     context = {
+        'student': student,
         'mentor': mentor,
         'student_count': students.count(),
         'students': students,
