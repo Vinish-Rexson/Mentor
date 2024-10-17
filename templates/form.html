@@ -26,7 +26,7 @@
         }
         /* Form container with shadow */
         .form-wrapper {
-            background-color: #dbe5f1; /* Shaded background */
+            background-color: transparent; /* Shaded background */
             padding: 50px 0; /* Padding for the form's background */
             overflow: hidden; /* Prevent scroll during form animation */
         }
@@ -376,17 +376,15 @@
 
 
     <script>
-        window.addEventListener('load', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
             const rollnoInput = document.querySelector('input[name="rollno"]');
-            const excludedFields = ['name', 'rollno', 'date'];
-    
+        
             // Function to generate a unique key based on roll number
             function generateKey() {
                 return `form_data_${rollnoInput.value}`;
             }
-            
-    
+        
             // Load saved data from localStorage
             function loadFormData() {
                 const savedData = localStorage.getItem(generateKey());
@@ -394,7 +392,7 @@
                     console.log("Saved data found:", JSON.parse(savedData));
                     const parsedData = JSON.parse(savedData);
                     for (const [key, value] of Object.entries(parsedData)) {
-                        if (!excludedFields.includes(key) && form[key]) {
+                        if (form[key]) {
                             form[key].value = value;
                         }
                     }
@@ -402,72 +400,38 @@
                     console.log("No saved data found for rollno:", rollnoInput.value);
                 }
             }
-    
+        
             // Save form data into localStorage
             function saveFormData() {
                 const formData = {};
                 Array.from(form.elements).forEach(field => {
-                    if (!excludedFields.includes(field.name)) {
+                    if (field.name) {
                         formData[field.name] = field.value;
                     }
                 });
                 localStorage.setItem(generateKey(), JSON.stringify(formData));
                 console.log("Form data saved for rollno:", rollnoInput.value);
             }
-    
+        
             // Clear form data from localStorage after submission
             form.addEventListener('submit', function() {
                 localStorage.removeItem(generateKey());
                 console.log("Form data cleared for rollno:", rollnoInput.value);
             });
-    
-            // Auto-save every minute
-            function autoSave() {
-                setInterval(saveFormData, 60000); // Save every 1 minute (60000 ms)
-            }
-    
-            // Trigger save on input change
-            form.addEventListener('input', function() {
-                saveFormData();
+        
+            // Trigger save on input change for each form field
+            Array.from(form.elements).forEach(field => {
+                if (field.name) {
+                    field.addEventListener('input', saveFormData);
+                }
             });
-    
+        
             // Load saved data when page is loaded
             loadFormData();
-    
-            // Initiate auto-save
-            autoSave();
         });
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const editButton = document.getElementById('editButton');
-            const saveButton = document.getElementById('saveButton');
-            const form = document.getElementById('studentForm');
-            const textareas = form.querySelectorAll('textarea');
-    
-            // Function to toggle read-only state
-            function toggleReadOnly(state) {
-                textareas.forEach(textarea => {
-                    textarea.readOnly = state;
-                });
-            }
-    
-            // Enable editing on click of Edit button
-            editButton.addEventListener('click', function () {
-                toggleReadOnly(false);  // Unlock fields for editing
-                editButton.style.display = 'none';  // Hide Edit button
-                saveButton.style.display = 'inline'; // Show Save button
-            });
-    
-            // Handle form submission on clicking Save button
-            saveButton.addEventListener('click', function (event) {
-                event.preventDefault(); // Prevent default form submission
-                // Optionally, you can add validation logic here
-                form.submit(); // Submit the form
-            });
-        });
-    </script>
+
     
 
 
