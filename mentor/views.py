@@ -138,6 +138,7 @@ def form_student_generate(request, student_id, mentor_id):
     if request.method == 'POST':
         # If it's a POST request, populate the form with POST data
         form = StudentSemForm(request.POST)
+        
         if form.is_valid():
             # Save the form but don't commit immediately to set additional fields
             student_form = form.save(commit=False)
@@ -145,7 +146,18 @@ def form_student_generate(request, student_id, mentor_id):
             student_form.rollno = student.roll_number  # Automatically set student roll number
             student_form.mentor_name = mentor.username  # Automatically set mentor's name
             student_form.save()  # Save the form to the database
-
+            
+            
+            student1, created = Student1.objects.get_or_create(mentorship_data=student)
+            # Set the fields you want to save to Student1
+            student1.atte_ise1 = form.cleaned_data['atte_ise1']
+            student1.atte_mse = form.cleaned_data['atte_mse']
+            student1.attendance = form.cleaned_data['attendance']
+            student1.cts = form.cleaned_data['cts']
+            student1.ise1 = form.cleaned_data['ise1']
+            student1.mse = form.cleaned_data['mse']
+            student1.semcgpa = form.cleaned_data['semcgpa']
+            student1.save()  # Save Student1 data
             # Redirect to a success page or confirmation that the form is filled
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
         else:
@@ -200,6 +212,18 @@ def form_student(request, student_id, mentor_id):
             student_form.mentor_name = mentor.username  # Set the mentor name
             student_form.save()
             print("Form successfully saved for student:", student_form.rollno)  # Debugging statement
+
+
+            student1, created = Student1.objects.get_or_create(mentorship_data=student)
+            # Set the fields you want to save to Student1
+            student1.atte_ise1 = form.cleaned_data['atte_ise1']
+            student1.atte_mse = form.cleaned_data['atte_mse']
+            student1.attendance = form.cleaned_data['attendance']
+            student1.cts = form.cleaned_data['cts']
+            student1.ise1 = form.cleaned_data['ise1']
+            student1.mse = form.cleaned_data['mse']
+            student1.semcgpa = form.cleaned_data['semcgpa']
+            student1.save()  # Save Student1 data
 
              # Render the same form.html template with a success message
             return render(request, 'form.html', {
@@ -455,6 +479,17 @@ def followup_form_student_generate(request, student_id, mentor_id):
             student_form.mentor = mentor
             student_form.save()
 
+            student1, created = Student1.objects.get_or_create(mentorship_data=student)
+            # Set the fields you want to save to Student1
+            student1.atte_ise1 = form.cleaned_data['atte_ise1']
+            student1.atte_mse = form.cleaned_data['atte_mse']
+            student1.attendance = form.cleaned_data['attendance']
+            
+            student1.ise1 = form.cleaned_data['ise1']
+            student1.mse = form.cleaned_data['mse']
+            student1.semcgpa = form.cleaned_data['semcgpa']
+            student1.save()  # Save Student1 data
+
             return render(request, 'follow_form_submitted.html', {'rollno': student.roll_number})
         else:
             return render(request, 'followup_form_student_view.html', {
@@ -503,6 +538,17 @@ def followup_form_student(request, student_id, mentor_id):
             student_form.student = student
             student_form.mentor = mentor
             student_form.save()
+
+
+            student1, created = Student1.objects.get_or_create(mentorship_data=student)
+            # Set the fields you want to save to Student1
+            student1.atte_ise1 = form.cleaned_data['atte_ise1']
+            student1.atte_mse = form.cleaned_data['atte_mse']
+            student1.attendance = form.cleaned_data['attendance']
+            student1.ise1 = form.cleaned_data['ise1']
+            student1.mse = form.cleaned_data['mse']
+            student1.semcgpa = form.cleaned_data['semcgpa']
+            student1.save()  # Save Student1 data
             return render(request, 'followup_form.html', {
                 'form': form,
                 'student': student,
@@ -743,98 +789,74 @@ def progress(request):
         'chart_data_be': chart_data_be,
     })
 
-# def attendance_data_view(request):
-#     # Query SE, TE, and BE students from MentorshipData
-#     se_students = MentorshipData.objects.filter(year="SE").values_list('roll_number', flat=True)
-#     te_students = MentorshipData.objects.filter(year="TE").values_list('roll_number', flat=True)
-#     be_students = MentorshipData.objects.filter(year="BE").values_list('roll_number', flat=True)
-
-#     # Fetch attendance data for SE, TE, and BE students from StudentForm
-#     attendance_data_se = StudentForm.objects.filter(rollno__in=se_students).values('atte_ise1', 'atte_mse', 'attendance')
-#     attendance_data_te = StudentForm.objects.filter(rollno__in=te_students).values('atte_ise1', 'atte_mse', 'attendance')
-#     attendance_data_be = StudentForm.objects.filter(rollno__in=be_students).values('atte_ise1', 'atte_mse', 'attendance')
-
-#     # Prepare chart data
-#     chart_data = {
-#         "labels": ["ISE 1", "MSE", "Overall Attendance"],
-#         "datasets": [
-#             {
-#                 'label': 'SE Attendance',
-#                 'data': [
-#                     sum(student['atte_ise1'] for student in attendance_data_se),
-#                     sum(student['atte_mse'] for student in attendance_data_se),
-#                     sum(student['attendance'] for student in attendance_data_se),
-#                 ],
-#                 'backgroundColor': 'rgba(255, 99, 132, 0.5)',
-#             },
-#             {
-#                 'label': 'TE Attendance',
-#                 'data': [
-#                     sum(student['atte_ise1'] for student in attendance_data_te),
-#                     sum(student['atte_mse'] for student in attendance_data_te),
-#                     sum(student['attendance'] for student in attendance_data_te),
-#                 ],
-#                 'backgroundColor': 'rgba(54, 162, 235, 0.5)',
-#             },
-#             {
-#                 'label': 'BE Attendance',
-#                 'data': [
-#                     sum(student['atte_ise1'] for student in attendance_data_be),
-#                     sum(student['atte_mse'] for student in attendance_data_be),
-#                     sum(student['attendance'] for student in attendance_data_be),
-#                 ],
-#                 'backgroundColor': 'rgba(75, 192, 192, 0.5)',
-#             },
-#         ]
-#     }
-    
-#     return JsonResponse(chart_data)
-
 
 
 from django.http import JsonResponse
 
+from django.http import JsonResponse
+
 def attendance_data_view(request):
-    # Function to get attendance data for a specific year
+    # Function to get attendance data percentage for a specific year
     def get_attendance_data(year):
-        # Query students for the given year
+        # Query mentorship data for students in the given year
         students = MentorshipData.objects.filter(year=year).values_list('roll_number', flat=True)
 
-        # Fetch attendance data from the follow-up form
-        followup_attendance = StudentFollowupForm.objects.filter(rollno__in=students).values('atte_ise1', 'atte_mse', 'attendance')
+        # Fetch attendance data from the Student1 model
+        attendance_data = Student1.objects.filter(mentorship_data__roll_number__in=students).values('atte_ise1', 'atte_mse', 'attendance')
 
-        # Fetch attendance data from the main form
-        main_attendance = StudentForm.objects.filter(rollno__in=students).values('atte_ise1', 'atte_mse', 'attendance')
+        # Get total number of students in that year
+        total_students = attendance_data.count()
 
-        # Combine both attendance datasets
-        combined_attendance = list(followup_attendance) + list(main_attendance)
+        # Avoid division by zero if there are no students
+        if total_students == 0:
+            return {
+                "labels": ["ISE 1", "MSE", "Overall Attendance"],
+                "datasets": [
+                    {
+                        'label': f'{year} Attendance',
+                        'data': [0, 0, 0],  # No data available
+                        'backgroundColor': 'rgba(255, 99, 132, 0.5)' if year == 'SE' else (
+                            'rgba(54, 162, 235, 0.5)' if year == 'TE' else 'rgba(75, 192, 192, 0.5)'
+                        ),
+                    }
+                ]
+            }
 
-        # Prepare chart data
+        # Calculate the sum of attendance values
+        total_atte_ise1 = sum(student['atte_ise1'] for student in attendance_data)
+        total_atte_mse = sum(student['atte_mse'] for student in attendance_data)
+        total_attendance = sum(student['attendance'] for student in attendance_data)
+
+        # Calculate percentages
+        percentage_ise1 = (total_atte_ise1 / (total_students * 100)) * 100  # ISE 1 attendance percentage
+        percentage_mse = (total_atte_mse / (total_students * 100)) * 100  # MSE attendance percentage
+        percentage_overall = (total_attendance / (total_students * 100)) * 100  # Overall attendance percentage
+
+        # Prepare chart data with percentage
         return {
             "labels": ["ISE 1", "MSE", "Overall Attendance"],
             "datasets": [
                 {
                     'label': f'{year} Attendance',
-                    'data': [
-                        sum(student['atte_ise1'] for student in combined_attendance),
-                        sum(student['atte_mse'] for student in combined_attendance),
-                        sum(student['attendance'] for student in combined_attendance),
-                    ],
-                    'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                    'data': [percentage_ise1, percentage_mse, percentage_overall],
+                    'backgroundColor': 'rgba(255, 99, 132, 0.5)' if year == 'SE' else (
+                        'rgba(54, 162, 235, 0.5)' if year == 'TE' else 'rgba(75, 192, 192, 0.5)'
+                    ),
                 }
             ]
         }
 
-    # Getting data for SE, TE, and BE
+    # Get data for SE, TE, and BE
     chart_data_se = get_attendance_data('SE')
     chart_data_te = get_attendance_data('TE')
     chart_data_be = get_attendance_data('BE')
     
-    # Prepare the final response
+    # Prepare the final response with the percentage data
     return JsonResponse({
         'se': chart_data_se,
         'te': chart_data_te,
         'be': chart_data_be
     })
+
 
 

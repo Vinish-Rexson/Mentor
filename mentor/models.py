@@ -164,3 +164,20 @@ class Session(models.Model):
             models.Index(fields=['mentor']),
             models.Index(fields=['created_at']),
         ]
+
+
+
+
+class Student1(models.Model):
+    mentorship_data = models.ForeignKey(MentorshipData, on_delete=models.CASCADE)
+    atte_ise1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    atte_mse = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    attendance = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cts = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    ise1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    mse = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    semcgpa = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f'{self.mentorship_data.name} ({self.mentorship_data.roll_number})'
+
