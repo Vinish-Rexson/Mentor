@@ -43,7 +43,12 @@ def mentor_dashboard(request, student_id=None):
     mentor = request.user
     # Fetch the students related to this mentor
     students = MentorshipData.objects.filter(faculty_mentor__iexact=mentor.username.replace('_', ' '))
-    
+
+    total_forms = (
+        StudentForm.objects.filter(student__in=students).count() +
+        StudentFollowupForm.objects.filter(student__in=students).count()
+    )
+    total_sessions = Session.objects.filter(mentor=mentor).count()
     # Fetch a specific student if student_id is provided
     student = None
     if student_id:
@@ -60,6 +65,8 @@ def mentor_dashboard(request, student_id=None):
         'student_names': [student.name for student in students],
         'recent_mainform': recent_forms['mainform'],
         'recent_followupform': recent_forms['followupform'],
+        'total_forms': total_forms,
+        'total_sessions': total_sessions,
     }
 
     return render(request, 'mentor_dashboard.html', context)
@@ -794,7 +801,8 @@ def progress(request):
     # Get counts for form analytics
     student_form_count = StudentForm.objects.filter(student__in=mentor_students).count()
     followup_form_count = StudentFollowupForm.objects.filter(student__in=mentor_students).count()
-    remaining_students = total_students - student_form_count - followup_form_count
+    total_forms = total_students*2
+    remaining_forms = total_forms - student_form_count - followup_form_count
 
     # Query SE, TE, and BE students from MentorshipData
     se_students = mentor_students.filter(year="SE").values_list('roll_number', flat=True)
@@ -876,7 +884,7 @@ def progress(request):
         'chart_data_be': chart_data_be,
         'student_form_count': student_form_count,
         'followup_form_count': followup_form_count,
-        'remaining_students': remaining_students,
+        'remaining_forms': remaining_forms,
         'total_students': total_students,
         'total_student_forms': total_student_forms,
         'forms_with_observations': forms_with_observations,

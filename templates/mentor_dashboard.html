@@ -228,25 +228,31 @@
 
     <ul class="box-info">
         <li>
-            <i class='bx bxs-calendar-check'></i>
-            <span class="text">
-                <h3>{{ student_count }}</h3>
-                <p>Total Students</p>
-            </span>
+            <a href="{% url 'form_dashboard' %}" style="text-decoration: none; color: inherit; display: contents;">
+                <i class='bx bxs-calendar-check'></i>
+                <span class="text">
+                    <h3>{{ student_count }}</h3>
+                    <p>Total Students</p>
+                </span>
+            </a>
         </li>
         <li>
-            <i class='bx bxs-group'></i>
-            <span class="text">
-                <h3>{{ total_reports }}</h3>
-                <p>Total Reports</p>
-            </span>
+            <a href="{% url 'form_dashboard' %}" style="text-decoration: none; color: inherit; display: contents;">
+                <i class='bx bxs-group'></i>
+                <span class="text">
+                    <h3>{{ total_forms }}</h3>
+                    <p>Total Forms</p>
+                </span>
+            </a>
         </li>
         <li>
-            <i class='bx bxs-dollar-circle'></i>
-            <span class="text">
-                <h3>70%</h3>
-                <p>Avg Academy Rate</p>
-            </span>
+            <a href="{% url 'session_list' %}" style="text-decoration: none; color: inherit; display: contents;">
+                <i class='bx bxs-group'></i>
+                <span class="text">
+                    <h3>{{ total_sessions }}</h3>
+                    <p>Total Sessions</p>
+                </span>
+            </a>
         </li>
     </ul>
 
