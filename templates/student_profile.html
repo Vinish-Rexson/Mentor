@@ -14,6 +14,7 @@
         --bg-color: #f4f7f9;
         --card-bg: #ffffff;
         --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --session-card-bg: #f0f8ff; /* Light blue background for session cards */
     }
 
     body {
@@ -191,6 +192,201 @@
         margin-right: 8px;
     }
 
+    .session-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 20px 0;
+        gap: 20px;
+    }
+    
+    .session-card {
+        flex: 0 0 300px;
+        background-color: var(--session-card-bg);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .session-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        background-color: #e6f3ff;
+    }
+    
+    .session-card h3 {
+        color: var(--primary-color);
+        font-size: 18px;
+        margin: 0 0 15px;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+    
+    .session-info {
+        margin-bottom: 10px;
+    }
+    
+    .session-info strong {
+        color: var(--secondary-color);
+        font-weight: 600;
+    }
+    
+    .additional-info {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 15px;
+    }
+    
+    .additional-info strong {
+        color: var(--accent-color);
+    }
+    
+    .no-sessions {
+        width: 100%;
+        text-align: center;
+        font-size: 1.2em;
+        color: #999;
+        padding: 40px 0;
+    }
+
+    #create-session-btn {
+        display: inline-block;
+        margin: 20px 0;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    #create-session-btn:hover {
+        background-color: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .session-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .session-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .session-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+    }
+
+    .session-container::-webkit-scrollbar-thumb:hover {
+        background: var(--secondary-color);
+    }
+
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-content {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        position: relative;
+        z-index: 10000;
+    }
+
+    .close-popup {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-color);
+    }
+
+    .close-popup:hover {
+        color: var(--primary-color);
+    }
+
+    .popup-content h3 {
+        color: var(--primary-color);
+        font-size: 20px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+
+    .popup-content form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .popup-content label {
+        display: block;
+        margin: 10px 0 5px;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .popup-content input,
+    .popup-content textarea,
+    .popup-content select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .popup-content .btn {
+        padding: 10px 15px;
+        font-size: 16px;
+        font-weight: 500;
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .popup-content .btn:hover {
+        background-color: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control-static {
+        padding-top: 7px;
+        margin-bottom: 0;
+        font-weight: bold;
+        color: var(--secondary-color);
+    }
+
     /* Mobile-specific styles */
     @media (max-width: 768px) {
         body {
@@ -283,83 +479,14 @@
             font-size: 12px;
             color: #777;
         }
-    }
-    .session-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px; /* Space between cards */
-        padding: 20px;
-    }
-    
-    .session-card {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px; /* Adjusted padding */
-        background-color: #f9f9f9;
-        width: 300px; /* Set a fixed width for cards */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    
-    .session-card h3 {
-        margin: 0 0 5px; /* Adjusted margin */
-    }
-    
-    .additional-info {
-        margin-top: 5px; /* Adjusted margin */
-        font-size: 0.9em; /* Slightly smaller font size */
-    }
-    
-    .no-sessions {
-        text-align: center;
-        font-size: 1.2em;
-        color: #999;
-    }
 
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px; /* Adjusted padding */
-        background-color: #f9f9f9;
-        margin: 20px 0;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        width: 300px; /* Set the same width as session cards */
-    }
+        .session-container {
+            grid-template-columns: 1fr;
+        }
 
-    .form-container h3 {
-        margin: 0 0 5px; /* Adjusted margin */
-    }
-
-    .form-container label {
-        display: block;
-        margin: 5px 0 3px; /* Adjusted margin */
-    }
-
-    .form-container input,
-    .form-container textarea,
-    .form-container select {
-        width: 100%;
-        padding: 6px; /* Adjusted padding */
-        margin-bottom: 10px; /* Adjusted margin */
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 0.9em; /* Slightly smaller font size */
-    }
-
-    .btn {
-        padding: 8px 12px; /* Adjusted padding */
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 5px; /* Margin to separate buttons */
-        font-size: 0.9em; /* Slightly smaller font size */
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
+        .form-container {
+            max-width: 100%;
+        }
     }
 </style>
 
@@ -461,6 +588,34 @@
                     <p class="info-value">{{ student.be_student_mentor }}</p>
                 </div>
             </div>
+        </div>
+        <div class="card">
+            <h2 class="section-title">Mentorship Sessions</h2>
+            <div class="session-container">
+                {% for session in sessions|dictsortreversed:"created_at" %}
+                    <div class="session-card">
+                        <h3>{{ session.title }}</h3>
+                        <div class="session-info">
+                            <p><strong>Description:</strong> {{ session.description }}</p>
+                            <p><strong>Mentor:</strong> {{ session.mentor.username }}</p>
+                            <p><strong>Created At:</strong> {{ session.created_at|date:"D d M Y" }}</p>
+                        </div>
+                        <div class="additional-info">
+                            <strong>Additional Info:</strong>
+                            {% if session.additional_info %}
+                                {% for key, value in session.additional_info.items %}
+                                    <p><strong>{{ key }}:</strong> {{ value }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <p>No additional info available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="no-sessions">No sessions available.</div>
+                {% endfor %}
+            </div>
+            <button id="create-session-btn">Create Session</button>
         </div>
     </div>
 </div>
@@ -585,57 +740,45 @@
         </div>
     </div>
 </div>
-<div class="session-container">
-    {% for session in sessions %}
-        <div class="session-card">
-            <h3>{{ session.title }}</h3>
-            <p><strong>Description:</strong> {{ session.description }}</p>
-            <p><strong>Mentor:</strong> {{ session.mentor.username }}</p>
-            <p><strong>Created At:</strong> {{ session.created_at|date:"D d M Y" }}</p>
-            <div class="additional-info">
-                <strong>Additional Info:</strong>
-                {% if session.additional_info %}
-                    {% for key, value in session.additional_info.items %}
-                        <strong>{{ key }}:</strong> {{ value }}<br>
-                    {% endfor %}
-                {% else %}
-                    <span>No additional info available.</span>
-                {% endif %}
+
+<!-- Popup Form Container -->
+<div id="popup-overlay" class="popup-overlay">
+    <div class="popup-content">
+        <span class="close-popup">&times;</span>
+        <h3>Create New Session</h3>
+        <form id="session-form" method="POST" action="{% url 'create_session' %}">
+            {% csrf_token %}
+            
+            <!-- Hidden Mentor Username -->
+            <input type="hidden" name="mentor" value="{{ user.username }}" required>
+
+            <!-- Hidden Student ID -->
+            <input type="hidden" name="student" value="{{ student.id }}" required>
+
+            <div class="form-group">
+                <label>Student:</label>
+                <p class="form-control-static">{{ student.name }}</p>
             </div>
-        </div>
-    {% empty %}
-        <div class="no-sessions">No sessions available.</div>
-    {% endfor %}
+
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="additional-info">Additional Info:</label>
+                <textarea id="additional-info" name="additional-info"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
 </div>
-
-<!-- Form Container -->
-<div id="form-container" class="form-container" style="display: none;">
-    <h3>Create New Session</h3>
-    <form id="session-form" method="POST" action="{% url 'create_session' %}">
-        {% csrf_token %}
-        
-        <!-- Hidden Mentor Username -->
-        <input type="hidden" name="mentor" value="{{ user.username }}" required>
-
-        <label for="student">Student:</label>
-        
-        <option value="{{ student.id }}">{{ student.name }}</option>
-
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required>
-
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required></textarea>
-
-        <label for="additional-info">Additional Info:</label>
-        <textarea id="additional-info" name="additional-info"></textarea>
-
-        <button type="submit" class="btn">Submit</button>
-        <button type="button" id="cancel-btn" class="btn" style="background-color: #dc3545;">Cancel</button>
-    </form>
-</div>
-
-<button id="create-session-btn" class="btn" style="margin-top: 20px;">Create Session</button>
 
 <script>
     // JavaScript to handle mobile tab navigation and responsiveness
@@ -671,12 +814,52 @@
             });
         });
     });
-    document.getElementById('create-session-btn').addEventListener('click', function() {
-        document.getElementById('form-container').style.display = 'block';
+
+    // Popup functionality
+    const createSessionBtn = document.getElementById('create-session-btn');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const closePopup = document.querySelector('.close-popup');
+
+    createSessionBtn.addEventListener('click', function() {
+        popupOverlay.style.display = 'flex';
     });
 
-    document.getElementById('cancel-btn').addEventListener('click', function() {
-        document.getElementById('form-container').style.display = 'none';
+    closePopup.addEventListener('click', function() {
+        popupOverlay.style.display = 'none';
+    });
+
+    popupOverlay.addEventListener('click', function(e) {
+        if (e.target === popupOverlay) {
+            popupOverlay.style.display = 'none';
+        }
+    });
+
+    // Add smooth scrolling for the session container
+    const sessionContainer = document.querySelector('.session-container');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    sessionContainer.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - sessionContainer.offsetLeft;
+        scrollLeft = sessionContainer.scrollLeft;
+    });
+
+    sessionContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+    });
+
+    sessionContainer.addEventListener('mouseup', () => {
+        isDown = false;
+    });
+
+    sessionContainer.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - sessionContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        sessionContainer.scrollLeft = scrollLeft - walk;
     });
 </script>
 {% endblock %}
