@@ -701,12 +701,15 @@ def BE(request):
 @login_required
 def student_profile(request, student_id):
     student = get_object_or_404(MentorshipData, id=student_id)
+    
     # student = get_object_or_404(Student, id=student_id)
     mentor = request.user
-    
+    student1 = Student1.objects.get(mentorship_data=student)
+    print(student)
     context = {
         'student': student,
-        'mentor': mentor,   
+        'mentor': mentor,  
+        'student1':student1,
     }
     
     return render(request, 'student_profile.html', context)
