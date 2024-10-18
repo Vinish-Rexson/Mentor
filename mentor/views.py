@@ -701,18 +701,24 @@ def BE(request):
 @login_required
 def student_profile(request, student_id):
     student = get_object_or_404(MentorshipData, id=student_id)
-    
-    # student = get_object_or_404(Student, id=student_id)
     mentor = request.user
+    sessions = Session.objects.filter(mentor=request.user,student=student)
+    print(sessions)
+    username = mentor.username
+    readable_name = username.replace('_', ' ').title()
+    students = MentorshipData.objects.filter(faculty_mentor=readable_name)
+    # student = get_object_or_404(Student, id=student_id)
     student1 = Student1.objects.get(mentorship_data=student)
-    print(student)
     context = {
+        'sessions': sessions,
+        'students': students,
         'student': student,
         'mentor': mentor,  
         'student1':student1,
     }
-    
     return render(request, 'student_profile.html', context)
+
+
 @login_required
 def form_dashboard(request):
     students = MentorshipData.objects.all()
@@ -729,6 +735,7 @@ def form_dashboard(request):
 
 
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
 from .forms import SessionForm
@@ -738,20 +745,19 @@ def create_session(request):
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
+            # Save the form without committing to the database
             session = form.save(commit=False)
-            session.mentor = request.user  # Set the logged-in user as mentor
             
-            additional_info_text = form.cleaned_data['additional_info']
+            # Set the mentor to the logged-in user
+            session.mentor = request.user
             
-            try:
-                additional_info_dict = json.loads(additional_info_text)
-                session.additional_info = additional_info_dict
-            except (ValueError, TypeError):
-                session.additional_info = {"note": additional_info_text}
-                messages.warning(request, "Additional Info was not valid JSON, stored as a note.")
-            
+            # Save the session after setting the mentor
             session.save()
-            return redirect('session_list')
+            
+            messages.success(request, "Session created successfully.")
+            return redirect('session_list')  # Replace 'session_list' with your actual redirect view
+        else:
+            messages.error(request, "There was an error in the form.")
     else:
         form = SessionForm()
 
@@ -759,10 +765,15 @@ def create_session(request):
 
 
 
+
 @login_required
 def session_list(request):
+    mentor = request.user
     sessions = Session.objects.filter(mentor=request.user)
-    return render(request, 'session_list.html', {'sessions': sessions})
+    username = mentor.username
+    readable_name = username.replace('_', ' ').title()
+    students = MentorshipData.objects.filter(faculty_mentor=readable_name)
+    return render(request, 'session_list.html', {'sessions': sessions, 'students': students,})
 
 
 # views.py

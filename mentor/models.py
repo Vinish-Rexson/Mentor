@@ -132,7 +132,7 @@ from .managers import DynamicFieldsManager  # Import the DynamicFieldsManager
 User = get_user_model()
 
 class Session(models.Model):
-    # Static fields for session information
+    student = models.ForeignKey('MentorshipData', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField()
     mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sessions")

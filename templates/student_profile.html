@@ -116,6 +116,7 @@
     }
 
     .info-item {
+        margin-bottom: 5px;
         background-color: #f8f9fa;
         padding: 15px;
         border-radius: 10px;
@@ -282,6 +283,83 @@
             font-size: 12px;
             color: #777;
         }
+    }
+    .session-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; /* Space between cards */
+        padding: 20px;
+    }
+    
+    .session-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px; /* Adjusted padding */
+        background-color: #f9f9f9;
+        width: 300px; /* Set a fixed width for cards */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .session-card h3 {
+        margin: 0 0 5px; /* Adjusted margin */
+    }
+    
+    .additional-info {
+        margin-top: 5px; /* Adjusted margin */
+        font-size: 0.9em; /* Slightly smaller font size */
+    }
+    
+    .no-sessions {
+        text-align: center;
+        font-size: 1.2em;
+        color: #999;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px; /* Adjusted padding */
+        background-color: #f9f9f9;
+        margin: 20px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 300px; /* Set the same width as session cards */
+    }
+
+    .form-container h3 {
+        margin: 0 0 5px; /* Adjusted margin */
+    }
+
+    .form-container label {
+        display: block;
+        margin: 5px 0 3px; /* Adjusted margin */
+    }
+
+    .form-container input,
+    .form-container textarea,
+    .form-container select {
+        width: 100%;
+        padding: 6px; /* Adjusted padding */
+        margin-bottom: 10px; /* Adjusted margin */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.9em; /* Slightly smaller font size */
+    }
+
+    .btn {
+        padding: 8px 12px; /* Adjusted padding */
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px; /* Margin to separate buttons */
+        font-size: 0.9em; /* Slightly smaller font size */
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
     }
 </style>
 
@@ -499,10 +577,65 @@
                 <a href="{% url 'generate_qr_followup' student.id mentor.id %}" class="action-btn btn-secondary">
                     <i class="fas fa-qrcode"></i> Followup QR Code
                 </a>
-            </div>
+                <!-- New Create Session Button -->
+                <a href="{% url 'create_session'%}" class="action-btn btn-accent">
+                    <i class="fas fa-calendar-plus"></i> Create Session
+                </a>
+            </div>            
         </div>
     </div>
 </div>
+<div class="session-container">
+    {% for session in sessions %}
+        <div class="session-card">
+            <h3>{{ session.title }}</h3>
+            <p><strong>Description:</strong> {{ session.description }}</p>
+            <p><strong>Mentor:</strong> {{ session.mentor.username }}</p>
+            <p><strong>Created At:</strong> {{ session.created_at|date:"D d M Y" }}</p>
+            <div class="additional-info">
+                <strong>Additional Info:</strong>
+                {% if session.additional_info %}
+                    {% for key, value in session.additional_info.items %}
+                        <strong>{{ key }}:</strong> {{ value }}<br>
+                    {% endfor %}
+                {% else %}
+                    <span>No additional info available.</span>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-sessions">No sessions available.</div>
+    {% endfor %}
+</div>
+
+<!-- Form Container -->
+<div id="form-container" class="form-container" style="display: none;">
+    <h3>Create New Session</h3>
+    <form id="session-form" method="POST" action="{% url 'create_session' %}">
+        {% csrf_token %}
+        
+        <!-- Hidden Mentor Username -->
+        <input type="hidden" name="mentor" value="{{ user.username }}" required>
+
+        <label for="student">Student:</label>
+        
+        <option value="{{ student.id }}">{{ student.name }}</option>
+
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="additional-info">Additional Info:</label>
+        <textarea id="additional-info" name="additional-info"></textarea>
+
+        <button type="submit" class="btn">Submit</button>
+        <button type="button" id="cancel-btn" class="btn" style="background-color: #dc3545;">Cancel</button>
+    </form>
+</div>
+
+<button id="create-session-btn" class="btn" style="margin-top: 20px;">Create Session</button>
 
 <script>
     // JavaScript to handle mobile tab navigation and responsiveness
@@ -537,6 +670,13 @@
                 document.getElementById(targetId).classList.add('active');
             });
         });
+    });
+    document.getElementById('create-session-btn').addEventListener('click', function() {
+        document.getElementById('form-container').style.display = 'block';
+    });
+
+    document.getElementById('cancel-btn').addEventListener('click', function() {
+        document.getElementById('form-container').style.display = 'none';
     });
 </script>
 {% endblock %}

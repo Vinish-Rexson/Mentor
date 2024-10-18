@@ -240,20 +240,48 @@ class StudentFollowup_Form(forms.ModelForm):
 from django import forms
 from .models import Session
 
+from django import forms
+import json
+from .models import Session, MentorshipData
+
 class SessionForm(forms.ModelForm):
     class Meta:
         model = Session
-        # Remove 'mentor' from the fields, as it will be set automatically in the view
-        fields = ['title', 'description', 'additional_info']
+        # 'mentor' is excluded because it will be set automatically in the view
+        fields = ['student', 'title', 'description', 'additional_info']
 
+    # Customizing the 'additional_info' field with a Textarea widget
     additional_info = forms.CharField(
         widget=forms.Textarea(attrs={
-            'placeholder': 'Enter additional information here...',
+            'placeholder': 'Enter additional information here in JSON format...',
             'rows': 10,
             'cols': 50,
             'style': 'font-family: monospace; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: none;'
         }),
         required=False,
-        help_text='You can add additional details in this field.'
+        help_text='You can add additional details in JSON format.'
     )
+
+    def clean_additional_info(self):
+        additional_info = self.cleaned_data.get('additional_info')
+        if additional_info:
+            try:
+                # Convert the input from string to a JSON object
+                additional_info_json = json.loads(additional_info)
+                return additional_info_json
+            except ValueError:
+                raise forms.ValidationError("Please provide valid JSON data.")
+        return {}
+
+    def save(self, commit=True, mentor=None):
+        # Save the form, assign the mentor, and ensure additional_info is handled properly
+        session = super().save(commit=False)
+        
+        if mentor:
+            session.mentor = mentor  # Assign the mentor in the view
+        
+        if commit:
+            session.save()
+        return session
+
 
