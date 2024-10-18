@@ -781,11 +781,24 @@ from django.shortcuts import render
 from .models import StudentForm, MentorshipData
 from django.http import JsonResponse
 
+@login_required
 def progress(request):
+    # Get the current mentor's username
+    mentor_username = request.user.username.replace('_', ' ').title()
+
+    # Filter students for this mentor
+    mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
+    total_students = mentor_students.count()
+
+    # Get counts for form analytics
+    student_form_count = StudentForm.objects.filter(student__in=mentor_students).count()
+    followup_form_count = StudentFollowupForm.objects.filter(student__in=mentor_students).count()
+    remaining_students = total_students - student_form_count - followup_form_count
+
     # Query SE, TE, and BE students from MentorshipData
-    se_students = MentorshipData.objects.filter(year="SE").values_list('roll_number', flat=True)
-    te_students = MentorshipData.objects.filter(year="TE").values_list('roll_number', flat=True)
-    be_students = MentorshipData.objects.filter(year="BE").values_list('roll_number', flat=True)
+    se_students = mentor_students.filter(year="SE").values_list('roll_number', flat=True)
+    te_students = mentor_students.filter(year="TE").values_list('roll_number', flat=True)
+    be_students = mentor_students.filter(year="BE").values_list('roll_number', flat=True)
 
     # Fetch attendance data for SE, TE, and BE students from StudentForm
     attendance_data_se = StudentForm.objects.filter(rollno__in=se_students).values('atte_ise1', 'atte_mse', 'attendance')
@@ -838,11 +851,17 @@ def progress(request):
         ]
     }
 
-    return render(request, 'progress.html', {
+    context = {
         'chart_data_se': chart_data_se,
         'chart_data_te': chart_data_te,
         'chart_data_be': chart_data_be,
-    })
+        'student_form_count': student_form_count,
+        'followup_form_count': followup_form_count,
+        'remaining_students': remaining_students,
+        'total_students': total_students,
+    }
+
+    return render(request, 'progress.html', context)
 
 
 
@@ -877,23 +896,18 @@ def attendance_data_view(request):
                 ]
             }
 
-        # Calculate the sum of attendance values
-        total_atte_ise1 = sum(student['atte_ise1'] for student in attendance_data)
-        total_atte_mse = sum(student['atte_mse'] for student in attendance_data)
-        total_attendance = sum(student['attendance'] for student in attendance_data)
+        # Calculate the average of attendance values
+        avg_atte_ise1 = sum(student['atte_ise1'] for student in attendance_data) / total_students
+        avg_atte_mse = sum(student['atte_mse'] for student in attendance_data) / total_students
+        avg_attendance = sum(student['attendance'] for student in attendance_data) / total_students
 
-        # Calculate percentages
-        percentage_ise1 = (total_atte_ise1 / (total_students * 100)) * 100  # ISE 1 attendance percentage
-        percentage_mse = (total_atte_mse / (total_students * 100)) * 100  # MSE attendance percentage
-        percentage_overall = (total_attendance / (total_students * 100)) * 100  # Overall attendance percentage
-
-        # Prepare chart data with percentage
+        # Prepare chart data with average percentages
         return {
             "labels": ["ISE 1", "MSE", "Overall Attendance"],
             "datasets": [
                 {
                     'label': f'{year} Attendance',
-                    'data': [percentage_ise1, percentage_mse, percentage_overall],
+                    'data': [avg_atte_ise1, avg_atte_mse, avg_attendance],
                     'backgroundColor': 'rgba(255, 99, 132, 0.5)' if year == 'SE' else (
                         'rgba(54, 162, 235, 0.5)' if year == 'TE' else 'rgba(75, 192, 192, 0.5)'
                     ),
@@ -906,7 +920,7 @@ def attendance_data_view(request):
     chart_data_te = get_attendance_data('TE')
     chart_data_be = get_attendance_data('BE')
     
-    # Prepare the final response with the percentage data
+    # Prepare the final response with the average percentage data
     return JsonResponse({
         'se': chart_data_se,
         'te': chart_data_te,

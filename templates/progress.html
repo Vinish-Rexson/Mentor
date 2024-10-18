@@ -83,11 +83,24 @@
     <!-- Chart Grid -->
     <div class="chart-container">
 
+        <div class="chart-box">
+            <h2>SE Attendance</h2>
+            <canvas id="seAttendanceChart" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>TE Attendance</h2>
+            <canvas id="teAttendanceChart" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>BE Attendance</h2>
+            <canvas id="beAttendanceChart" height="200"></canvas>
+        </div>
 
         <div class="chart-box">
-            <h2>Attendance Monitoring of your students</h2>
-            <canvas id="attendanceChart" height="200"></canvas>
+            <h2>Form Submission Analytics for Your Students</h2>
+            <canvas id="formAnalyticsChart" height="200"></canvas>
         </div>
+
         <div class="chart-box">
             <h2>Sales by Outlet</h2>
             <canvas id="salesByOutlet" height="200"></canvas>
@@ -104,13 +117,12 @@
             <canvas id="customerSatisfaction" height="200"></canvas>
         </div>
         <div class="chart-box">
-            <h2>Revenue by Event Type</h2>
-            <canvas id="revenueByEventType" height="200"></canvas>
-        </div>
-        <div class="chart-box">
             <h2>Repeat Customer Rate</h2>
             <canvas id="repeatCustomerRate" height="200"></canvas>
         </div>
+
+        
+        
     </div>
 
     <script>
@@ -138,40 +150,41 @@
         fetch("{% url 'attendance_data_view' %}")
         .then(response => response.json())
         .then(data => {
-            // Set up the context for the chart
-            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-    
-            // Create the chart with data for all years (SE, TE, BE)
-            const attendanceChart = new Chart(attendanceCtx, {
-                type: 'bar',
-                data: {
-                    labels: data.se.labels,  // Assuming all years have the same labels
-                    datasets: [
-                        {
-                            label: 'SE Attendance',
-                            data: data.se.datasets[0].data, // Data for SE
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            // Function to create a chart
+            function createAttendanceChart(elementId, chartData) {
+                const ctx = document.getElementById(elementId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                max: 100, // Set max to 100 for percentage
+                                title: {
+                                    display: true,
+                                    text: 'Attendance Percentage'
+                                }
+                            }
                         },
-                        {
-                            label: 'TE Attendance',
-                            data: data.te.datasets[0].data, // Data for TE
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        },
-                        {
-                            label: 'BE Attendance',
-                            data: data.be.datasets[0].data, // Data for BE
-                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y.toFixed(2) + '%';
+                                    }
+                                }
+                            }
                         }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { stacked: true },
-                        y: { stacked: true, beginAtZero: true }
                     }
-                }
-            });
+                });
+            }
+
+            // Create separate charts for SE, TE, and BE
+            createAttendanceChart('seAttendanceChart', data.se);
+            createAttendanceChart('teAttendanceChart', data.te);
+            createAttendanceChart('beAttendanceChart', data.be);
         })
         .catch(error => console.error('Error fetching data:', error));
     
@@ -220,24 +233,6 @@
             }
         });
 
-        // Revenue by Event Type Pie Chart
-        const revenueByEventTypeCtx = document.getElementById('revenueByEventType').getContext('2d');
-        const revenueByEventTypeChart = new Chart(revenueByEventTypeCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Event Type 1', 'Event Type 2', 'Event Type 3'],
-                datasets: [{
-                    label: 'Revenue by Event Type',
-                    data: [3000, 2000, 1500],
-                    backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(75, 192, 192, 0.5)'],
-                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-            }
-        });
 
         // Repeat Customer Rate Line Chart
         const repeatCustomerRateCtx = document.getElementById('repeatCustomerRate').getContext('2d');
@@ -258,6 +253,47 @@
                 responsive: true,
                 scales: {
                     y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Form Submission Analytics Pie Chart
+        const formAnalyticsCtx = document.getElementById('formAnalyticsChart').getContext('2d');
+        const formAnalyticsChart = new Chart(formAnalyticsCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Student Forms', 'Follow-up Forms', 'Remaining Students'],
+                datasets: [{
+                    label: 'Form Submission Analytics',
+                    data: [
+                        {{ student_form_count }},
+                        {{ followup_form_count }},
+                        {{ remaining_students }}
+                    ],
+                    backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(75, 192, 192, 0.5)'],
+                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    subtitle: {
+                        display: true,
+                        text: 'Total Students: {{ total_students }}'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed + ' students';
+                                return label;
+                            }
+                        }
+                    }
                 }
             }
         });
