@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.contrib.staticfiles import finders
+from django.db.models import Q
 
 from .forms import *
 from .forms import StudentFollowup_Form
@@ -851,6 +852,24 @@ def progress(request):
         ]
     }
 
+    # Analytics for StudentForm
+    total_student_forms = StudentForm.objects.filter(student__in=mentor_students).count()
+    forms_with_observations = StudentForm.objects.filter(
+        student__in=mentor_students
+    ).exclude(
+        Q(nao='') & Q(ao='')
+    ).count()
+    forms_without_observations = total_student_forms - forms_with_observations
+
+    # Analytics for StudentFollowupForm
+    total_followup_forms = StudentFollowupForm.objects.filter(student__in=mentor_students).count()
+    followup_forms_with_observations = StudentFollowupForm.objects.filter(
+        student__in=mentor_students
+    ).exclude(
+        Q(nao='') & Q(ao='')
+    ).count()
+    followup_forms_without_observations = total_followup_forms - followup_forms_with_observations
+
     context = {
         'chart_data_se': chart_data_se,
         'chart_data_te': chart_data_te,
@@ -859,6 +878,12 @@ def progress(request):
         'followup_form_count': followup_form_count,
         'remaining_students': remaining_students,
         'total_students': total_students,
+        'total_student_forms': total_student_forms,
+        'forms_with_observations': forms_with_observations,
+        'forms_without_observations': forms_without_observations,
+        'total_followup_forms': total_followup_forms,
+        'followup_forms_with_observations': followup_forms_with_observations,
+        'followup_forms_without_observations': followup_forms_without_observations,
     }
 
     return render(request, 'progress.html', context)
@@ -868,63 +893,74 @@ def progress(request):
 from django.http import JsonResponse
 
 from django.http import JsonResponse
-
+from django.db.models import Avg
 def attendance_data_view(request):
-    # Function to get attendance data percentage for a specific year
     def get_attendance_data(year):
-        # Query mentorship data for students in the given year
         students = MentorshipData.objects.filter(year=year).values_list('roll_number', flat=True)
-
-        # Fetch attendance data from the Student1 model
-        attendance_data = Student1.objects.filter(mentorship_data__roll_number__in=students).values('atte_ise1', 'atte_mse', 'attendance')
-
-        # Get total number of students in that year
-        total_students = attendance_data.count()
-
-        # Avoid division by zero if there are no students
-        if total_students == 0:
-            return {
-                "labels": ["ISE 1", "MSE", "Overall Attendance"],
-                "datasets": [
-                    {
-                        'label': f'{year} Attendance',
-                        'data': [0, 0, 0],  # No data available
-                        'backgroundColor': 'rgba(255, 99, 132, 0.5)' if year == 'SE' else (
-                            'rgba(54, 162, 235, 0.5)' if year == 'TE' else 'rgba(75, 192, 192, 0.5)'
-                        ),
-                    }
-                ]
-            }
-
-        # Calculate the average of attendance values
-        avg_atte_ise1 = sum(student['atte_ise1'] for student in attendance_data) / total_students
-        avg_atte_mse = sum(student['atte_mse'] for student in attendance_data) / total_students
-        avg_attendance = sum(student['attendance'] for student in attendance_data) / total_students
-
-        # Prepare chart data with average percentages
+        data = Student1.objects.filter(mentorship_data__roll_number__in=students).aggregate(
+            avg_atte_ise1=Avg('atte_ise1'),
+            avg_atte_mse=Avg('atte_mse'),
+            avg_attendance=Avg('attendance')
+        )
+        
         return {
             "labels": ["ISE 1", "MSE", "Overall Attendance"],
-            "datasets": [
-                {
-                    'label': f'{year} Attendance',
-                    'data': [avg_atte_ise1, avg_atte_mse, avg_attendance],
-                    'backgroundColor': 'rgba(255, 99, 132, 0.5)' if year == 'SE' else (
-                        'rgba(54, 162, 235, 0.5)' if year == 'TE' else 'rgba(75, 192, 192, 0.5)'
-                    ),
-                }
-            ]
+            "datasets": [{
+                'label': f'{year} Attendance',
+                'data': [
+                    data['avg_atte_ise1'] or 0,
+                    data['avg_atte_mse'] or 0,
+                    data['avg_attendance'] or 0
+                ],
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)' if year == 'SE' else (
+                    'rgba(54, 162, 235, 0.5)' if year == 'TE' else 'rgba(75, 192, 192, 0.5)'
+                ),
+            }]
         }
 
-    # Get data for SE, TE, and BE
-    chart_data_se = get_attendance_data('SE')
-    chart_data_te = get_attendance_data('TE')
-    chart_data_be = get_attendance_data('BE')
+    def get_marks_data(year):
+        students = MentorshipData.objects.filter(year=year).values_list('roll_number', flat=True)
+        data = Student1.objects.filter(mentorship_data__roll_number__in=students).aggregate(
+            avg_cts=Avg('cts'),
+            avg_ise1=Avg('ise1'),
+            avg_mse=Avg('mse'),
+            avg_semcgpa=Avg('semcgpa')
+        )
+        
+        # Adjust CGPA to be on a similar scale as percentage scores
+        adjusted_cgpa = data['avg_semcgpa'] * 10 if data['avg_semcgpa'] else 0
+        
+        return {
+            "labels": ["CTS", "ISE 1", "MSE", "Sem CGPA (x10)"],
+            "datasets": [{
+                'label': f'{year} Marks',
+                'data': [
+                    data['avg_cts'] or 0,
+                    data['avg_ise1'] or 0,
+                    data['avg_mse'] or 0,
+                    adjusted_cgpa
+                ],
+                'backgroundColor': 'rgba(255, 206, 86, 0.5)' if year == 'SE' else (
+                    'rgba(75, 192, 192, 0.5)' if year == 'TE' else 'rgba(153, 102, 255, 0.5)'
+                ),
+            }]
+        }
+
+    attendance_data = {
+        'se': get_attendance_data('SE'),
+        'te': get_attendance_data('TE'),
+        'be': get_attendance_data('BE')
+    }
+
+    marks_data = {
+        'se': get_marks_data('SE'),
+        'te': get_marks_data('TE'),
+        'be': get_marks_data('BE')
+    }
     
-    # Prepare the final response with the average percentage data
     return JsonResponse({
-        'se': chart_data_se,
-        'te': chart_data_te,
-        'be': chart_data_be
+        'attendance': attendance_data,
+        'marks': marks_data
     })
 
 

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Ettarra Coffee House Admin Dashboard{% endblock %}
+{% block title %}Mentor's Student Progress{% endblock %}
 
 {% block content %}
 <div class="admin-dashboard">
@@ -82,6 +82,19 @@
 
     <!-- Chart Grid -->
     <div class="chart-container">
+        <div class="chart-box">
+            <h2>Form Submission Analytics </h2>
+            <canvas id="formAnalyticsChart" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>Main    Form Observations</h2>
+            <canvas id="studentFormObservations" height="200"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Follow-up Form Observations</h2>
+            <canvas id="followupFormObservations" height="200"></canvas>
+        </div>
 
         <div class="chart-box">
             <h2>SE Attendance</h2>
@@ -97,61 +110,33 @@
         </div>
 
         <div class="chart-box">
-            <h2>Form Submission Analytics for Your Students</h2>
-            <canvas id="formAnalyticsChart" height="200"></canvas>
+            <h2>SE Marks</h2>
+            <canvas id="seMarksChart" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>TE Marks</h2>
+            <canvas id="teMarksChart" height="200"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>BE Marks</h2>
+            <canvas id="beMarksChart" height="200"></canvas>
         </div>
 
-        <div class="chart-box">
-            <h2>Sales by Outlet</h2>
-            <canvas id="salesByOutlet" height="200"></canvas>
-        </div>
+       
 
-        <div class="chart-box">
-            <h2>Event Attendance by Outlet</h2>
-            <canvas id="attendanceByOutlet" height="200"></canvas>
-        </div>
         
-        <!-- Second Row -->
-        <div class="chart-box">
-            <h2>Customer Satisfaction</h2>
-            <canvas id="customerSatisfaction" height="200"></canvas>
-        </div>
-        <div class="chart-box">
-            <h2>Repeat Customer Rate</h2>
-            <canvas id="repeatCustomerRate" height="200"></canvas>
-        </div>
 
+        
         
         
     </div>
 
     <script>
-        // Sales by Outlet Bar Chart
-        const salesByOutletCtx = document.getElementById('salesByOutlet').getContext('2d');
-        const salesByOutletChart = new Chart(salesByOutletCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Outlet 1', 'Outlet 2', 'Outlet 3', 'Outlet 4'],
-                datasets: [{
-                    label: 'Sales ($)',
-                    data: [5000, 3000, 4000, 7000],
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Toned-down color
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
 
         fetch("{% url 'attendance_data_view' %}")
         .then(response => response.json())
         .then(data => {
-            // Function to create a chart
-            function createAttendanceChart(elementId, chartData) {
+            function createChart(elementId, chartData, isMarksChart = false) {
                 const ctx = document.getElementById(elementId).getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',
@@ -161,10 +146,10 @@
                         scales: {
                             y: { 
                                 beginAtZero: true,
-                                max: 100, // Set max to 100 for percentage
+                                max: 100,
                                 title: {
                                     display: true,
-                                    text: 'Attendance Percentage'
+                                    text: isMarksChart ? 'Percentage / CGPA (x10)' : 'Percentage'
                                 }
                             }
                         },
@@ -172,7 +157,17 @@
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return context.parsed.y.toFixed(2) + '%';
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y.toFixed(2) + '%';
+                                            if (isMarksChart && context.label === "Sem CGPA (x10)") {
+                                                label += ' (CGPA: ' + (context.parsed.y / 10).toFixed(2) + ')';
+                                            }
+                                        }
+                                        return label;
                                     }
                                 }
                             }
@@ -181,86 +176,25 @@
                 });
             }
 
-            // Create separate charts for SE, TE, and BE
-            createAttendanceChart('seAttendanceChart', data.se);
-            createAttendanceChart('teAttendanceChart', data.te);
-            createAttendanceChart('beAttendanceChart', data.be);
+            // Create Attendance Charts
+            createChart('seAttendanceChart', data.attendance.se);
+            createChart('teAttendanceChart', data.attendance.te);
+            createChart('beAttendanceChart', data.attendance.be);
+
+            // Create Marks Charts
+            createChart('seMarksChart', data.marks.se, true);
+            createChart('teMarksChart', data.marks.te, true);
+            createChart('beMarksChart', data.marks.be, true);
         })
         .catch(error => console.error('Error fetching data:', error));
     
     
 
-        // Event Attendance by Outlet Bar Chart
-        const attendanceByOutletCtx = document.getElementById('attendanceByOutlet').getContext('2d');
-        const attendanceByOutletChart = new Chart(attendanceByOutletCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Outlet 1', 'Outlet 2', 'Outlet 3', 'Outlet 4'],
-                datasets: [{
-                    label: 'Attendance',
-                    data: [200, 150, 300, 250],
-                    backgroundColor: 'rgba(255, 206, 86, 0.5)', 
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-
-        // Customer Satisfaction Horizontal Bar Chart
-        const customerSatisfactionCtx = document.getElementById('customerSatisfaction').getContext('2d');
-        const customerSatisfactionChart = new Chart(customerSatisfactionCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Excellent', 'Good', 'Average', 'Poor'],
-                datasets: [{
-                    label: 'Satisfaction',
-                    data: [200, 150, 100, 50],
-                    backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(255, 99, 132, 0.5)'],
-                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y', // Horizontal bar chart
-                scales: {
-                    x: { beginAtZero: true }
-                }
-            }
-        });
-
-
-        // Repeat Customer Rate Line Chart
-        const repeatCustomerRateCtx = document.getElementById('repeatCustomerRate').getContext('2d');
-        const repeatCustomerRateChart = new Chart(repeatCustomerRateCtx, {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-                datasets: [{
-                    label: 'Repeat Customer Rate (%)',
-                    data: [60, 65, 70, 75, 80, 85],
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    fill: true,
-                    tension: 0.1 // Smoother line
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
 
         // Form Submission Analytics Pie Chart
         const formAnalyticsCtx = document.getElementById('formAnalyticsChart').getContext('2d');
         const formAnalyticsChart = new Chart(formAnalyticsCtx, {
-            type: 'pie',
+            type: 'doughnut',  // Changed from 'pie' to 'doughnut'
             data: {
                 labels: ['Student Forms', 'Follow-up Forms', 'Remaining Students'],
                 datasets: [{
@@ -270,17 +204,29 @@
                         {{ followup_form_count }},
                         {{ remaining_students }}
                     ],
-                    backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(75, 192, 192, 0.5)'],
+                    backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)'],
                     borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                cutout: '50%',  // This creates the hollow center. Adjust for desired thickness.
                 plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    
                     subtitle: {
                         display: true,
-                        text: 'Total Students: {{ total_students }}'
+                        text: 'Total Students: {{ total_students }}',
+                        font: {
+                            size: 14,
+                            weight: 'normal'
+                        },
+                        padding: {
+                            bottom: 10
+                        }
                     },
                     tooltip: {
                         callbacks: {
@@ -290,6 +236,102 @@
                                     label += ': ';
                                 }
                                 label += context.parsed + ' students';
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Student Form Observations Bar Chart
+        const studentFormCtx = document.getElementById('studentFormObservations').getContext('2d');
+        const studentFormChart = new Chart(studentFormCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Forms', 'Forms with Observations'],
+                datasets: [{
+                    label: 'Number of Forms',
+                    data: [{{ total_student_forms }}, {{ forms_with_observations }}],
+                    backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Forms'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Student Form Observations'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Follow-up Form Observations Bar Chart
+        const followupFormCtx = document.getElementById('followupFormObservations').getContext('2d');
+        const followupFormChart = new Chart(followupFormCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Forms', 'Forms with Observations'],
+                datasets: [{
+                    label: 'Number of Forms',
+                    data: [{{ total_followup_forms }}, {{ followup_forms_with_observations }}],
+                    backgroundColor: ['rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Forms'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Follow-up Form Observations'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
                                 return label;
                             }
                         }
