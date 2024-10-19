@@ -762,16 +762,24 @@ def create_session(request, student_id):
         if form.is_valid():
             # Save the form without committing to the database
             session = form.save(commit=False)
-            
+
             # Set the mentor to the logged-in user
             session.mentor = request.user
-            
-            # Save the session after setting the mentor
+
+            # Debugging: Check what additional_info contains
+            print("Parsed additional_info:", form.cleaned_data['additional_info'])
+
+            # Set the additional_info directly from the cleaned form data
+            session.additional_info = form.cleaned_data['additional_info']
+
+            # Debugging: Ensure additional_info is being set correctly
+            print("Session additional_info before save:", session.additional_info)
+
             session.save()
-            
-            messages.success(request, "Session created successfully.")
-            return redirect('student_profile',student.id)  # Replace 'session_list' with your actual redirect view
+            return redirect('student_profile', student.id)  # Redirect to the student's profile
         else:
+            # Debugging: Show form errors
+            print("Form errors:", form.errors)
             messages.error(request, "There was an error in the form.")
     else:
         form = SessionForm()
