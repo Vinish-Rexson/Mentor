@@ -133,7 +133,11 @@ class StudentSemForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'placeholder': 'Academic Observations', 'rows': 4})
     )
 
-
+    profile_picture = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={'accept': 'image/*'}),
+        help_text='Upload a profile picture (optional)'
+    )
 
     class Meta:
         model = StudentForm  # Ensure this is the correct model name
@@ -143,6 +147,7 @@ class StudentSemForm(forms.ModelForm):
             'question3', 'question4', 'question5', 'question6', 
             'question7', 'question8', 'question9', 'question10', 'question11','question12','date','mentor_name',
             'Strengths', 'Weakness', 'Opportunities', 'Challenges', 'nao', 'ao',
+            'profile_picture',
         ]
 
 
@@ -283,5 +288,6 @@ class SessionForm(forms.ModelForm):
         if commit:
             session.save()
         return session
+
 
 

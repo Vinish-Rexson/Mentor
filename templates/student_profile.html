@@ -493,9 +493,15 @@
 <div class="profile-container desktop-profile">
     <div class="profile-sidebar">
         <div class="card profile-header">
-            <img src="https://via.placeholder.com/150" alt="{{ student.name }}" class="profile-img">
-            <h1 class="profile-name">{{ student.name }}</h1>
-            <p class="profile-role">{{ student.year }} Year {{ student.branch }} Student</p>
+            {% if student_form and student_form.profile_picture %}
+                <img src="{{ student_form.profile_picture.url }}" alt="{{ student.name }}" class="profile-img">
+            {% else %}
+                <img src="https://via.placeholder.com/150" alt="{{ student.name }}" class="profile-img">
+            {% endif %}
+            <div>
+                <h1 class="profile-name">{{ student.name }}</h1>
+                <p class="profile-role">{{ student.year }} Year {{ student.branch }} Student</p>
+            </div>
             <div class="profile-stats">
                 <div class="stat-item">
                     <div class="stat-value">{{ student1.semcgpa }}</div>
@@ -623,7 +629,11 @@
 <!-- Mobile layout -->
 <div class="mobile-profile" style="display: none;">
     <div class="card profile-header">
-        <img src="https://via.placeholder.com/150" alt="{{ student.name }}" class="profile-img">
+        {% if student_form and student_form.profile_picture %}
+            <img src="{{ student_form.profile_picture.url }}" alt="{{ student.name }}" class="profile-img">
+        {% else %}
+            <img src="https://via.placeholder.com/150" alt="{{ student.name }}" class="profile-img">
+        {% endif %}
         <div>
             <h1 class="profile-name">{{ student.name }}</h1>
             <p class="profile-role">{{ student.year }} Year {{ student.branch }} Student</p>

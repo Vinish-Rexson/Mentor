@@ -176,15 +176,21 @@ def form_student_generate(request, student_id, mentor_id):
         return render(request,"already_submit.html",{'student':student})
     if request.method == 'POST':
         # If it's a POST request, populate the form with POST data
-        form = StudentSemForm(request.POST)
+        form = StudentSemForm(request.POST, request.FILES)
         
         if form.is_valid():
             # Save the form but don't commit immediately to set additional fields
             student_form = form.save(commit=False)
+            student_form.student = student  # Set the student field
             student_form.name = student.name  # Automatically set student name
             student_form.rollno = student.roll_number  # Automatically set student roll number
             student_form.mentor_name = mentor.username  # Automatically set mentor's name
-            student_form.date = form_datetime#pass current datetime to form models to pass recent forms
+            student_form.date = form_datetime  # pass current datetime to form models to pass recent forms
+            
+            # Handle profile picture
+            if 'profile_picture' in request.FILES:
+                student_form.profile_picture = request.FILES['profile_picture']
+            
             student_form.save()  # Save the form to the database
             
             
@@ -710,19 +716,24 @@ def BE(request):
 def student_profile(request, student_id):
     student = get_object_or_404(MentorshipData, id=student_id)
     mentor = request.user
-    sessions = Session.objects.filter(mentor=request.user,student=student)
+    sessions = Session.objects.filter(mentor=request.user, student=student)
     print(sessions)
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
     # student = get_object_or_404(Student, id=student_id)
     student1 = Student1.objects.get(mentorship_data=student)
+    
+    # Fetch the StudentForm instance for this student
+    student_form = StudentForm.objects.filter(student=student).first()
+
     context = {
         'sessions': sessions,
         'students': students,
         'student': student,
         'mentor': mentor,  
-        'student1':student1,
+        'student1': student1,
+        'student_form': student_form,  # Add this to the context
     }
     return render(request, 'student_profile.html', context)
 

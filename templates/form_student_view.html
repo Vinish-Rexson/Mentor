@@ -213,7 +213,7 @@
             {% else %}
                 <h3>Mentor Name: None</h3>
             {% endif %}
-            <form method="post" action="{% url 'form_student_generate' student.id mentor.id%}">
+            <form method="post" action="{% url 'form_student_generate' student.id mentor.id%}" enctype="multipart/form-data">
                 {% csrf_token %}
             
                 <!-- Student Name Input -->
@@ -226,6 +226,10 @@
                  <li class="error">{{ error }}</li>
                  {% endfor %}
                 </ul>
+                {% endif %}
+                {% if not student.studentform.profile_picture %}
+                <label for="profile-picture">Profile Picture</label>
+                <input type="file" id="profile-picture" name="profile_picture" accept="image/*">
                 {% endif %}
             
                 <!-- Student Roll Number Input -->
@@ -413,19 +417,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

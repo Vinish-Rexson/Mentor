@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 import datetime
+from django.core.validators import FileExtensionValidator
 
 class Mentor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -67,6 +68,12 @@ class StudentForm(models.Model):
     ao = models.TextField(null=True, blank=True)  
 
     date = models.DateTimeField(default=timezone.now)
+
+    profile_picture = models.ImageField(
+        upload_to='profile_pictures/',
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
+    )
 
     def __str__(self):
         return str(self.rollno)
@@ -181,5 +188,4 @@ class Student1(models.Model):
     semcgpa = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return f'{self.mentorship_data.name} ({self.mentorship_data.roll_number})'
-
+        return f'{self.mentorship_data.student.name} ({self.mentorship_data.student.roll_number})'

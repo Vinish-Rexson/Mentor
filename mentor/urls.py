@@ -1,6 +1,8 @@
 # urls.py
 from django.urls import path,include
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('signup/', views.mentor_signup, name='mentor_signup'),
@@ -31,4 +33,5 @@ urlpatterns = [
     path('attendance-data/', views.attendance_data_view, name='attendance_data_view'),
 ]
 
-
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
