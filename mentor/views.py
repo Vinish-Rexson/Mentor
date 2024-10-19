@@ -77,8 +77,9 @@ def mentor_dashboard(request, student_id=None):
 
 @login_required
 def recents(request):
-    latest_forms = StudentForm.objects.all().order_by('-date')[:3]  # Now orders by both date and time
-    latest_followupforms = StudentFollowupForm.objects.order_by('-date')[:3]
+    mentor = request.user
+    latest_forms = StudentForm.objects.filter(mentor_name=mentor).order_by('-date')[:3]  # Now orders by both date and time
+    latest_followupforms = StudentFollowupForm.objects.filter(mentor_name=mentor).order_by('-date')[:3]
     recents = {
         'mainform': latest_forms,
         'followupform': latest_followupforms
@@ -754,7 +755,8 @@ import json
 from .forms import SessionForm
 
 @login_required
-def create_session(request):
+def create_session(request, student_id):
+    student = get_object_or_404(MentorshipData, id=student_id)
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
@@ -768,7 +770,7 @@ def create_session(request):
             session.save()
             
             messages.success(request, "Session created successfully.")
-            return redirect('session_list')  # Replace 'session_list' with your actual redirect view
+            return redirect('student_profile',student.id)  # Replace 'session_list' with your actual redirect view
         else:
             messages.error(request, "There was an error in the form.")
     else:

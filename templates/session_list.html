@@ -108,9 +108,9 @@
 </div>
 
 <!-- Form Container -->
-<div id="form-container" class="form-container" style="display: none;">
+{% comment %} <div id="form-container" class="form-container" style="display: none;">
     <h3>Create New Session</h3>
-    <form id="session-form" method="POST" action="{% url 'create_session' %}">
+    <form id="session-form" method="POST" action="{% url 'create_session' student.id%}">
         {% csrf_token %}
         
         <!-- Hidden Mentor Username -->
@@ -136,9 +136,9 @@
         <button type="submit" class="btn">Submit</button>
         <button type="button" id="cancel-btn" class="btn" style="background-color: #dc3545;">Cancel</button>
     </form>
-</div>
+</div> 
 
-<button id="create-session-btn" class="btn" style="margin-top: 20px;">Create Session</button>
+<button id="create-session-btn" class="btn" style="margin-top: 20px;">Create Session</button>{% endcomment %}
 
 <script>
     document.getElementById('create-session-btn').addEventListener('click', function() {

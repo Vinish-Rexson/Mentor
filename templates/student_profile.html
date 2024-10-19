@@ -743,9 +743,9 @@
                     <i class="fas fa-qrcode"></i> Followup QR Code
                 </a>
                 <!-- New Create Session Button -->
-                <a href="{% url 'create_session'%}" class="action-btn btn-accent">
+                {% comment %} <a href="{% url 'create_session'%}" class="action-btn btn-accent">
                     <i class="fas fa-calendar-plus"></i> Create Session
-                </a>
+                </a> {% endcomment %}
             </div>            
         </div>
     </div>
@@ -756,7 +756,7 @@
     <div class="popup-content">
         <span class="close-popup">&times;</span>
         <h3>Create New Session</h3>
-        <form id="session-form" method="POST" action="{% url 'create_session' %}">
+        <form id="session-form" method="POST" action="{% url 'create_session' student.id %}">
             {% csrf_token %}
             
             <!-- Hidden Mentor Username -->
