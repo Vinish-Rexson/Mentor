@@ -151,15 +151,17 @@ def generate_qr(request, student_id, mentor_id):
     })
 
 
+@login_required
 def form_student_generate(request, student_id, mentor_id):
     # Fetch the student and mentor based on their IDs
     student = get_object_or_404(MentorshipData, id=student_id)
     mentor = get_object_or_404(User, id=mentor_id)
+    student1, created = Student1.objects.get_or_create(mentorship_data=student)
 
     # Get current date for display
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
-    form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
+    form_datetime = timezone.now()  # pass current datetime to form models to pass recent forms
     # Validate the token from GET or POST
     token = request.GET.get('token') or request.POST.get('token')
     
@@ -172,8 +174,8 @@ def form_student_generate(request, student_id, mentor_id):
 
     if existing_submission:
         # If the form was already submitted, return an HttpResponse
-        # return HttpResponse(f"Form already submitted for roll number {student.roll_number}.", status=403)
-        return render(request,"already_submit.html",{'student':student})
+        return render(request, "already_submit.html", {'student': student})
+
     if request.method == 'POST':
         # If it's a POST request, populate the form with POST data
         form = StudentSemForm(request.POST, request.FILES)
@@ -187,15 +189,9 @@ def form_student_generate(request, student_id, mentor_id):
             student_form.mentor_name = mentor.username  # Automatically set mentor's name
             student_form.date = form_datetime  # pass current datetime to form models to pass recent forms
             
-            # Handle profile picture
-            if 'profile_picture' in request.FILES:
-                student_form.profile_picture = request.FILES['profile_picture']
-            
             student_form.save()  # Save the form to the database
             
-            
-            student1, created = Student1.objects.get_or_create(mentorship_data=student)
-            # Set the fields you want to save to Student1
+            # Update Student1 model with form data
             student1.atte_ise1 = form.cleaned_data['atte_ise1']
             student1.atte_mse = form.cleaned_data['atte_mse']
             student1.attendance = form.cleaned_data['attendance']
@@ -203,6 +199,10 @@ def form_student_generate(request, student_id, mentor_id):
             student1.ise1 = form.cleaned_data['ise1']
             student1.mse = form.cleaned_data['mse']
             student1.semcgpa = form.cleaned_data['semcgpa']
+            
+            if 'profile_picture' in request.FILES:
+                student1.profile_picture = request.FILES['profile_picture']
+            
             student1.save()  # Save Student1 data
             # Redirect to a success page or confirmation that the form is filled
             return render(request, 'form_submitted.html', {'rollno': student_form.rollno})
@@ -214,7 +214,8 @@ def form_student_generate(request, student_id, mentor_id):
                 'mentor': mentor,
                 'date': form_date,
                 'display_date': display_date,
-                'token': token  # Pass the token to the template for security
+                'token': token,  # Pass the token to the template for security
+                'student1': student1
             })
     else:
         # For GET requests, return an empty form
@@ -227,7 +228,8 @@ def form_student_generate(request, student_id, mentor_id):
         'mentor': mentor,
         'date': form_date,
         'display_date': display_date,
-        'token': token  # Pass the token to the template
+        'token': token,  # Pass the token to the template
+        'student1': student1
     })
 
 def form_student(request, student_id, mentor_id):
@@ -710,22 +712,15 @@ def BE(request):
     }
 
     return render(request, 'be.html', context)
-
-
 @login_required
 def student_profile(request, student_id):
     student = get_object_or_404(MentorshipData, id=student_id)
     mentor = request.user
     sessions = Session.objects.filter(mentor=request.user, student=student)
-    print(sessions)
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
-    # student = get_object_or_404(Student, id=student_id)
     student1 = Student1.objects.get(mentorship_data=student)
-    
-    # Fetch the StudentForm instance for this student
-    student_form = StudentForm.objects.filter(student=student).first()
 
     context = {
         'sessions': sessions,
@@ -733,7 +728,6 @@ def student_profile(request, student_id):
         'student': student,
         'mentor': mentor,  
         'student1': student1,
-        'student_form': student_form,  # Add this to the context
     }
     return render(request, 'student_profile.html', context)
 

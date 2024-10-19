@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 import datetime
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ObjectDoesNotExist
 
 class Mentor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -74,9 +75,28 @@ class StudentForm(models.Model):
         blank=True,
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
     )
+    def save(self, *args, **kwargs):
+        # Call the original save method to save the StudentForm instance
+        super().save(*args, **kwargs)
+        # After saving, sync the profile picture to the corresponding Student1 instance
+        self.sync_profile_pictures()
+
+    # Sync profile pictures from StudentForm to Student1
+    def sync_profile_pictures(self):
+        try:
+            # Find the corresponding Student1 instance
+            student1 = Student1.objects.get(mentorship_data=self.student)
+            # Update the profile picture in Student1
+            student1.profile_picture = self.profile_picture
+            student1.save()  # Save the updated profile picture in Student1
+            return True
+        except ObjectDoesNotExist:
+            # Handle case where Student1 does not exist
+            return False
 
     def __str__(self):
         return str(self.rollno)
+
     
 
 
@@ -186,6 +206,11 @@ class Student1(models.Model):
     ise1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     mse = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     semcgpa = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    profile_picture = models.ImageField(
+        upload_to='profile_pictures/',
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
+    )
 
     def __str__(self):
-        return f'{self.mentorship_data.student.name} ({self.mentorship_data.student.roll_number})'
+        return f'{self.mentorship_data.name} ({self.mentorship_data.roll_number})'
