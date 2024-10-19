@@ -27,8 +27,145 @@
     </div>
 
     <div class="qr-code-section">
-        <h1>QR Code for {{ student.name }}</h1>
-        <p>Scan the QR code to access the form:</p>
-        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for {{ student.name }}">
+        <div class="qr-code-container">
+            <div class="qr-header">
+                <h1 class="qr-title">QR Code for <span class="student-name">{{ student.name }}</span></h1>
+                <p class="qr-description">Scan to access the form instantly</p>
+            </div>
+            <div class="qr-content">
+                <div class="qr-image-wrapper">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for {{ student.name }}" class="qr-image">
+                    <div class="qr-overlay">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                </div>
+                <div class="qr-instructions">
+                    <h2>How to Scan</h2>
+                    <ol>
+                        <li><i class="fas fa-mobile-alt"></i> Open your phone's camera app</li>
+                        <li><i class="fas fa-camera"></i> Point it at the QR code</li>
+                        <li><i class="fas fa-hand-pointer"></i> Tap the notification to open the form</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+        .qr-code-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+           
+            font-family: 'Poppins', sans-serif;
+        }
+        .qr-code-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .qr-code-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+        .qr-header {
+            margin-bottom: 30px;
+        }
+        .qr-title {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .student-name {
+            color: #4a69bd;
+        }
+        .qr-description {
+            color: #666;
+            font-size: 16px;
+        }
+        .qr-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .qr-image-wrapper {
+            position: relative;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-right: 20px;
+            flex: 1;
+            transition: transform 0.3s ease;
+        }
+        .qr-image-wrapper:hover {
+            transform: scale(1.05);
+        }
+        .qr-image {
+            max-width: 100%;
+            height: auto;
+        }
+        .qr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(74, 105, 189, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .qr-overlay i {
+            font-size: 48px;
+            color: white;
+        }
+        .qr-image-wrapper:hover .qr-overlay {
+            opacity: 1;
+        }
+        .qr-instructions {
+            text-align: left;
+            color: #555;
+            flex: 1;
+        }
+        .qr-instructions h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #4a69bd;
+        }
+        .qr-instructions ol {
+            padding-left: 20px;
+        }
+        .qr-instructions li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .qr-instructions li i {
+            margin-right: 10px;
+            color: #4a69bd;
+            font-size: 18px;
+        }
+        @media (max-width: 768px) {
+            .qr-content {
+                flex-direction: column;
+            }
+            .qr-image-wrapper {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
 {% endblock %}

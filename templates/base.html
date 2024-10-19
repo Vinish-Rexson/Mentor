@@ -32,7 +32,7 @@
             </a>
         </li>
         <!-- Use 'startswith' check for student details to include sub-tabs -->
-        <li class="{% if '/student_detail/' in request.path %}active{% endif %}">
+        <li class="{% if '/student_detail/' in request.path or '/generate_qr_followup/' in request.path or '/followup_form/' in request.path or '/generate_qr/' in request.path or '/form/' in request.path or '/student_profile/' in request.path %}active{% endif %}">
             <a href="/student_detail/">
                 <i class='bx bxs-group'></i>
                 <span class="text">Students Detail</span>
