@@ -825,9 +825,7 @@ def share_session_with_mentor_admin(request, session_id):
     return redirect('session_list')
 
 
-# views.py
-from django.shortcuts import render
-from .models import StudentForm, MentorshipData
+
 from django.http import JsonResponse
 
 @login_required

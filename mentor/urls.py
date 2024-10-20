@@ -32,8 +32,6 @@ urlpatterns = [
     path('progress_report/',views.progress,name = 'progress_report'),
     path('attendance-data/', views.attendance_data_view, name='attendance_data_view'),
     path('share-session/<int:session_id>/', views.share_session_with_mentor_admin, name='share_session_with_mentor_admin'),
-    
-    # Add these new URL patterns
     path('main-forms-to-observe/', views.main_forms_to_observe, name='main_forms_to_observe'),
     path('followup-forms-to-observe/', views.followup_forms_to_observe, name='followup_forms_to_observe'),
     path('remaining-forms/', views.remaining_forms, name='remaining_forms'),
