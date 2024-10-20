@@ -157,6 +157,7 @@ class MentorshipData(models.Model):
 from django.db import models
 from django.contrib.auth import get_user_model
 from .managers import DynamicFieldsManager  # Import the DynamicFieldsManager
+from mentor_admin.models import *
 
 User = get_user_model()
 
@@ -167,25 +168,29 @@ class Session(models.Model):
     mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sessions")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     # Dynamic fields for flexibility
     additional_info = models.JSONField(default=dict)
-
-    # Custom manager to handle dynamic field logic
+    
+    # Many-to-many relationship for mentor_admins who can view this session
+    mentor_admins = models.ManyToManyField(MentorAdmin, related_name="shared_sessions", blank=True)
+    
     objects = DynamicFieldsManager()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Dynamically set attributes from additional_info on initialization
         for key, value in self.additional_info.items():
             setattr(self, key, value)
 
     def save(self, *args, **kwargs):
-        # Before saving, ensure additional_info matches dynamic attributes
         for attr in self.additional_info.keys():
             if hasattr(self, attr):
                 self.additional_info[attr] = getattr(self, attr)
         super().save(*args, **kwargs)
+
+    def share_with_mentor_admin(self, mentor_admin):
+        """Function to share a session with a mentor admin."""
+        self.mentor_admins.add(mentor_admin)
 
     def __str__(self):
         return f"Session: {self.title}"
@@ -195,6 +200,7 @@ class Session(models.Model):
             models.Index(fields=['mentor']),
             models.Index(fields=['created_at']),
         ]
+
 
 
 

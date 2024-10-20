@@ -488,6 +488,42 @@
             max-width: 100%;
         }
     }
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 20% auto; /* Center modal vertically */
+        padding: 15px; /* Reduced padding */
+        border: 1px solid #888;
+        width: 40%; /* Reduced width */
+        max-width: 400px; /* Maximum width */
+        border-radius: 8px; /* Rounded corners */
+    }
+    
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 24px; /* Smaller close button */
+        font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 </style>
 
 <div class="profile-container desktop-profile">
@@ -616,12 +652,25 @@
                                 <p>No additional info available.</p>
                             {% endif %}
                         </div>
+                        <button class="share-session-btn" onclick="openModal('{{ session.id }}', '{{ session.title }}')">Share Session</button>
                     </div>
                 {% empty %}
                     <div class="no-sessions">No sessions available.</div>
                 {% endfor %}
             </div>
             <button id="create-session-btn">Create Session</button>
+        </div>
+        <!-- Modal for Sharing Session -->
+        <div id="shareModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Select Mentor Admins to Share</h2>
+                <form id="shareForm" method="POST">
+                    {% csrf_token %}
+                    <div id="mentorAdminCheckboxes"></div>
+                    <button type="submit" class="share-modal-btn">Share</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -742,10 +791,6 @@
                 <a href="{% url 'generate_qr_followup' student.id mentor.id %}" class="action-btn btn-secondary">
                     <i class="fas fa-qrcode"></i> Followup QR Code
                 </a>
-                <!-- New Create Session Button -->
-                {% comment %} <a href="{% url 'create_session'%}" class="action-btn btn-accent">
-                    <i class="fas fa-calendar-plus"></i> Create Session
-                </a> {% endcomment %}
             </div>            
         </div>
     </div>
@@ -871,5 +916,35 @@
         const walk = (x - startX) * 2;
         sessionContainer.scrollLeft = scrollLeft - walk;
     });
+
+    function openModal(sessionId, sessionTitle) {
+    // Set the action URL for the share form
+    const shareForm = document.getElementById('shareForm');
+    shareForm.action = `{% url 'share_session_with_mentor_admin' 0 %}`.replace('0', sessionId); // Replace with the actual URL
+    
+    // Populate the checkbox list for mentor admins
+    const mentorAdminCheckboxes = document.getElementById('mentorAdminCheckboxes');
+    mentorAdminCheckboxes.innerHTML = ''; // Clear existing checkboxes
+    {% for mentor_admin in available_mentor_admins %}
+        mentorAdminCheckboxes.innerHTML += `
+            <input type="checkbox" name="mentor_admins" value="{{ mentor_admin.id }}"> {{ mentor_admin.user.username }}<br>
+        `;
+    {% endfor %}
+
+    // Show the modal
+    document.getElementById('shareModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('shareModal').style.display = 'none';
+}
+
+// Close the modal if the user clicks outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('shareModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+}
 </script>
 {% endblock %}

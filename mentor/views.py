@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.contrib.staticfiles import finders
@@ -11,6 +11,7 @@ from django.db.models import Q
 from .forms import *
 from .forms import StudentFollowup_Form
 from .models import *
+from mentor_admin.models import *
 
 from io import BytesIO
 import qrcode, base64, secrets
@@ -722,6 +723,7 @@ def student_profile(request, student_id):
     readable_name = username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
     student1 = Student1.objects.get(mentorship_data=student)
+    available_mentor_admins = MentorAdmin.objects.all()
 
     context = {
         'sessions': sessions,
@@ -729,6 +731,7 @@ def student_profile(request, student_id):
         'student': student,
         'mentor': mentor,  
         'student1': student1,
+        'available_mentor_admins': available_mentor_admins,
     }
     return render(request, 'student_profile.html', context)
 
@@ -796,7 +799,30 @@ def session_list(request):
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
     students = MentorshipData.objects.filter(faculty_mentor=readable_name)
-    return render(request, 'session_list.html', {'sessions': sessions, 'students': students,})
+    available_mentor_admins = MentorAdmin.objects.all()
+
+    return render(request, 'session_list.html', {
+        'sessions': sessions,
+        'available_mentor_admins': available_mentor_admins
+    })
+
+
+def share_session_with_mentor_admin(request, session_id):
+    session = get_object_or_404(Session, id=session_id)
+
+    if request.method == "POST":
+        # Get the selected mentor_admins from the form
+        selected_admin_ids = request.POST.getlist('mentor_admins')
+        
+        # Add the selected mentor_admins to the session
+        for admin_id in selected_admin_ids:
+            mentor_admin = get_object_or_404(MentorAdmin, id=admin_id)
+            session.mentor_admins.add(mentor_admin)
+        
+        messages.success(request, f'Session "{session.title}" shared with selected mentor admins.')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+    return redirect('session_list')
 
 
 # views.py

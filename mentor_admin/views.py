@@ -71,7 +71,7 @@ def recents(request):
 # View to list all mentors
 @login_required
 def list_mentors(request):
-    mentors = MentorAdmin.objects.all()
+    mentors = MentorshipData.objects.all()
     return render(request, 'mentor_admin/list_mentors.html', {'mentors': mentors})
 
 # View to edit mentor details
@@ -95,3 +95,18 @@ def delete_mentor(request, mentor_id):
         mentor.user.delete()
         return redirect('list_mentors')
     return render(request, 'mentor_admin/delete_mentor.html', {'mentor': mentor})
+
+
+
+
+
+def mentor_admin_sessions(request):
+    # Get the logged-in mentor_admin
+    mentor_admin = request.user.mentoradmin
+
+    # Fetch sessions shared with this mentor_admin
+    shared_sessions = mentor_admin.shared_sessions.all()
+
+    return render(request, 'mentor_admin/mentor_admin_sessions.html', {
+        'shared_sessions': shared_sessions,
+    })

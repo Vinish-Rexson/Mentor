@@ -1,0 +1,61 @@
+{% extends 'mentor_admin/admin_base.html' %}
+
+{% block title %}Sessions Shared{% endblock %}
+
+{% block content %}
+
+<style>
+    .session-container {
+        display: flex;
+        flex-wrap: wrap; /* Allow wrapping of session cards */
+        justify-content: space-between; /* Space between cards */
+        margin: 20px; /* Margin around the container */
+    }
+    
+    .session-card {
+        background-color: #f9f9f9; /* Light background for cards */
+        border: 1px solid #ddd; /* Border around cards */
+        border-radius: 8px; /* Rounded corners */
+        padding: 15px; /* Padding inside cards */
+        margin: 15px; /* Reduced margin between cards */
+        width: calc(30% - 10px); /* Responsive width for cards */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        transition: transform 0.2s; /* Smooth scaling effect on hover */
+    }
+    
+    .session-card:hover {
+        transform: scale(1.02); /* Scale effect on hover */
+    }
+    
+    .no-sessions {
+        text-align: center; /* Center align no sessions message */
+        font-size: 18px; /* Slightly larger font for visibility */
+        color: #888; /* Light grey color for the message */
+    }    
+</style>
+
+<h2>Sessions Shared with You</h2>
+
+<div class="session-container">
+    {% for session in shared_sessions %}
+        <div class="session-card">
+            <h3>{{ session.title }}</h3>
+            <p><strong>Description:</strong> {{ session.description }}</p>
+            <p><strong>Mentor:</strong> {{ session.mentor.username }}</p>
+            <p><strong>Created At:</strong> {{ session.created_at|date:"D d M Y" }}</p>
+            <div class="additional-info">
+                <strong>Additional Info:</strong>
+                {% if session.additional_info %}
+                    {% for key, value in session.additional_info.items %}
+                        <strong>{{ key }}:</strong> {{ value }}<br>
+                    {% endfor %}
+                {% else %}
+                    <span>No additional info available.</span>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-sessions">No sessions have been shared with you.</div>
+    {% endfor %}
+</div>
+{% endblock %}

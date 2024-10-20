@@ -31,6 +31,7 @@ urlpatterns = [
     path('student_profile/<int:student_id>/', views.student_profile, name='student_profile'),
     path('progress_report/',views.progress,name = 'progress_report'),
     path('attendance-data/', views.attendance_data_view, name='attendance_data_view'),
+    path('share-session/<int:session_id>/', views.share_session_with_mentor_admin, name='share_session_with_mentor_admin'),
 ]
 
 if settings.DEBUG:

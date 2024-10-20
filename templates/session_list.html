@@ -101,11 +101,23 @@
                     <span>No additional info available.</span>
                 {% endif %}
             </div>
+
+            <!-- Share with Mentor Admins form -->
+            <form method="POST" action="{% url 'share_session_with_mentor_admin' session.id %}">
+                {% csrf_token %}
+                <label for="mentor-admins">Select Mentor Admins to Share:</label><br>
+                {% for mentor_admin in available_mentor_admins %}
+                    <input type="checkbox" name="mentor_admins" value="{{ mentor_admin.id }}">
+                    {{ mentor_admin.user.username }}<br>
+                {% endfor %}
+                <button type="submit">Share Session</button>
+            </form>
         </div>
     {% empty %}
         <div class="no-sessions">No sessions available.</div>
     {% endfor %}
 </div>
+
 
 <!-- Form Container -->
 {% comment %} <div id="form-container" class="form-container" style="display: none;">
