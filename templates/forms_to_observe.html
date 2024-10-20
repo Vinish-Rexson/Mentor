@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ form_type }} Forms to Observe{% endblock %}
+
+{% block content %}
+<style>
+    /* Copy the styles from mentor_dashboard.html */
+    .dashboard-container {
+        padding: 20px;
+    }
+
+    .section-wrapper {
+        margin-top: 40px;
+        margin-bottom: 30px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2d3748;
+        padding: 20px 24px;
+        background-color: #ffffff;
+        border-bottom: 2px solid #e2e8f0;
+        margin: 0;
+    }
+
+    .section-content {
+        padding: 24px;
+    }
+
+    .recent {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-gap: 24px;
+    }
+
+    .form-item {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+    }
+
+    .form-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-preview {
+        height: 160px;
+        background-color: #f7fafc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #4a5568;
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-preview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, #4299e1, #667eea);
+        opacity: 0.1;
+    }
+
+    .form-preview i {
+        font-size: 48px;
+        margin-bottom: 10px;
+        color: #4299e1;
+    }
+
+    .form-preview span {
+        font-weight: 600;
+    }
+
+    .form-info {
+        padding: 20px;
+    }
+
+    .form-info h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #2d3748;
+    }
+    
+    .form-info p {
+        font-size: 14px;
+        color: #4a5568;
+        margin-bottom: 6px;
+    }
+
+    .form-item.no-data {
+        background: #edf2f7;
+        border: 2px dashed #cbd5e0;
+        color: #4a5568;
+        padding: 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="section-wrapper">
+        <h2 class="section-title">{{ form_type }} Forms to Observe</h2>
+        <div class="section-content">
+            <div class="recent">
+                {% for form in forms %}
+                <div class="form-item">
+                    <a href="{% if form_type == 'Main' %}{% url 'form_student' form.student.id mentor.id %}{% else %}{% url 'followup_form_student' form.student.id mentor.id %}{% endif %}" class="form-link">
+                        <div class="form-preview">
+                            <i class='bx {% if form_type == 'Main' %}bxs-file-doc{% else %}bxs-file-plus{% endif %}'></i>
+                            <span>{{ form_type }} Form</span>
+                        </div>
+                        <div class="form-info">
+                            <h3>{{ form.name }}</h3>
+                            <p>Date: {{ form.date|date:"d/m/Y h:i A" }}</p>
+                            <p>Roll No: {{ form.rollno }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="form-item no-data">
+                    <p>No {{ form_type|lower }} forms to observe</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

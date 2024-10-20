@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Remaining Forms{% endblock %}
+
+{% block content %}
+<style>
+    .student-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    .student-item {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+    .student-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .student-item h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    .student-item p {
+        margin: 5px 0;
+        color: #666;
+    }
+    .missing-forms {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #e74c3c;
+    }
+    .view-profile {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .view-profile:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+<div class="head-title">
+    <div class="left">
+        <h1>Students with Remaining Forms</h1>
+        <ul class="breadcrumb">
+            <li><a href="{% url 'mentor_dashboard' %}">Dashboard</a></li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li><a class="active" href="#">Remaining Forms</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="student-list">
+    {% for item in students_with_missing_forms %}
+        <div class="student-item">
+            <h3>{{ item.student.name }}</h3>
+            <p>Roll No: {{ item.student.roll_number }}</p>
+            <p>Year: {{ item.student.year }}</p>
+            <div class="missing-forms">
+                Missing Forms: {{ item.missing_forms|join:", " }}
+            </div>
+            <a href="{% url 'student_profile' item.student.id %}" class="view-profile">View Profile</a>
+        </div>
+    {% empty %}
+        <p>No students with remaining forms.</p>
+    {% endfor %}
+</div>
+{% endblock %}

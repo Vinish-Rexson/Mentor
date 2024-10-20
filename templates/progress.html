@@ -90,32 +90,51 @@
             padding: 15px;
             text-align: center;
             width: 30%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .summary-box:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
         .summary-box h3 {
             margin-top: 0;
             color: #495057;
+            font-size: 1.1em;
         }
         .summary-box p {
             margin-bottom: 0;
-            font-size: 1.2em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #007bff;
+        }
+        .summary-box a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
         }
     </style>
 
     <!-- Summary Statistics Boxes -->
     <div class="summary-container">
         <div class="summary-box">
-            <h3>Remaining Forms</h3>
-            <p>{{ remaining_forms }}</p>
+            <a href="{% url 'remaining_forms' %}">
+                <h3>Remaining Forms</h3>
+                <p>{{ remaining_forms }}</p>
+            </a>
         </div>
         <div class="summary-box">
-            <h3>Main Forms to Observe</h3>
-            <p>{{ forms_without_observations }}</p>
+            <a href="{% url 'main_forms_to_observe' %}">
+                <h3>Main Forms to Observe</h3>
+                <p>{{ forms_without_observations }}</p>
+            </a>
         </div>
         <div class="summary-box">
-            <h3>Follow-up Forms to Observe</h3>
-            <p>{{ followup_forms_without_observations }}</p>
+            <a href="{% url 'followup_forms_to_observe' %}">
+                <h3>Follow-up Forms to Observe</h3>
+                <p>{{ followup_forms_without_observations }}</p>
+            </a>
         </div>
     </div>
 
@@ -381,3 +400,6 @@
     </script>
 </div>
 {% endblock %}
+
+
+
