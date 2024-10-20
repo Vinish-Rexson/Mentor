@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from .forms import MentorAdminSignUpForm
 from .models import MentorAdmin
+from mentor.models import *
 
 # Mentor Admin Signup View
 def mentor_admin_signup(request):
@@ -21,8 +22,51 @@ def mentor_admin_signup(request):
 
 # Mentor Admin Dashboard View
 @login_required
-def mentor_admin_dashboard(request):
-    return render(request, 'mentor_admin/dashboard.html')
+def mentor_admin_dashboard(request, student_id=None):
+    mentor = request.user
+    # Fetch the students related to this mentor
+    students = MentorshipData.objects.all()
+
+    total_forms = (
+        StudentForm.objects.filter(student__in=students).count() +
+        StudentFollowupForm.objects.filter(student__in=students).count()
+    )
+    total_sessions = Session.objects.all().count()
+    # Fetch a specific student if student_id is provided
+    student = None
+    if student_id:
+        student = get_object_or_404(MentorshipData, id=student_id)
+
+    # Call recents and unpack it directly into context
+    recent_forms = recents(request)
+
+    context = {
+        'student': student,
+        'mentor': mentor,
+        'student_count': students.count(),
+        'students': students,  # Pass the students to the template
+        'student_names': [student.name for student in students],
+        'recent_mainform': recent_forms['mainform'],
+        'recent_followupform': recent_forms['followupform'],
+        'total_forms': total_forms,
+        'total_sessions': total_sessions,
+    }
+
+    return render(request, 'mentor_admin/dashboard.html', context)
+
+
+@login_required
+def recents(request):
+    mentor = request.user
+    latest_forms = StudentForm.objects.all().order_by('-date')[:3]  # Now orders by both date and time
+    latest_followupforms = StudentFollowupForm.objects.all().order_by('-date')[:3]
+    recents = {
+        'mainform': latest_forms,
+        'followupform': latest_followupforms
+    }
+    return recents
+
+
 
 # View to list all mentors
 @login_required
