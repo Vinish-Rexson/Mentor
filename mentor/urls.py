@@ -8,7 +8,7 @@ urlpatterns = [
     path('signup/', views.mentor_signup, name='mentor_signup'),
     path('dashboard/', views.mentor_dashboard, name='mentor_dashboard'),
     
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/logout', include('django.contrib.auth.urls')),
     path('form/generate/<int:student_id>/<int:mentor_id>/', views.form_student_generate, name='form_student_generate'),
     path('form/<int:student_id>/<int:mentor_id>/', views.form_student, name='form_student'),
     path('generate_qr/<int:student_id>/<int:mentor_id>/', views.generate_qr, name='generate_qr'),
