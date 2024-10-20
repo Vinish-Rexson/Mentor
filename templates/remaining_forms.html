@@ -4,75 +4,141 @@
 
 {% block content %}
 <style>
-    .student-list {
+    :root {
+        --primary-color: #333;
+        --secondary-color: #666;
+        --background-color: #f5f5f5;
+        --card-background: #fff;
+        --border-color: #e0e0e0;
+    }
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background-color: var(--background-color);
+    }
+    .dashboard-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    .dashboard-header h1 {
+        font-size: 32px;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+    .dashboard-header p {
+        font-size: 16px;
+        color: var(--secondary-color);
+    }
+    .student-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        padding: 20px;
+        gap: 30px;
     }
-    .student-item {
-        background-color: #ffffff;
+    .student-card {
+        background-color: var(--card-background);
+        border: 1px solid var(--border-color);
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .student-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .student-header {
         padding: 20px;
-        transition: all 0.3s ease;
+        border-bottom: 1px solid var(--border-color);
     }
-    .student-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    .student-header h3 {
+        font-size: 20px;
+        color: var(--primary-color);
+        margin-bottom: 5px;
     }
-    .student-item h3 {
-        margin-top: 0;
-        color: #333;
+    .student-header p {
+        font-size: 14px;
+        color: var(--secondary-color);
     }
-    .student-item p {
-        margin: 5px 0;
-        color: #666;
+    .student-body {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     .missing-forms {
-        margin-top: 10px;
-        font-weight: bold;
-        color: #e74c3c;
+        margin-bottom: 20px;
     }
-    .view-profile {
+    .missing-forms h4 {
+        font-size: 16px;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+    .missing-forms ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .missing-forms li {
+        font-size: 14px;
+        color: var(--secondary-color);
+        margin-bottom: 5px;
+    }
+    .view-profile-btn {
+        align-self: flex-start;
+        margin-top: auto;
         display: inline-block;
-        margin-top: 10px;
-        padding: 5px 10px;
-        background-color: #3498db;
-        color: white;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: #fff;
         text-decoration: none;
         border-radius: 4px;
         transition: background-color 0.3s ease;
     }
-    .view-profile:hover {
-        background-color: #2980b9;
+    .view-profile-btn:hover {
+        background-color: #000;
+    }
+    .no-students {
+        text-align: center;
+        padding: 40px;
+        background-color: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 18px;
+        color: var(--secondary-color);
     }
 </style>
 
-<div class="head-title">
-    <div class="left">
+<div class="dashboard-container">
+    <div class="dashboard-header">
         <h1>Students with Remaining Forms</h1>
-        <ul class="breadcrumb">
-            <li><a href="{% url 'mentor_dashboard' %}">Dashboard</a></li>
-            <li><i class='bx bx-chevron-right'></i></li>
-            <li><a class="active" href="#">Remaining Forms</a></li>
-        </ul>
+        <p>Track and manage students who have pending form submissions</p>
     </div>
-</div>
 
-<div class="student-list">
-    {% for item in students_with_missing_forms %}
-        <div class="student-item">
-            <h3>{{ item.student.name }}</h3>
-            <p>Roll No: {{ item.student.roll_number }}</p>
-            <p>Year: {{ item.student.year }}</p>
-            <div class="missing-forms">
-                Missing Forms: {{ item.missing_forms|join:", " }}
+    <div class="student-grid">
+        {% for item in students_with_missing_forms %}
+            <div class="student-card">
+                <div class="student-header">
+                    <h3>{{ item.student.name }}</h3>
+                    <p>Roll No: {{ item.student.roll_number }} | Year: {{ item.student.year }}</p>
+                </div>
+                <div class="student-body">
+                    <div class="missing-forms">
+                        <h4>Missing Forms:</h4>
+                        <ul>
+                            {% for form in item.missing_forms %}
+                                <li>{{ form }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <a href="{% url 'student_profile' item.student.id %}" class="view-profile-btn">View Profile</a>
+                </div>
             </div>
-            <a href="{% url 'student_profile' item.student.id %}" class="view-profile">View Profile</a>
-        </div>
-    {% empty %}
-        <p>No students with remaining forms.</p>
-    {% endfor %}
+        {% empty %}
+            <div class="no-students">
+                <p>Great job! No students have remaining forms to submit.</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
