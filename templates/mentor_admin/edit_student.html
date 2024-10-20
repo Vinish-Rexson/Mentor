@@ -1,29 +1,88 @@
 {% extends 'mentor_admin/admin_base.html' %}
 
 {% block content %}
-<h2>Edit Student: {{ student.name }}</h2>
-<form method="post">
-    {% csrf_token %}
-    <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ student.name }}" required>
-    </div>
-    <div>
-        <label for="roll_number">Roll Number:</label>
-        <input type="text" id="roll_number" name="roll_number" value="{{ student.roll_number }}" required>
-    </div>
-    <div>
-        <label for="year">Year:</label>
-        <select id="year" name="year" required>
-            <option value="SE" {% if student.year == 'SE' %}selected{% endif %}>SE</option>
-            <option value="TE" {% if student.year == 'TE' %}selected{% endif %}>TE</option>
-            <option value="BE" {% if student.year == 'BE' %}selected{% endif %}>BE</option>
-        </select>
-    </div>
-    <div>
-        <label for="division">Division:</label>
-        <input type="text" id="division" name="division" value="{{ student.division }}" required>
-    </div>
-    <button type="submit">Update Student</button>
-</form>
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .btn-primary {
+        background-color: #007bff;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+<div class="container">
+    <h2>Edit Student: {{ student.name }}</h2>
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ student.name }}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="roll_number">Roll Number:</label>
+            <input type="text" id="roll_number" name="roll_number" value="{{ student.roll_number }}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="year">Year:</label>
+            <select id="year" name="year" class="form-control" required>
+                <option value="SE" {% if student.year == 'SE' %}selected{% endif %}>SE</option>
+                <option value="TE" {% if student.year == 'TE' %}selected{% endif %}>TE</option>
+                <option value="BE" {% if student.year == 'BE' %}selected{% endif %}>BE</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="division">Division:</label>
+            <input type="text" id="division" name="division" value="{{ student.division }}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="faculty_mentor">Faculty Mentor:</label>
+            <input type="text" id="faculty_mentor" name="faculty_mentor" value="{{ student.faculty_mentor }}" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="be_student_mentor">BE Student Mentor:</label>
+            <input type="text" id="be_student_mentor" name="be_student_mentor" value="{{ student.be_student_mentor }}" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Student</button>
+        <a href="{% url 'mentors_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
 {% endblock %}
+

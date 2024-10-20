@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Session Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .note-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .note-item span {
+            margin-right: 10px;
+        }
+        #recentSessions {
+            margin-top: 20px;
+        }
+        .session-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mentor Session Tracker</h1>
+        <div id="sessionControls">
+            <button id="startSession">Start New Session</button>
+        </div>
+        <div id="activeSession" style="display:none;">
+            <h2>Active Session</h2>
+            <p id="sessionTime"></p>
+            <div id="notes">
+                <h3>Session Notes</h3>
+                <button id="addTextNote">Add Text Note</button>
+                <button id="addBulletPoint">Add Bullet Point</button>
+                <div id="noteList"></div>
+            </div>
+            <div>
+                <h3>Action Taken</h3>
+                <textarea id="actionTaken" rows="3"></textarea>
+            </div>
+            <div id="dynamicFields">
+                <h3>Dynamic Fields</h3>
+                <button id="addDynamicField">Add Field</button>
+                <div id="dynamicFieldList"></div>
+            </div>
+            <button id="endSession">End Session</button>
+        </div>
+        <div id="recentSessions">
+            <h2>Recent Sessions</h2>
+            <div id="sessionList"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentSession = null;
+
+        document.getElementById('startSession').addEventListener('click', startNewSession);
+        document.getElementById('addTextNote').addEventListener('click', () => addNoteItem('text'));
+        document.getElementById('addBulletPoint').addEventListener('click', () => addNoteItem('bullet'));
+        document.getElementById('addDynamicField').addEventListener('click', addDynamicField);
+        document.getElementById('endSession').addEventListener('click', endSession);
+
+        function startNewSession() {
+            currentSession = {
+                id: Date.now(),
+                startTime: new Date(),
+                notes: [],
+                actionTaken: '',
+                dynamicFields: []
+            };
+            document.getElementById('sessionControls').style.display = 'none';
+            document.getElementById('activeSession').style.display = 'block';
+            document.getElementById('sessionTime').textContent = `Started at: ${currentSession.startTime.toLocaleTimeString()}`;
+            
+            // In a real implementation, you would send a request to your Django backend here
+            // fetch('/api/sessions/', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ student_id: 1 }) // Replace with actual student selection logic
+            // }).then(response => response.json())
+            //   .then(data => {
+            //     currentSession.id = data.id;
+            //   });
+        }
+
+        function addNoteItem(type) {
+            const noteList = document.getElementById('noteList');
+            const noteItem = document.createElement('div');
+            noteItem.className = 'note-item';
+            
+            if (type === 'bullet') {
+                const bullet = document.createElement('span');
+                bullet.textContent = '•';
+                noteItem.appendChild(bullet);
+            }
+            
+            const noteInput = document.createElement('input');
+            noteInput.type = 'text';
+            noteInput.placeholder = type === 'bullet' ? 'Bullet point...' : 'Text note...';
+            noteInput.addEventListener('input', (e) => updateNote(currentSession.notes.length, e.target.value));
+            
+            noteItem.appendChild(noteInput);
+            noteList.appendChild(noteItem);
+            
+            currentSession.notes.push({ type, content: '' });
+        }
+
+        function updateNote(index, content) {
+            currentSession.notes[index].content = content;
+            // In a real implementation, you would send an update to your Django backend here
+        }
+
+        function addDynamicField() {
+            const fieldList = document.getElementById('dynamicFieldList');
+            const fieldItem = document.createElement('div');
+            fieldItem.className = 'dynamic-field';
+            
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'Field name';
+            
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.placeholder = 'Field value';
+            
+            fieldItem.appendChild(nameInput);
+            fieldItem.appendChild(valueInput);
+            fieldList.appendChild(fieldItem);
+            
+            const fieldIndex = currentSession.dynamicFields.length;
+            currentSession.dynamicFields.push({ name: '', value: '' });
+            
+            nameInput.addEventListener('input', (e) => updateDynamicField(fieldIndex, 'name', e.target.value));
+            valueInput.addEventListener('input', (e) => updateDynamicField(fieldIndex, 'value', e.target.value));
+        }
+
+        function updateDynamicField(index, field, value) {
+            currentSession.dynamicFields[index][field] = value;
+            // In a real implementation, you would send an update to your Django backend here
+        }
+
+        function endSession() {
+            currentSession.actionTaken = document.getElementById('actionTaken').value;
+            // In a real implementation, you would send a final update to your Django backend here
+            
+            document.getElementById('sessionControls').style.display = 'block';
+            document.getElementById('activeSession').style.display = 'none';
+            
+            addSessionToList(currentSession);
+            resetSessionForm();
+        }
+
+        function addSessionToList(session) {
+            const sessionList = document.getElementById('sessionList');
+            const sessionItem = document.createElement('div');
+            sessionItem.className = 'session-item';
+            sessionItem.textContent = `${session.startTime.toLocaleDateString()} - ${session.notes.length > 0 ? session.notes[0].content.substring(0, 50) : 'No notes'}...`;
+            sessionList.prepend(sessionItem);
+        }
+
+        function resetSessionForm() {
+            document.getElementById('noteList').innerHTML = '';
+            document.getElementById('actionTaken').value = '';
+            document.getElementById('dynamicFieldList').innerHTML = '';
+            currentSession = null;
+        }
+
+        // Load recent sessions (in a real implementation, this would fetch from your Django backend)
+        function loadRecentSessions() {
+            // Simulated data - replace with actual API call
+            const recentSessions = [
+                { id: 1, startTime: new Date(2023, 5, 1), notes: [{ content: 'Discussed project progress' }] },
+                { id: 2, startTime: new Date(2023, 5, 3), notes: [{ content: 'Reviewed study plan' }] }
+            ];
+            
+            recentSessions.forEach(addSessionToList);
+        }
+
+        loadRecentSessions();
+    </script>
+</body>
+</html>
