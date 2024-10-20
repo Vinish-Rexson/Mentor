@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from .forms import MentorAdminSignUpForm
 from .models import MentorAdmin
 from mentor.models import *
+from django.contrib import messages
 
 # Mentor Admin Signup View
 def mentor_admin_signup(request):
@@ -95,3 +96,68 @@ def delete_mentor(request, mentor_id):
         mentor.user.delete()
         return redirect('list_mentors')
     return render(request, 'mentor_admin/delete_mentor.html', {'mentor': mentor})
+
+@login_required
+def mentors_list(request):
+    mentors = User.objects.filter(groups__name='Mentor')
+    
+    mentor_data = []
+    for mentor in mentors:
+        students = MentorshipData.objects.filter(faculty_mentor=mentor.username.replace('_', ' ').title())
+        mentor_data.append({
+            'mentor': mentor,
+            'students': students
+        })
+    
+    context = {
+        'mentor_data': mentor_data
+    }
+    return render(request, 'mentor_admin/mentors_list.html', context)
+
+@login_required
+def add_student(request, mentor_id):
+    mentor = get_object_or_404(User, id=mentor_id)
+    if request.method == 'POST':
+        # Process the form data
+        name = request.POST.get('name')
+        roll_number = request.POST.get('roll_number')
+        year = request.POST.get('year')
+        division = request.POST.get('division')
+        
+        MentorshipData.objects.create(
+            name=name,
+            roll_number=roll_number,
+            year=year,
+            division=division,
+            faculty_mentor=mentor.username.replace('_', ' ').title()
+        )
+        messages.success(request, f"Student {name} added successfully to {mentor.username}'s list.")
+        return redirect('mentors_list')
+    
+    return render(request, 'mentor_admin/add_student.html', {'mentor': mentor})
+
+@login_required
+def edit_student(request, student_id):
+    student = get_object_or_404(MentorshipData, id=student_id)
+    if request.method == 'POST':
+        # Process the form data
+        student.name = request.POST.get('name')
+        student.roll_number = request.POST.get('roll_number')
+        student.year = request.POST.get('year')
+        student.division = request.POST.get('division')
+        student.save()
+        messages.success(request, f"Student {student.name} updated successfully.")
+        return redirect('mentors_list')
+    
+    return render(request, 'mentor_admin/edit_student.html', {'student': student})
+
+@login_required
+def delete_student(request, student_id):
+    student = get_object_or_404(MentorshipData, id=student_id)
+    if request.method == 'POST':
+        mentor_name = student.faculty_mentor
+        student.delete()
+        messages.success(request, f"Student {student.name} removed from {mentor_name}'s list.")
+        return redirect('mentors_list')
+    
+    return render(request, 'mentor_admin/delete_student.html', {'student': student})

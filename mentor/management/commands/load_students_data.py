@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Load the Excel file
-        file_path = 'SE_comps_Mentor_list_Final.xlsx'
+        file_path = 'static/TE_comps_Mentor_list_Final.xlsx'
 
         # Use openpyxl to open the workbook and get all sheets (including hidden ones)
         wb = load_workbook(file_path, data_only=True)
