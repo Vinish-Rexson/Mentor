@@ -66,6 +66,12 @@
                 <span class="text">Tools</span>
             </a>
         </li>
+        <li class="{% if request.path == '/mentor_admin/mentors/' %}active{% endif %}">
+            <a href="/mentor_admin/mentors/">
+                <i class='bx bxs-group'></i>
+                <span class="text">Mentors</span>
+            </a>
+        </li>
     </ul>
     <ul class="side-menu">
         <li class="{% if request.path == '/settings/' %}active{% endif %}">

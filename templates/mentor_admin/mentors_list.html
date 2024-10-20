@@ -1,0 +1,138 @@
+{% extends 'mentor_admin/admin_base.html' %}
+
+{% block content %}
+<div class="head-title">
+    <div class="left">
+        <h1>Mentors and Students</h1>
+    </div>
+</div>
+
+<div class="mentor-list">
+    {% for data in mentor_data %}
+    <div class="mentor-card">
+        <h2 class="mentor-name">{{ data.mentor.get_full_name|default:data.mentor.username }}</h2>
+        <a href="{% url 'add_student' data.mentor.id %}" class="btn btn-primary">Add Student</a>
+        <div class="student-table-wrapper">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>Roll Number</th>
+                        <th>Name</th>
+                        <th>Year</th>
+                        <th>Division</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in data.students %}
+                    <tr>
+                        <td>{{ student.roll_number }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.year }}</td>
+                        <td>{{ student.division }}</td>
+                        <td>
+                            <a href="{% url 'edit_student' student.id %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'delete_student' student.id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No students assigned</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mentor-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    .mentor-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .mentor-name {
+        background-color: #4a5568;
+        color: #ffffff;
+        padding: 15px;
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    .student-table-wrapper {
+        padding: 15px;
+        overflow-x: auto;
+    }
+    .student-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .student-table th,
+    .student-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .student-table th {
+        background-color: #edf2f7;
+        font-weight: 600;
+        color: #4a5568;
+    }
+    .student-table tr:last-child td {
+        border-bottom: none;
+    }
+    .student-table tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+    @media screen and (max-width: 768px) {
+        .mentor-list {
+            grid-template-columns: 1fr;
+        }
+    }
+    .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .btn-primary {
+        color: #fff;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+    .btn-warning {
+        color: #fff;
+        background-color: #f0ad4e;
+        border-color: #eea236;
+    }
+    .btn-danger {
+        color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}

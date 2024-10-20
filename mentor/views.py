@@ -1014,3 +1014,71 @@ def attendance_data_view(request):
 
 
 
+
+@login_required
+def main_forms_to_observe(request):
+    mentor = request.user
+    mentor_username = mentor.username.replace('_', ' ').title()
+    mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
+    
+    forms_without_observations = StudentForm.objects.filter(
+        student__in=mentor_students,
+        nao='',
+        ao=''
+    ).order_by('-date')
+
+    context = {
+        'forms': forms_without_observations,
+        'form_type': 'Main',
+        'mentor': mentor,
+    }
+    return render(request, 'forms_to_observe.html', context)
+
+@login_required
+def followup_forms_to_observe(request):
+    mentor = request.user
+    mentor_username = mentor.username.replace('_', ' ').title()
+    mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
+    
+    followup_forms_without_observations = StudentFollowupForm.objects.filter(
+        student__in=mentor_students,
+        nao='',
+        ao=''
+    ).order_by('-date')
+
+    context = {
+        'forms': followup_forms_without_observations,
+        'form_type': 'Follow-up',
+        'mentor': mentor,
+    }
+    return render(request, 'forms_to_observe.html', context)
+
+@login_required
+def remaining_forms(request):
+    mentor = request.user
+    mentor_username = mentor.username.replace('_', ' ').title()
+    mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
+    
+    students_with_missing_forms = []
+    
+    for student in mentor_students:
+        main_form = StudentForm.objects.filter(student=student).exists()
+        followup_form = StudentFollowupForm.objects.filter(student=student).exists()
+        
+        if not main_form or not followup_form:
+            missing_forms = []
+            if not main_form:
+                missing_forms.append('Main')
+            if not followup_form:
+                missing_forms.append('Follow-up')
+            
+            students_with_missing_forms.append({
+                'student': student,
+                'missing_forms': missing_forms
+            })
+    
+    context = {
+        'students_with_missing_forms': students_with_missing_forms,
+        'mentor': mentor,
+    }
+    return render(request, 'remaining_forms.html', context)
