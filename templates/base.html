@@ -54,7 +54,7 @@
             </a>
         </li>
 
-        <li class="{% if request.path == '/progress_report/' %}active{% endif %}">
+        <li class="{% if '/progress_report/' in request.path or  '/remaining-forms/' in request.path or  '/main-forms-to-observe/' in request.path %}active{% endif %}">
             <a href="/progress_report/">
                 <i class='bx bxs-doughnut-chart'></i>
                 <span class="text">Progress Report</span>

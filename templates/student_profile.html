@@ -63,7 +63,7 @@
         border-radius: 50%;
         object-fit: cover;
         border: 5px solid var(--primary-color);
-        margin-bottom: 15px;
+        margin-bottom: 5px;
     }
 
     .profile-name {
@@ -75,19 +75,19 @@
     .profile-role {
         color: var(--secondary-color);
         font-size: 16px;
-        margin-bottom: 15px;
+        margin-bottom: 7px;
     }
 
     .profile-stats {
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
-        margin-top: 20px;
+        margin-top: 05px;
     }
 
     .stat-item {
         text-align: center;
-        margin: 10px;
+        margin: 7px;
     }
 
     .stat-value {
@@ -197,7 +197,7 @@
         overflow-x: auto;
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
-        padding: 20px 0;
+        padding: 10px 0;
         gap: 20px;
     }
     
@@ -491,24 +491,25 @@
     .modal {
         display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
+        z-index: 10000; /* Increased z-index */
         left: 0;
         top: 0;
         width: 100%; /* Full width */
         height: 100%; /* Full height */
         overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0, 0, 0); /* Fallback color */
-        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        background-color: rgba(0, 0, 0, 0.6); /* Darker background for better visibility */
     }
     
     .modal-content {
         background-color: #fefefe;
-        margin: 20% auto; /* Center modal vertically */
-        padding: 15px; /* Reduced padding */
+        margin: 15% auto;
+        padding: 20px;
         border: 1px solid #888;
-        width: 40%; /* Reduced width */
-        max-width: 400px; /* Maximum width */
-        border-radius: 8px; /* Rounded corners */
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+        position: relative;
+        z-index: 10001; /* Ensure it's above the modal background */
     }
     
     .close {
@@ -523,6 +524,109 @@
         color: black;
         text-decoration: none;
         cursor: pointer;
+    }
+
+    .share-session-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .share-session-btn:hover {
+        background-color: #3a7bc8;
+    }
+
+    /* Enhanced Modal Styles */
+    .modal {
+        background-color: rgba(0, 0, 0, 0.7); /* Darker background for better contrast */
+    }
+
+    .modal-content {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .modal-content h2 {
+        color: var(--primary-color);
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .close {
+        color: #777;
+        font-size: 28px;
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        transition: color 0.3s ease;
+    }
+
+    .close:hover {
+        color: var(--primary-color);
+    }
+
+    #mentorAdminCheckboxes {
+        margin-bottom: 20px;
+    }
+
+    #mentorAdminCheckboxes label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: var(--text-color);
+    }
+
+    #mentorAdminCheckboxes input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .share-modal-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .share-modal-btn:hover {
+        background-color: #3a7bc8;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        .modal-content {
+            padding: 20px;
+        }
+
+        .modal-content h2 {
+            font-size: 20px;
+        }
+
+        #mentorAdminCheckboxes label {
+            font-size: 14px;
+        }
+
+        .share-modal-btn {
+            padding: 10px 16px;
+            font-size: 14px;
+        }
     }
 </style>
 
@@ -931,12 +1035,14 @@
         `;
     {% endfor %}
 
-    // Show the modal
+    // Show the modal and prevent scrolling on the body
     document.getElementById('shareModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
     document.getElementById('shareModal').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
 }
 
 // Close the modal if the user clicks outside of it
