@@ -20,7 +20,7 @@ admin.site.register(StudentFollowupForm, StudentFollowupFormAdmin)
 @admin.register(MentorshipData)
 class MentorshipDataAdmin(admin.ModelAdmin):
     # Customize how the model is displayed in the admin panel
-    list_display = ('name', 'roll_number', 'division', 'faculty_mentor', 'be_student_mentor')
+    list_display = ('name', 'roll_number', 'division', 'sem', 'year', 'faculty_mentor', 'be_student_mentor')
     search_fields = ('name', 'roll_number', 'faculty_mentor', 'be_student_mentor')
     list_filter = ('division',)
 
@@ -69,3 +69,11 @@ class Student1Admin(admin.ModelAdmin):
 
 admin.site.register(Student1, Student1Admin)
 
+
+@admin.action(description='Increment semester for all students')
+def increment_semester_for_all(modeladmin, request, queryset):
+    for student in queryset:
+        if student.sem < 8:  # Ensure that the sem doesn't exceed 8
+            student.sem += 1
+            student.set_year_based_on_sem()
+            student.save()

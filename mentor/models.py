@@ -134,13 +134,18 @@ class StudentFollowupForm(models.Model):
 
 
 
+from django.db import models
+from django.utils import timezone
+import datetime
+
 class MentorshipData(models.Model):
     name = models.CharField(max_length=255)
     roll_number = models.CharField(max_length=50)
     division = models.CharField(max_length=10)
     faculty_mentor = models.CharField(max_length=255, null=True, blank=True)
     be_student_mentor = models.CharField(max_length=255, null=True, blank=True)
-    year = models.CharField(max_length=10)
+    year = models.CharField(max_length=10, blank=True)  # Year will be set based on sem
+    sem = models.IntegerField(null=True)  # Semester field
     token = models.CharField(max_length=100, null=True, blank=True)
     token_created_at = models.DateTimeField(null=True, blank=True)
 
@@ -153,10 +158,30 @@ class MentorshipData(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        # Check if sem has changed or it's a new instance
+        if not self.pk or self.has_sem_changed():
+            self.set_year_based_on_sem()
+
         # Call the original save method
         super().save(*args, **kwargs)
         # Ensure a corresponding Student1 instance exists
         self.ensure_student1_exists()
+
+    def has_sem_changed(self):
+        if not self.pk:
+            return False  # New instance, nothing to compare
+        previous = MentorshipData.objects.get(pk=self.pk)
+        return previous.sem != self.sem
+
+    def set_year_based_on_sem(self):
+        if self.sem in [1, 2]:
+            self.year = 'FE'  # First Year
+        elif self.sem in [3, 4]:
+            self.year = 'SE'  # Second Year
+        elif self.sem in [5, 6]:
+            self.year = 'TE'  # Third Year
+        elif self.sem in [7, 8]:
+            self.year = 'BE'  # Final Year
 
     def ensure_student1_exists(self):
         from .models import Student1  # Import here to avoid circular import
@@ -164,6 +189,7 @@ class MentorshipData(models.Model):
         if not Student1.objects.filter(mentorship_data=self).exists():
             # Create a new Student1 instance if it doesn't exist
             Student1.objects.create(mentorship_data=self)
+
             
 
 

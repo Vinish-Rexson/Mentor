@@ -179,62 +179,31 @@
             </a> 
         </li>
     </ul>
-
-    <div class="section-wrapper">
-        <h2 class="section-title">Recent Main Forms</h2>
-        <div class="section-content">
-            <div class="recent">
-                {% for form in recent_mainform %}
-                <div class="form-item">
-                    <span class="recency-label">{% if forloop.first %}Latest{% else %}{{ forloop.counter }} days ago{% endif %}</span>
-                    <a href="{% url 'form_student' form.student.id mentor.id %}" class="form-link">
-                        <div class="form-preview">
-                            <i class='bx bxs-file-doc'></i>
-                            <span>Main Form</span>
-                        </div>
-                        <div class="form-info">
-                            <h3>{{ form.name }}</h3>
-                            <p>Date: {{ form.date|date:"d/m/Y h:i A" }}</p>
-                            <p>Roll No: {{ form.rollno }}</p>
-                        </div>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="form-item no-data">
-                    <p>No recent main forms available</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <div class="section-wrapper">
-        <h2 class="section-title">Recent Follow-up Forms</h2>
-        <div class="section-content">
-            <div class="recent">
-                {% for followup in recent_followupform %}
-                <div class="form-item">
-                    <span class="recency-label">{% if forloop.first %}Latest{% else %}{{ forloop.counter }} days ago{% endif %}</span>
-                    <a href="{% url 'followup_form_student' followup.student.id mentor.id %}" class="form-link">
-                        <div class="form-preview">
-                            <i class='bx bxs-file-plus'></i>
-                            <span>Follow-up Form</span>
-                        </div>
-                        <div class="form-info">
-                            <h3>{{ followup.name }}</h3>
-                            <p>Date: {{ followup.date|date:"d/m/Y h:i A" }}</p>
-                            <p>Roll No: {{ followup.rollno }}</p>
-                        </div>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="form-item no-data">
-                    <p>No recent follow-up forms available</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+    <form method="post" action="{% url 'change_sem' 'increment' %}">
+        {% csrf_token %}
+        <label for="year">Select Year:</label>
+        <select name="year" id="year" required>
+            <option value="FE">First Year (FE)</option>
+            <option value="SE">Second Year (SE)</option>
+            <option value="TE">Third Year (TE)</option>
+            <option value="BE">Final Year (BE)</option>
+        </select>
+    
+        <button type="submit" class="btn btn-success">Increment Semester</button>
+    </form>
+    
+    <form method="post" action="{% url 'change_sem' 'decrement' %}">
+        {% csrf_token %}
+        <label for="year">Select Year:</label>
+        <select name="year" id="year" required>
+            <option value="FE">First Year (FE)</option>
+            <option value="SE">Second Year (SE)</option>
+            <option value="TE">Third Year (TE)</option>
+            <option value="BE">Final Year (BE)</option>
+        </select>
+    
+        <button type="submit" class="btn btn-warning">Decrement Semester</button>
+    </form>    
 </div>
 
 {% endblock %}

@@ -176,3 +176,43 @@ def delete_student(request, student_id):
         return redirect('mentors_list')
     
     return render(request, 'mentor_admin/delete_student.html', {'student': student})
+
+
+
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.http import HttpResponse
+from mentor.models import MentorshipData
+from django.contrib.auth.decorators import user_passes_test
+
+# Check if user is mentor_admin
+def is_mentor_admin(user):
+    return user.is_authenticated and user.is_staff  # Customize this check based on your project
+
+# View to increment the semester for students of a specific year
+@user_passes_test(is_mentor_admin)
+def change_sem_for_year(request, action, year):
+    if request.method == 'POST':
+        # Filter students by the selected year (FE, SE, TE, BE)
+        students = MentorshipData.objects.filter(year=year)
+        updated_students = 0
+        
+        # Loop through the students and either increment or decrement the semester
+        for student in students:
+            if action == 'increment' and student.sem < 8:
+                student.sem += 1
+            elif action == 'decrement' and student.sem > 1:
+                student.sem -= 1
+
+            student.set_year_based_on_sem()  # Automatically update the year based on the new sem
+            student.save()
+            updated_students += 1
+
+        if action == 'increment':
+            messages.success(request, f'Successfully incremented semester for {updated_students} students in {year}.')
+        else:
+            messages.success(request, f'Successfully decremented semester for {updated_students} students in {year}.')
+
+        return redirect('mentor_admin_dashboard')  # Redirect to mentor admin dashboard
+
+    return HttpResponse(status=405)  # Return method not allowed if it's not a POST request
