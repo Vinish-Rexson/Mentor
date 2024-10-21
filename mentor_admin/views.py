@@ -193,26 +193,51 @@ def is_mentor_admin(user):
 @user_passes_test(is_mentor_admin)
 def change_sem_for_year(request, action, year):
     if request.method == 'POST':
-        # Filter students by the selected year (FE, SE, TE, BE)
-        students = MentorshipData.objects.filter(year=year)
+        # Map years to their corresponding semester ranges
+        year_to_semester = {
+            'FE': [1, 2],
+            'SE': [3, 4],
+            'TE': [5, 6],
+            'BE': [7, 8]
+        }
+
+        # Get the students who belong to the selected year
+        students_in_selected_year = MentorshipData.objects.filter(year=year)
         updated_students = 0
-        
-        # Loop through the students and either increment or decrement the semester
-        for student in students:
+
+        # Increment or decrement semesters for the students in the selected year
+        for student in students_in_selected_year:
             if action == 'increment' and student.sem < 8:
                 student.sem += 1
             elif action == 'decrement' and student.sem > 1:
                 student.sem -= 1
 
-            student.set_year_based_on_sem()  # Automatically update the year based on the new sem
+            # Automatically update the year based on the new sem
+            student.set_year_based_on_sem()
             student.save()
             updated_students += 1
 
+        # Now, update the rest of the students who are not in the selected year
+        for year_key, sem_range in year_to_semester.items():
+            if year_key != year:  # Exclude the selected year group
+                other_students = MentorshipData.objects.filter(year=year_key)
+                for student in other_students:
+                    # Increment or decrement accordingly based on the action
+                    if action == 'increment' and student.sem < 8:
+                        student.sem += 1
+                    elif action == 'decrement' and student.sem > 1:
+                        student.sem -= 1
+
+                    # Automatically update the year based on the new sem
+                    student.set_year_based_on_sem()
+                    student.save()
+
         if action == 'increment':
-            messages.success(request, f'Successfully incremented semester for {updated_students} students in {year}.')
+            messages.success(request, f'Successfully incremented semester for {updated_students} students in {year}, and adjusted others accordingly.')
         else:
-            messages.success(request, f'Successfully decremented semester for {updated_students} students in {year}.')
+            messages.success(request, f'Successfully decremented semester for {updated_students} students in {year}, and adjusted others accordingly.')
 
         return redirect('mentor_admin_dashboard')  # Redirect to mentor admin dashboard
 
     return HttpResponse(status=405)  # Return method not allowed if it's not a POST request
+
