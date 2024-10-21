@@ -152,6 +152,19 @@ class MentorshipData(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        # Call the original save method
+        super().save(*args, **kwargs)
+        # Ensure a corresponding Student1 instance exists
+        self.ensure_student1_exists()
+
+    def ensure_student1_exists(self):
+        from .models import Student1  # Import here to avoid circular import
+        # Check if a Student1 instance already exists
+        if not Student1.objects.filter(mentorship_data=self).exists():
+            # Create a new Student1 instance if it doesn't exist
+            Student1.objects.create(mentorship_data=self)
+
 
 
 from django.db import models

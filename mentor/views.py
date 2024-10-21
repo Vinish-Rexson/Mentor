@@ -687,8 +687,8 @@ def TE(request):
     mentor = request.user
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
-    # te_students = MentorshipData.objects.filter(year__iexact="TE",faculty_mentor=readable_name)
-    te_students = Student.objects.filter(year = "TE ")
+    te_students = MentorshipData.objects.filter(year__iexact="TE",faculty_mentor=readable_name)
+    
     context = {
         'student_count': te_students.count(),
         'students': te_students,
@@ -703,8 +703,8 @@ def BE(request):
     mentor = request.user
     username = mentor.username
     readable_name = username.replace('_', ' ').title()
-    # be_students = MentorshipData.objects.filter(year__iexact="BE",faculty_mentor=readable_name)
-    be_students = Student.objects.filter(year = "BE")
+    be_students = MentorshipData.objects.filter(year__iexact="BE",faculty_mentor=readable_name)
+    
 
     context = {
         'student_count': be_students.count(),
