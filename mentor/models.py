@@ -164,6 +164,7 @@ class MentorshipData(models.Model):
         if not Student1.objects.filter(mentorship_data=self).exists():
             # Create a new Student1 instance if it doesn't exist
             Student1.objects.create(mentorship_data=self)
+            
 
 
 
