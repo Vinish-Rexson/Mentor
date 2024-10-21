@@ -4,6 +4,9 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Add this import at the top
+from .views import download_document, download_pdf
+
 urlpatterns = [
     path('signup/', views.mentor_signup, name='mentor_signup'),
     path('dashboard/', views.mentor_dashboard, name='mentor_dashboard'),
@@ -12,8 +15,9 @@ urlpatterns = [
     path('form/generate/<int:student_id>/<int:mentor_id>/', views.form_student_generate, name='form_student_generate'),
     path('form/<int:student_id>/<int:mentor_id>/', views.form_student, name='form_student'),
     path('generate_qr/<int:student_id>/<int:mentor_id>/', views.generate_qr, name='generate_qr'),
-    path('download/<str:rollno>/', views.download_document, name='download_document'),
-
+    path('download/<str:rollno>/', download_document, name='download_document'),
+    path('download/pdf/<str:rollno>/<str:form_type>/', views.download_pdf, name='download_pdf'),
+    
     path('followup_form/generate/<int:student_id>/<int:mentor_id>/', views.followup_form_student_generate, name='followup_form_student_generate'),
     path('followup_form/<int:student_id>/<int:mentor_id>/', views.followup_form_student, name='followup_form_student'),
     path('generate_qr_followup/<int:student_id>/<int:mentor_id>/', views.generate_qr_followup, name='generate_qr_followup'),

@@ -222,6 +222,48 @@
     width: 100%; /* Take full width */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
 }
+.download-container {
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.download-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.download-options {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.download-option {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.download-option:hover {
+    background-color: #f1f1f1;
+}
+
+.download-container:hover .download-options {
+    display: block;
+}
 
         
         
@@ -244,6 +286,15 @@
             {% if success_message %}
                 <div class="alert alert-success">
                     {{ success_message }}
+                </div>
+            {% endif %}
+            {% if form_exists %}
+                <div class="download-container">
+                    <button class="download-btn">Download Form</button>
+                    <div class="download-options">
+                        <a href="{% url 'download_document' student.roll_number %}" class="download-option">Download as Word</a>
+                        <a href="{% url 'download_pdf' student.roll_number 'main' %}" class="download-option">Download as PDF</a>
+                    </div>
                 </div>
             {% endif %}
 
@@ -373,6 +424,27 @@
 
         </div>
     </div>
+    ...
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.querySelector('.download-btn');
+        const downloadOptions = document.querySelector('.download-options');
+
+        downloadBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            downloadOptions.style.display = downloadOptions.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!downloadOptions.contains(e.target) && e.target !== downloadBtn) {
+                downloadOptions.style.display = 'none';
+            }
+        });
+    });
+</script>
 
 
     <script>
@@ -439,3 +511,6 @@
 </body>
 </html>
 {% endblock %}
+
+
+

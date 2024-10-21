@@ -16,6 +16,7 @@ from mentor_admin.models import *
 from io import BytesIO
 import qrcode, base64, secrets
 from docxtpl import DocxTemplate
+import pdfkit  # Ensure you have this package installed
 
 
 
@@ -242,6 +243,7 @@ def form_student(request, student_id, mentor_id):
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
     form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
+    form_exists = StudentForm.objects.filter(rollno=student.roll_number).exists()#check if form exists for download button
 
     try:
         # Check if a form entry for the given student already exists
@@ -286,6 +288,7 @@ def form_student(request, student_id, mentor_id):
                 'display_date': display_date,
                 'success_message': 'Form has been successfully updated for roll number ' + student_form.rollno, # Success message,
                 'preview': preview,
+                'form_exists': form_exists,
             })
         else:
             print("Form errors:", form.errors)  # Debugging statement
@@ -297,6 +300,7 @@ def form_student(request, student_id, mentor_id):
                 'display_date': display_date,
                 'errors': form.errors,
                 'preview': preview,
+                'form_exists': form_exists,
             })
     else:
         # If there is an existing form, populate it, else use an empty form
@@ -314,6 +318,7 @@ def form_student(request, student_id, mentor_id):
         'date': form_date,
         'display_date': display_date,
         'preview': preview,
+        'form_exists': form_exists,
     })
 
 
@@ -361,6 +366,47 @@ def download_document(request, rollno):
 }
     # Call the document generation function
     return generate_document(form_dict)
+
+from django.http import HttpResponse
+from io import BytesIO
+from docx2pdf import convert
+import tempfile
+import os
+import pythoncom
+
+def download_pdf(request, rollno, form_type='main'):
+    # Initialize COM library
+    pythoncom.CoInitialize()
+
+    # Get the Word document using the existing download_document function
+    if form_type == 'main':
+        word_response = download_document(request, rollno)
+    else:  # follow-up form
+        word_response = download_follow_document(request, rollno)
+
+    # Check if the response is valid
+    if word_response.status_code != 200:
+        return word_response  # Return the error response if any
+
+    # Create a temporary directory to store the files
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Save the Word document to a temporary file
+        word_file_path = os.path.join(tmpdirname, f"{rollno}_{form_type}.docx")
+        with open(word_file_path, 'wb') as word_file:
+            word_file.write(word_response.content)
+
+        # Convert the Word document to PDF
+        pdf_file_path = os.path.join(tmpdirname, f"{rollno}_{form_type}.pdf")
+        convert(word_file_path, pdf_file_path)
+
+        # Read the PDF file
+        with open(pdf_file_path, 'rb') as pdf_file:
+            pdf_data = pdf_file.read()
+
+    # Return the PDF in the response
+    response = HttpResponse(pdf_data, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename={rollno}_{form_type}.pdf'
+    return response
 
 def generate_document(form_dict):
     # Find the template document (adjust the path according to your project structure)
@@ -576,6 +622,7 @@ def followup_form_student(request, student_id, mentor_id):
     display_date = timezone.now().strftime("%d/%m/%Y")
     form_date = timezone.now().strftime("%Y-%m-%d")
     form_datetime = timezone.now()#pass current datetime to form models to pass recent forms
+    form_exists = StudentFollowupForm.objects.filter(rollno=student.roll_number).exists()#check if form exists for download button
 
     try:
         # Check if a follow-up form entry for the given student already exists
@@ -614,7 +661,8 @@ def followup_form_student(request, student_id, mentor_id):
                 'mentor': mentor,  # Pass the mentor (user) to the template
                 'date': form_date,
                 'display_date': display_date,
-                'success_message': 'Follow Form has been successfully updated for roll number ' + student_form.rollno  # Success message
+                'success_message': 'Follow Form has been successfully updated for roll number ' + student_form.rollno,  # Success message
+                'form_exists': form_exists,
             })  # Debugging statement
 
             # return render(request, 'follow_form_submitted.html', {'rollno': student_form.rollno})
@@ -626,7 +674,8 @@ def followup_form_student(request, student_id, mentor_id):
                 'mentor': mentor,
                 'date': form_date,
                 'display_date': display_date,
-                'errors': form.errors
+                'errors': form.errors,
+                'form_exists': form_exists,
             })
     else:
         # If there is an existing follow-up form, populate it, else use an empty form
@@ -642,7 +691,8 @@ def followup_form_student(request, student_id, mentor_id):
         'student': student,
         'mentor': mentor,
         'date': form_date,
-        'display_date': display_date
+        'display_date': display_date,
+        'form_exists': form_exists,
     })
 
 
@@ -1080,3 +1130,10 @@ def remaining_forms(request):
         'mentor': mentor,
     }
     return render(request, 'remaining_forms.html', context)
+
+
+
+
+
+
+
