@@ -187,7 +187,7 @@ from django.contrib.auth.decorators import user_passes_test
 
 # Check if user is mentor_admin
 def is_mentor_admin(user):
-    return user.is_authenticated and user.is_staff  # Customize this check based on your project
+    return user.is_authenticated  # Customize this check based on your project
 
 # View to increment the semester for students of a specific year
 @user_passes_test(is_mentor_admin)

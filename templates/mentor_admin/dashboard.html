@@ -179,31 +179,47 @@
             </a> 
         </li>
     </ul>
-    <form method="post" action="{% url 'change_sem' 'increment' %}">
+    <form method="post" id="increment-form">
         {% csrf_token %}
-        <label for="year">Select Year:</label>
-        <select name="year" id="year" required>
+        <label for="increment-year">Select Year:</label>
+        <select name="year" id="increment-year" required>
             <option value="FE">First Year (FE)</option>
             <option value="SE">Second Year (SE)</option>
             <option value="TE">Third Year (TE)</option>
             <option value="BE">Final Year (BE)</option>
         </select>
     
-        <button type="submit" class="btn btn-success">Increment Semester</button>
+        <button type="button" onclick="submitForm('increment')">Increment Semester</button>
     </form>
     
-    <form method="post" action="{% url 'change_sem' 'decrement' %}">
+    <form method="post" id="decrement-form">
         {% csrf_token %}
-        <label for="year">Select Year:</label>
-        <select name="year" id="year" required>
+        <label for="decrement-year">Select Year:</label>
+        <select name="year" id="decrement-year" required>
             <option value="FE">First Year (FE)</option>
             <option value="SE">Second Year (SE)</option>
             <option value="TE">Third Year (TE)</option>
             <option value="BE">Final Year (BE)</option>
         </select>
     
-        <button type="submit" class="btn btn-warning">Decrement Semester</button>
-    </form>    
+        <button type="button" onclick="submitForm('decrement')">Decrement Semester</button>
+    </form>
+    
+    <script>
+    function submitForm(action) {
+        const year = document.getElementById(action === 'increment' ? 'increment-year' : 'decrement-year').value;
+    
+        // Construct the URL for the action with the selected year
+        const url = `/mentor_admin/change-sem/${action}/${year}/`;  // Using the correct URL format
+    
+        const form = action === 'increment' ? document.getElementById('increment-form') : document.getElementById('decrement-form');
+    
+        // Set the form action to the constructed URL
+        form.action = url;
+    
+        form.submit();
+    }
+    </script>    
 </div>
 
 {% endblock %}
