@@ -39,18 +39,10 @@
             </a>
         </li>
         
-        
-        <li class="{% if request.path == '/mentor_admin/form_dashboard/' %}active{% endif %}">
-            <a href="/mentor_admin/form_dashboard/">
-                <i class='bx bxs-message-dots'></i>
-                <span class="text">Forms</span>
-            </a>
-        </li>
-        
         <li class="{% if request.path == '/mentor_admin/sessions/' %}active{% endif %}">
             <a href="/mentor_admin/sessions/">
                 <i class='bx bxs-message-dots'></i>
-                <span class="text">Session</span>
+                <span class="text">Sessions Shared</span>
             </a>
         </li>
 
@@ -60,12 +52,7 @@
                 <span class="text">Progress Report</span>
             </a>
         </li>
-        <li class="{% if request.path == '/mentor_admin/update_semester/' %}active{% endif %}">
-            <a href="/mentor_admin/update_semester/">
-                <i class='bx bxs-shopping-bag-alt'></i>
-                <span class="text">Update semester</span>
-            </a>
-        </li>
+
         <li class="{% if request.path == '/mentor_admin/mentors/' %}active{% endif %}">
             <a href="/mentor_admin/mentors/">
                 <i class='bx bxs-group'></i>
