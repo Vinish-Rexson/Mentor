@@ -4,41 +4,55 @@
 <style>
     .mentor-list {
         display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Display three mentors per row */
+        grid-template-columns: repeat(2, 1fr);
         gap: 20px;
         padding: 20px;
     }
     .mentor-card {
         background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        transition: box-shadow 0.3s ease;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+    .mentor-card:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
     .mentor-name {
-        background-color: #4a5568;
+        background-color: #3498db;
         color: #ffffff;
-        padding: 15px;
+        padding: 10px 15px;
         margin: 0;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
     .student-table-wrapper {
-        padding: 15px;
-        overflow-x: auto;
+        padding: 10px;
+        overflow-y: auto;
+        flex-grow: 1;
     }
     .student-table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.9rem;
     }
     .student-table th,
     .student-table td {
-        padding: 12px; /* Increase padding for better readability */
+        padding: 8px;
         text-align: left;
         border-bottom: 1px solid #e2e8f0;
     }
     .student-table th {
-        background-color: #edf2f7;
+        background-color: #f8fafc;
         font-weight: 600;
-        color: #4a5568;
+        color: #2c3e50;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
     .student-table tr:last-child td {
         border-bottom: none;
@@ -46,47 +60,66 @@
     .student-table tr:nth-child(even) {
         background-color: #f8fafc;
     }
-    @media screen and (max-width: 1024px) {
-        .mentor-list {
-            grid-template-columns: 1fr; /* Stack mentors on smaller screens */
-        }
-    }
     .btn {
         display: inline-block;
-        padding: 8px 16px; /* Increase button size */
-        margin-bottom: 0;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 1.42857143;
+        padding: 6px 12px;
+        margin: 3px;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1.5;
         text-align: center;
         white-space: nowrap;
         vertical-align: middle;
         cursor: pointer;
-        border: 1px solid transparent;
+        border: none;
         border-radius: 4px;
+        transition: all 0.3s ease;
     }
     .btn-primary {
         color: #fff;
-        background-color: #337ab7;
-        border-color: #2e6da4;
+        background-color: #3498db;
     }
     .btn-warning {
         color: #fff;
-        background-color: #f0ad4e;
-        border-color: #eea236;
+        background-color: #f39c12;
     }
     .btn-danger {
         color: #fff;
-        background-color: #d9534f;
-        border-color: #d43f3a;
+        background-color: #e74c3c;
+    }
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
     }
     .btn-sm {
-        padding: 6px 12px;
-        font-size: 12px;
-        line-height: 1.5;
-        border-radius: 3px;
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+    .card-actions {
+        padding: 8px;
+        background-color: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+    @media screen and (max-width: 1200px) {
+        .mentor-list {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media screen and (max-width: 768px) {
+        .mentor-card {
+            height: auto;
+            max-height: 400px;
+        }
+        .student-table th,
+        .student-table td {
+            padding: 6px;
+        }
+        .btn {
+            padding: 5px 10px;
+        }
     }
 </style>
+
 <div class="head-title">
     <div class="left">
         <h1>Mentors and Students</h1>
@@ -97,15 +130,14 @@
     {% for data in mentor_data %}
     <div class="mentor-card">
         <h2 class="mentor-name">{{ data.mentor.get_full_name|default:data.mentor.username }}</h2>
-        <a href="{% url 'add_student' data.mentor.id %}" class="btn btn-primary">Add Student</a>
         <div class="student-table-wrapper">
             <table class="student-table">
                 <thead>
                     <tr>
-                        <th>Roll Number</th>
+                        <th>Roll No.</th>
                         <th>Name</th>
                         <th>Year</th>
-                        <th>Division</th>
+                        <th>Div</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -129,8 +161,10 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-actions">
+            <a href="{% url 'add_student' data.mentor.id %}" class="btn btn-primary">Add Student</a>
+        </div>
     </div>
     {% endfor %}
 </div>
 {% endblock %}
-

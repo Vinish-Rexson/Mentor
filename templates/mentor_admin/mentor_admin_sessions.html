@@ -1,61 +1,123 @@
 {% extends 'mentor_admin/admin_base.html' %}
 
-{% block title %}Sessions Shared{% endblock %}
+{% block title %}Shared Sessions{% endblock %}
 
 {% block content %}
-
 <style>
+    .sessions-header {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sessions-header h2 {
+        margin: 0;
+        color: #333;
+        font-size: 24px;
+    }
+
     .session-container {
-        display: flex;
-        flex-wrap: wrap; /* Allow wrapping of session cards */
-        justify-content: space-between; /* Space between cards */
-        margin: 20px; /* Margin around the container */
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
     }
     
     .session-card {
-        background-color: #f9f9f9; /* Light background for cards */
-        border: 1px solid #ddd; /* Border around cards */
-        border-radius: 8px; /* Rounded corners */
-        padding: 15px; /* Padding inside cards */
-        margin: 15px; /* Reduced margin between cards */
-        width: calc(30% - 10px); /* Responsive width for cards */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-        transition: transform 0.2s; /* Smooth scaling effect on hover */
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
     }
     
     .session-card:hover {
-        transform: scale(1.02); /* Scale effect on hover */
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .session-header {
+        background-color: #4a90e2;
+        color: white;
+        padding: 15px;
+    }
+    
+    .session-header h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+    
+    .session-body {
+        padding: 20px;
+    }
+    
+    .session-info {
+        margin-bottom: 10px;
+    }
+    
+    .session-info strong {
+        color: #555;
+    }
+    
+    .additional-info {
+        background-color: #f9f9f9;
+        border-top: 1px solid #eee;
+        padding: 15px;
+    }
+    
+    .additional-info-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
     }
     
     .no-sessions {
-        text-align: center; /* Center align no sessions message */
-        font-size: 18px; /* Slightly larger font for visibility */
-        color: #888; /* Light grey color for the message */
-    }    
+        text-align: center;
+        font-size: 18px;
+        color: #888;
+        padding: 40px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        margin: 20px;
+    }
 </style>
 
-<h2>Sessions Shared with You</h2>
+<div class="sessions-header">
+    <h2>Sessions Shared with You</h2>
+</div>
 
 <div class="session-container">
     {% for session in shared_sessions %}
         <div class="session-card">
-            <h3>{{ session.title }}</h3>
-            <p><strong>Description:</strong> {{ session.description }}</p>
-            <p><strong>Mentor:</strong> {{ session.mentor.username }}</p>
-            <p><strong>Created At:</strong> {{ session.created_at|date:"D d M Y" }}</p>
+            <div class="session-header">
+                <h3>{{ session.title }}</h3>
+            </div>
+            <div class="session-body">
+                <div class="session-info">
+                    <strong>Description:</strong> {{ session.description }}
+                </div>
+                <div class="session-info">
+                    <strong>Mentor:</strong> {{ session.mentor.username }}
+                </div>
+                <div class="session-info">
+                    <strong>Created:</strong> {{ session.created_at|date:"D d M Y" }}
+                </div>
+            </div>
             <div class="additional-info">
-                <strong>Additional Info:</strong>
+                <div class="additional-info-title">Additional Info:</div>
                 {% if session.additional_info %}
                     {% for key, value in session.additional_info.items %}
-                        <strong>{{ key }}:</strong> {{ value }}<br>
+                        <div><strong>{{ key }}:</strong> {{ value }}</div>
                     {% endfor %}
                 {% else %}
-                    <span>No additional info available.</span>
+                    <div>No additional info available.</div>
                 {% endif %}
             </div>
         </div>
     {% empty %}
-        <div class="no-sessions">No sessions have been shared with you.</div>
+        <div class="no-sessions">No sessions have been shared with you yet.</div>
     {% endfor %}
 </div>
 {% endblock %}
