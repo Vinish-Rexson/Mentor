@@ -158,22 +158,16 @@ class MentorshipData(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Check if sem has changed or it's a new instance
-        if not self.pk or self.has_sem_changed():
-            self.set_year_based_on_sem()
+        # Prevent set_year_based_on_sem() from being called when manually changing sem in views
+        if not kwargs.pop('skip_year_update', False):
+            self.set_year_based_on_sem()  # Only auto-update year if not skipped
 
-        # Call the original save method
         super().save(*args, **kwargs)
         # Ensure a corresponding Student1 instance exists
         self.ensure_student1_exists()
 
-    def has_sem_changed(self):
-        if not self.pk:
-            return False  # New instance, nothing to compare
-        previous = MentorshipData.objects.get(pk=self.pk)
-        return previous.sem != self.sem
-
     def set_year_based_on_sem(self):
+        """ Automatically update the year based on the current semester. """
         if self.sem in [1, 2]:
             self.year = 'FE'  # First Year
         elif self.sem in [3, 4]:
@@ -182,6 +176,22 @@ class MentorshipData(models.Model):
             self.year = 'TE'  # Third Year
         elif self.sem in [7, 8]:
             self.year = 'BE'  # Final Year
+
+    def increment_semester(self):
+        if self.sem < 8:
+            self.sem += 1
+            if self.sem in [3, 5, 7]:
+                # Update year when moving to a new academic year
+                self.set_year_based_on_sem()
+        self.save()
+
+    def decrement_semester(self):
+        if self.sem > 1:
+            self.sem -= 1
+            if self.sem in [2, 4, 6]:
+                # Update year when moving to a previous academic year
+                self.set_year_based_on_sem()
+        self.save()
 
     def ensure_student1_exists(self):
         from .models import Student1  # Import here to avoid circular import

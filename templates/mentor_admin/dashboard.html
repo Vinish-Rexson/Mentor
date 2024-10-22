@@ -206,6 +206,29 @@
     #decrement-form button:hover {
         background-color: #dd6b20;
     }
+
+    .message-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #e6f3ff;
+        border: 1px solid #b3d7ff;
+    }
+
+    .message-container .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        background-color: #ffffff;
+    }
+
+    .message-container .message.success {
+        border-left: 4px solid #48bb78;
+    }
+
+    .message-container .message.info {
+        border-left: 4px solid #4299e1;
+    }
 </style>
 
 <div class="dashboard-container">
@@ -302,6 +325,17 @@
         form.submit();
     }
     </script>    
+
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 </div>
 
 {% endblock %}
