@@ -229,6 +229,41 @@
     .message-container .message.info {
         border-left: 4px solid #4299e1;
     }
+
+    .batch-distribution-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .batch-distribution-table th,
+    .batch-distribution-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .batch-distribution-table th {
+        background-color: #4299e1;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .batch-distribution-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .batch-distribution-table tr:nth-child(even) {
+        background-color: #f7fafc;
+    }
+
+    .batch-info {
+        margin-bottom: 8px;
+    }
 </style>
 
 <div class="dashboard-container">
@@ -291,7 +326,12 @@
                 <option value="TE">Third Year (TE)</option>
                 <option value="BE">Final Year (BE)</option>
             </select>
-        
+            <label for="increment-batch">Select Batch:</label>
+            <select name="batch" id="increment-batch" required>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
             <button type="button" onclick="submitForm('increment')">Increment Semester</button>
         </form>
         
@@ -305,7 +345,12 @@
                 <option value="TE">Third Year (TE)</option>
                 <option value="BE">Final Year (BE)</option>
             </select>
-        
+            <label for="decrement-batch">Select Batch:</label>
+            <select name="batch" id="decrement-batch" required>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
             <button type="button" onclick="submitForm('decrement')">Decrement Semester</button>
         </form>
     </div>
@@ -313,9 +358,10 @@
     <script>
     function submitForm(action) {
         const year = document.getElementById(action === 'increment' ? 'increment-year' : 'decrement-year').value;
+        const batch = document.getElementById(action === 'increment' ? 'increment-batch' : 'decrement-batch').value;
     
         // Construct the URL for the action with the selected year
-        const url = `/mentor_admin/change-sem/${action}/${year}/`;  // Using the correct URL format
+        const url = `/mentor_admin/change-sem/${action}/${year}/`;
     
         const form = action === 'increment' ? document.getElementById('increment-form') : document.getElementById('decrement-form');
     
@@ -335,6 +381,40 @@
         {% endfor %}
     </div>
     {% endif %}
+
+    <div class="section-wrapper">
+        <h2 class="section-title">Current Batch Distribution</h2>
+        <div class="section-content">
+            <table class="batch-distribution-table">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Batch Information</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for year, batches in year_batch_distribution.items %}
+                        <tr>
+                            <td>{{ year }}</td>
+                            <td>
+                                {% for batch in batches %}
+                                    <div class="batch-info">
+                                        Batch {{ batch.batch }}:
+                                        {% if batch.min_sem == batch.max_sem %}
+                                            Semester {{ batch.min_sem }},
+                                        {% else %}
+                                            Semesters {{ batch.min_sem }} - {{ batch.max_sem }},
+                                        {% endif %}
+                                        {{ batch.count }} students
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
 

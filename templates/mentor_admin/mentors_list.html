@@ -138,6 +138,7 @@
                         <th>Name</th>
                         <th>Year</th>
                         <th>Div</th>
+                        <th>Batch</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -148,6 +149,7 @@
                         <td>{{ student.name }}</td>
                         <td>{{ student.year }}</td>
                         <td>{{ student.division }}</td>
+                        <td>{{ student.batch }}</td>
                         <td>
                             <a href="{% url 'edit_student' student.id %}" class="btn btn-sm btn-warning">Edit</a>
                             <a href="{% url 'delete_student' student.id %}" class="btn btn-sm btn-danger">Delete</a>
@@ -155,7 +157,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5">No students assigned</td>
+                        <td colspan="6">No students assigned</td>
                     </tr>
                     {% endfor %}
                 </tbody>

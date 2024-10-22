@@ -7,6 +7,8 @@ from .models import MentorAdmin
 from mentor.models import *
 from django.contrib import messages
 from django.db.models import Count, Avg  # Add Avg here
+from django.db import transaction
+from django.utils import timezone
 
 # Mentor Admin Signup View
 def mentor_admin_signup(request):
@@ -42,6 +44,19 @@ def mentor_admin_dashboard(request, student_id=None):
     # Call recents and unpack it directly into context
     recent_forms = recents(request)
 
+    # Get batch distribution
+    batch_distribution = MentorshipData.objects.values('year', 'batch').annotate(count=Count('id')).order_by('year', 'batch')
+
+    # Organize batch distribution by year
+    year_batch_distribution = {}
+    for item in batch_distribution:
+        if item['year'] not in year_batch_distribution:
+            year_batch_distribution[item['year']] = []
+        year_batch_distribution[item['year']].append({
+            'batch': item['batch'],
+            'count': item['count']
+        })
+
     context = {
         'student': student,
         'mentor': mentor,
@@ -52,6 +67,7 @@ def mentor_admin_dashboard(request, student_id=None):
         'recent_followupform': recent_forms['followupform'],
         'total_forms': total_forms,
         'total_sessions': total_sessions,
+        'year_batch_distribution': year_batch_distribution,
     }
 
     return render(request, 'mentor_admin/dashboard.html', context)
@@ -138,13 +154,17 @@ def add_student(request, mentor_id):
         name = request.POST.get('name')
         roll_number = request.POST.get('roll_number')
         year = request.POST.get('year')
+        sem = request.POST.get('sem')
         division = request.POST.get('division')
+        batch = request.POST.get('batch')
         
         MentorshipData.objects.create(
             name=name,
             roll_number=roll_number,
             year=year,
+            sem=sem,
             division=division,
+            batch=batch,
             faculty_mentor=mentor.username.replace('_', ' ').title()
         )
         messages.success(request, f"Student {name} added successfully to {mentor.username}'s list.")
@@ -156,11 +176,14 @@ def add_student(request, mentor_id):
 def edit_student(request, student_id):
     student = get_object_or_404(MentorshipData, id=student_id)
     if request.method == 'POST':
-        # Process the form data
         student.name = request.POST.get('name')
         student.roll_number = request.POST.get('roll_number')
         student.year = request.POST.get('year')
+        student.sem = request.POST.get('sem')
         student.division = request.POST.get('division')
+        student.batch = request.POST.get('batch')
+        student.faculty_mentor = request.POST.get('faculty_mentor')
+        student.be_student_mentor = request.POST.get('be_student_mentor')
         student.save()
         messages.success(request, f"Student {student.name} updated successfully.")
         return redirect('mentors_list')
@@ -191,27 +214,39 @@ def is_mentor_admin(user):
     return user.is_authenticated  # Customize this check based on your project
 
 # View to increment the semester for students of a specific year
-from django.db import transaction
-
 @login_required
 @user_passes_test(is_mentor_admin)
 def change_sem_for_year(request, action, year):
     if request.method == 'POST':
-        # Get the students in the selected year
-        students_in_selected_year = MentorshipData.objects.filter(year=year)
+        batch = request.POST.get('batch')
+
+        if not batch:
+            messages.error(request, 'Please select a batch.')
+            return redirect('mentor_admin_dashboard')
+
+        students_in_batch = MentorshipData.objects.filter(year=year, batch=batch)
+        total_students = students_in_batch.count()
         updated_students = 0
 
-        with transaction.atomic():  # Ensure atomic updates
-            for student in students_in_selected_year:
+        with transaction.atomic():
+            for student in students_in_batch:
                 if action == 'increment':
-                    student.increment_semester()
+                    if student.sem < 8:
+                        student.sem += 1
+                        updated_students += 1
                 elif action == 'decrement':
-                    student.decrement_semester()
-                updated_students += 1
+                    if student.sem > 1:
+                        student.sem -= 1
+                        updated_students += 1
+                student.set_year_based_on_sem()
+                student.save()
 
-        # Display a success message
-        action_word = 'incremented' if action == 'increment' else 'decremented'
-        messages.success(request, f'Successfully {action_word} semester for {updated_students} students in {year}.')
+        # Check if all students in the batch were updated
+        if updated_students == total_students:
+            action_word = 'incremented' if action == 'increment' else 'decremented'
+            messages.success(request, f'Successfully {action_word} semester for all {updated_students} students in {year} (Batch {batch}).')
+        else:
+            messages.warning(request, f'Updated {updated_students} out of {total_students} students in {year} (Batch {batch}). Some students could not be updated due to semester limits.')
 
         return redirect('mentor_admin_dashboard')
 
@@ -340,6 +375,10 @@ def admin_progress_report(request):
     }
     
     return render(request, 'mentor_admin/progress_report.html', context)
+
+
+
+
 
 
 

@@ -148,6 +148,7 @@ class MentorshipData(models.Model):
     sem = models.IntegerField(null=True)  # Semester field
     token = models.CharField(max_length=100, null=True, blank=True)
     token_created_at = models.DateTimeField(null=True, blank=True)
+    batch = models.IntegerField(null=True, blank=True)  # New field for batch
 
     def is_token_expired(self):
         if not self.token_created_at:
@@ -180,18 +181,14 @@ class MentorshipData(models.Model):
     def increment_semester(self):
         if self.sem < 8:
             self.sem += 1
-            if self.sem in [3, 5, 7]:
-                # Update year when moving to a new academic year
-                self.set_year_based_on_sem()
-        self.save()
+            self.set_year_based_on_sem()
+        self.save(skip_year_update=True)
 
     def decrement_semester(self):
         if self.sem > 1:
             self.sem -= 1
-            if self.sem in [2, 4, 6]:
-                # Update year when moving to a previous academic year
-                self.set_year_based_on_sem()
-        self.save()
+            self.set_year_based_on_sem()
+        self.save(skip_year_update=True)
 
     def ensure_student1_exists(self):
         from .models import Student1  # Import here to avoid circular import
@@ -272,3 +269,4 @@ class Student1(models.Model):
 
     def __str__(self):
         return f'{self.mentorship_data.name} ({self.mentorship_data.roll_number})'
+
