@@ -10,4 +10,5 @@ urlpatterns = [
     path('edit_student/<int:student_id>/', views.edit_student, name='edit_student'),
     path('delete_student/<int:student_id>/', views.delete_student, name='delete_student'),
     path('change-sem/<str:action>/<str:year>/', views.change_sem_for_year, name='change_sem'),
+    path('progress_report/', views.admin_progress_report, name='admin_progress_report'),
 ]

@@ -6,6 +6,7 @@ from .forms import MentorAdminSignUpForm
 from .models import MentorAdmin
 from mentor.models import *
 from django.contrib import messages
+from django.db.models import Count, Avg  # Add Avg here
 
 # Mentor Admin Signup View
 def mentor_admin_signup(request):
@@ -241,3 +242,83 @@ def change_sem_for_year(request, action, year):
 
     return HttpResponse(status=405)  # Return method not allowed if it's not a POST request
 
+@login_required
+def admin_progress_report(request):
+    # Get all mentors
+    mentors = User.objects.filter(groups__name='Mentor')
+    
+    mentor_data = []
+    for mentor in mentors:
+        mentor_username = mentor.username.replace('_', ' ').title()
+        mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
+        total_students = mentor_students.count()
+        
+        # Form analytics
+        main_forms = StudentForm.objects.filter(student__in=mentor_students)
+        followup_forms = StudentFollowupForm.objects.filter(student__in=mentor_students)
+        
+        main_form_count = main_forms.count()
+        followup_form_count = followup_forms.count()
+        remaining_forms = (total_students * 2) - main_form_count - followup_form_count
+        
+        # Attendance data
+        attendance_data = Student1.objects.filter(mentorship_data__in=mentor_students).aggregate(
+            avg_atte_ise1=Avg('atte_ise1'),
+            avg_atte_mse=Avg('atte_mse'),
+            avg_attendance=Avg('attendance')
+        )
+        
+        # Marks data
+        marks_data = Student1.objects.filter(mentorship_data__in=mentor_students).aggregate(
+            avg_cts=Avg('cts'),
+            avg_ise1=Avg('ise1'),
+            avg_mse=Avg('mse'),
+            avg_semcgpa=Avg('semcgpa')
+        )
+        
+        # Multiply CGPA by 10 here
+        if marks_data['avg_semcgpa']:
+            marks_data['avg_semcgpa'] *= 10
+        
+        mentor_data.append({
+            'mentor': mentor,
+            'total_students': total_students,
+            'main_form_count': main_form_count,
+            'followup_form_count': followup_form_count,
+            'remaining_forms': remaining_forms,
+            'attendance_data': attendance_data,
+            'marks_data': marks_data,
+        })
+    
+    years = ['SE', 'TE', 'BE']
+    form_completion_data = []
+    session_data = []
+
+    for year in years:
+        students = MentorshipData.objects.filter(year=year)
+        total_students = students.count()
+        main_forms = StudentForm.objects.filter(student__in=students).count()
+        followup_forms = StudentFollowupForm.objects.filter(student__in=students).count()
+        total_forms = total_students * 2
+        completed_forms = main_forms + followup_forms
+        completion_percentage = (completed_forms / total_forms) * 100 if total_forms > 0 else 0
+
+        form_completion_data.append({
+            'year': year,
+            'completion_percentage': round(completion_percentage, 2)
+        })
+
+        # Session data
+        sessions = Session.objects.filter(student__year=year).count()
+        session_data.append({
+            'year': year,
+            'session_count': sessions
+        })
+
+    context = {
+        'mentor_data': mentor_data,
+        'form_completion_data': form_completion_data,
+        'session_data': session_data,
+    }
+    
+    return render(request, 'mentor_admin/progress_report.html', context)

@@ -47,7 +47,7 @@
         </li>
 
         <li class="{% if request.path == '/mentor_admin/progress_report/' %}active{% endif %}">
-            <a href="/mentor_admin/progress_report/">
+            <a href="{% url 'admin_progress_report' %}">
                 <i class='bx bxs-doughnut-chart'></i>
                 <span class="text">Progress Report</span>
             </a>
