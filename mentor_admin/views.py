@@ -191,56 +191,55 @@ def is_mentor_admin(user):
     return user.is_authenticated  # Customize this check based on your project
 
 # View to increment the semester for students of a specific year
+from django.db import transaction
+
+@login_required
 @user_passes_test(is_mentor_admin)
 def change_sem_for_year(request, action, year):
     if request.method == 'POST':
-        # Map years to their corresponding semester ranges
-        year_to_semester = {
-            'FE': [1, 2],
-            'SE': [3, 4],
-            'TE': [5, 6],
-            'BE': [7, 8]
-        }
-
-        # Get the students who belong to the selected year
+        # Get the students in the selected year
         students_in_selected_year = MentorshipData.objects.filter(year=year)
         updated_students = 0
 
-        # Increment or decrement semesters for the students in the selected year
-        for student in students_in_selected_year:
-            if action == 'increment' and student.sem < 8:
-                student.sem += 1
-            elif action == 'decrement' and student.sem > 1:
-                student.sem -= 1
+        with transaction.atomic():  # Ensure atomic updates
+            for student in students_in_selected_year:
+                if action == 'increment':
+                    student.increment_semester()
+                elif action == 'decrement':
+                    student.decrement_semester()
+                updated_students += 1
 
-            # Automatically update the year based on the new sem
-            student.set_year_based_on_sem()
-            student.save()
-            updated_students += 1
+        # Display a success message
+        action_word = 'incremented' if action == 'increment' else 'decremented'
+        messages.success(request, f'Successfully {action_word} semester for {updated_students} students in {year}.')
 
-        # Now, update the rest of the students who are not in the selected year
-        for year_key, sem_range in year_to_semester.items():
-            if year_key != year:  # Exclude the selected year group
-                other_students = MentorshipData.objects.filter(year=year_key)
-                for student in other_students:
-                    # Increment or decrement accordingly based on the action
-                    if action == 'increment' and student.sem < 8:
-                        student.sem += 1
-                    elif action == 'decrement' and student.sem > 1:
-                        student.sem -= 1
+        return redirect('mentor_admin_dashboard')
 
-                    # Automatically update the year based on the new sem
-                    student.set_year_based_on_sem()
-                    student.save()
+    return HttpResponse(status=405)
 
-        if action == 'increment':
-            messages.success(request, f'Successfully incremented semester for {updated_students} students in {year}, and adjusted others accordingly.')
-        else:
-            messages.success(request, f'Successfully decremented semester for {updated_students} students in {year}, and adjusted others accordingly.')
 
-        return redirect('mentor_admin_dashboard')  # Redirect to mentor admin dashboard
 
-    return HttpResponse(status=405)  # Return method not allowed if it's not a POST request
+def _update_other_years(action, year_to_semester, selected_year):
+    """Helper function to update other students not in the selected year"""
+    for year_key, sem_range in year_to_semester.items():
+        if year_key != selected_year:  # Exclude the selected year group
+            other_students = MentorshipData.objects.filter(year=year_key)
+            for student in other_students:
+                # Only increment or decrement if within valid range
+                if action == 'increment' and student.sem < sem_range[1]:
+                    student.sem += 1
+                elif action == 'decrement' and student.sem > sem_range[0]:
+                    student.sem -= 1
+
+                # Ensure year is only updated when sem crosses thresholds
+                if action == 'increment' and student.sem == sem_range[1]:
+                    student.year = year_key  # Set to next year if it reaches the max semester for this year
+                elif action == 'decrement' and student.sem == sem_range[0]:
+                    student.year = year_key  # Set to previous year if it reaches the min semester for this year
+
+                student.save()
+
+
 
 @login_required
 def admin_progress_report(request):
@@ -341,4 +340,6 @@ def admin_progress_report(request):
     }
     
     return render(request, 'mentor_admin/progress_report.html', context)
+
+
 
