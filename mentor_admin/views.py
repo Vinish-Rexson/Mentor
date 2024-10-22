@@ -6,7 +6,7 @@ from .forms import MentorAdminSignUpForm
 from .models import MentorAdmin
 from mentor.models import *
 from django.contrib import messages
-from django.db.models import Count, Avg  # Add Avg here
+from django.db.models import Count, Avg, Min, Max  # Add Avg here
 from django.db import transaction
 from django.utils import timezone
 
@@ -44,8 +44,12 @@ def mentor_admin_dashboard(request, student_id=None):
     # Call recents and unpack it directly into context
     recent_forms = recents(request)
 
-    # Get batch distribution
-    batch_distribution = MentorshipData.objects.values('year', 'batch').annotate(count=Count('id')).order_by('year', 'batch')
+    # Get batch distribution with semester information
+    batch_distribution = MentorshipData.objects.values('year', 'batch', 'sem').annotate(
+        count=Count('id'),
+        min_sem=Min('sem'),
+        max_sem=Max('sem')
+    ).order_by('year', 'batch', 'sem')
 
     # Organize batch distribution by year
     year_batch_distribution = {}
@@ -54,7 +58,10 @@ def mentor_admin_dashboard(request, student_id=None):
             year_batch_distribution[item['year']] = []
         year_batch_distribution[item['year']].append({
             'batch': item['batch'],
-            'count': item['count']
+            'sem': item['sem'],
+            'count': item['count'],
+            'min_sem': item['min_sem'],
+            'max_sem': item['max_sem']
         })
 
     context = {
