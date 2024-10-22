@@ -315,10 +315,30 @@ def admin_progress_report(request):
             'session_count': sessions
         })
 
+    # Overall form completion data
+    total_students = MentorshipData.objects.count()
+    completed_main_forms = StudentForm.objects.count()
+    completed_followup_forms = StudentFollowupForm.objects.count()
+    remaining_main_forms = total_students - completed_main_forms
+    remaining_followup_forms = total_students - completed_followup_forms
+
+    # Sessions per year data
+    se_sessions = Session.objects.filter(student__year='SE').count()
+    te_sessions = Session.objects.filter(student__year='TE').count()
+    be_sessions = Session.objects.filter(student__year='BE').count()
+
     context = {
         'mentor_data': mentor_data,
         'form_completion_data': form_completion_data,
         'session_data': session_data,
+        'completed_main_forms': completed_main_forms,
+        'completed_followup_forms': completed_followup_forms,
+        'remaining_main_forms': remaining_main_forms,
+        'remaining_followup_forms': remaining_followup_forms,
+        'se_sessions': se_sessions,
+        'te_sessions': te_sessions,
+        'be_sessions': be_sessions,
     }
     
     return render(request, 'mentor_admin/progress_report.html', context)
+

@@ -33,6 +33,7 @@
         background: #fff;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
+        height: 250px; /* Reduce this value */
     }
     .chart-box:hover {
         transform: scale(1.02);
@@ -40,13 +41,13 @@
     }
     .chart-box h3 {
         text-align: center;
-        font-size: 1.2em;
+        font-size: 1.4em;
         margin-bottom: 10px;
         color: #666;
     }
     canvas {
         width: 100% !important;
-        height: 300px !important;
+        height: 200px !important; /* Reduce this value */
     }
     @media (max-width: 992px) {
         .chart-container {
@@ -58,30 +59,143 @@
             grid-template-columns: 1fr;
         }
     }
+    .overall-stats {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .overall-stats h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .stats-message {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+        color: #555;
+    }
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        margin-bottom: 5px;
+    }
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        border-radius: 3px;
+    }
+    .stats-message {
+        font-size: 1em;
+        margin-top: 15px;
+        color: #555;
+        text-align: center;
+    }
+    .stats-message ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .overall-chart-box {
+        height: 350px; /* Increase height for better visibility */
+    }
+    .overall-chart-box canvas {
+        height: 300px !important;
+    }
+    .mentor-section {
+        margin-top: 40px;
+    }
 </style>
 
 <div class="admin-progress-report">
     <h1>Admin Progress Report</h1>
     
-    {% for mentor in mentor_data %}
+    <div class="overall-stats">
+        <h2>Overall Statistics</h2>
+        <div class="chart-container">
+            <div class="chart-box overall-chart-box">
+                <h3>Overall Form Completion</h3>
+                <canvas id="overallFormCompletion"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(75, 192, 192, 0.7);"></div>
+                        <span>Completed</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(255, 99, 132, 0.7);"></div>
+                        <span>Remaining</span>
+                    </div>
+                </div>
+                <div class="stats-message">
+                    <p>Total main forms remaining: {{ remaining_main_forms }}</p>
+                    <p>Total follow-up forms remaining: {{ remaining_followup_forms }}</p>
+                </div>
+            </div>
+            <div class="chart-box overall-chart-box">
+                <h3>Sessions per Year</h3>
+                <canvas id="sessionsPerYear"></canvas>
+                <div class="stats-message">
+                    <p>Number of sessions created:</p>
+                    <ul>
+                        <li>SE: {{ se_sessions }}</li>
+                        <li>TE: {{ te_sessions }}</li>
+                        <li>BE: {{ be_sessions }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     
+    {% for mentor in mentor_data %}
     <div class="mentor-section">
         <h2>{{ mentor.mentor.username|replace_underscore }}</h2>
-        
         <div class="chart-container">
             <div class="chart-box">
                 <h3>Form Completion</h3>
                 <canvas id="formCompletion{{ forloop.counter }}"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(75, 192, 192, 0.7);"></div>
+                        <span>Main Forms</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(255, 159, 64, 0.7);"></div>
+                        <span>Follow-up Forms</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(255, 99, 132, 0.7);"></div>
+                        <span>Remaining Forms</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-box">
                 <h3>Attendance</h3>
                 <canvas id="attendance{{ forloop.counter }}"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(54, 162, 235, 0.7);"></div>
+                        <span>Average Attendance</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-box">
                 <h3>Marks</h3>
                 <canvas id="marks{{ forloop.counter }}"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: rgba(255, 206, 86, 0.7);"></div>
+                        <span>Average Marks</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -121,49 +235,79 @@ document.addEventListener('DOMContentLoaded', function() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
+            legend: {
+                display: false, // Hide the default legend
+            },
             tooltip: {
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
                 titleFont: {
-                    size: 16,
+                    size: 15,
                     weight: 'bold'
                 },
                 bodyFont: {
                     size: 14
                 },
                 padding: 12,
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: 'white',
-                bodyColor: 'white',
-                borderColor: 'white',
-                borderWidth: 1,
-                displayColors: false
-            },
-            legend: {
-                display: false
+                cornerRadius: 5,
+                displayColors: false,
+                callbacks: {
+                    title: function(tooltipItems) {
+                        return tooltipItems[0].label;
+                    },
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += context.parsed.y;
+                        }
+                        return label;
+                    }
+                }
             }
         },
         scales: {
             x: {
+                grid: { display: false },
                 ticks: {
                     font: {
-                        size: 14
-                    }
+                        size: 16  // Increase this value to make labels bigger
+                    },
+                    color: '#333'
                 }
             },
             y: {
+                beginAtZero: true,
+                grid: { display: false },
                 ticks: {
                     font: {
-                        size: 14
-                    }
+                        size: 14  // Increase this value for y-axis labels
+                    },
+                    color: '#333'
                 },
                 title: {
                     display: true,
+                    text: 'Value',
                     font: {
                         size: 16,
                         weight: 'bold'
-                    }
+                    },
+                    color: '#333'
                 }
             }
         }
+    };
+
+    // For overall charts
+    const overallChartOptions = {
+        ...commonOptions,
+        aspectRatio: 1.5, // Adjust this value to change the chart's shape
     };
 
     mentorData.forEach((mentor, index) => {
@@ -173,30 +317,21 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: ['Main Forms', 'Follow-up Forms', 'Remaining Forms'],
                 datasets: [{
-                    label: 'Form Completion',
                     data: [mentor.formCompletion.mainForms, mentor.formCompletion.followupForms, mentor.formCompletion.remainingForms],
                     backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(255, 99, 132, 0.7)']
                 }]
             },
             options: {
                 ...commonOptions,
-                scales: {
-                    ...commonOptions.scales,
-                    y: {
-                        ...commonOptions.scales.y,
-                        title: {
-                            ...commonOptions.scales.y.title,
-                            text: 'Number of Forms'
-                        }
-                    }
-                },
                 plugins: {
                     ...commonOptions.plugins,
                     tooltip: {
                         ...commonOptions.plugins.tooltip,
                         callbacks: {
                             label: function(context) {
-                                return `${context.dataset.label}: ${context.parsed.y}`;
+                                const label = context.label || '';
+                                const value = context.parsed.y || 0;
+                                return `${label}: ${value}`;
                             }
                         }
                     }
@@ -210,12 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: ['ISE 1', 'MSE', 'Overall'],
                 datasets: [{
-                    label: 'Average Attendance',
-                    data: [
-                        mentor.attendance.ise1,
-                        mentor.attendance.mse,
-                        mentor.attendance.overall
-                    ],
+                    data: [mentor.attendance.ise1, mentor.attendance.mse, mentor.attendance.overall],
                     backgroundColor: 'rgba(54, 162, 235, 0.7)'
                 }]
             },
@@ -223,14 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ...commonOptions,
                 scales: {
                     ...commonOptions.scales,
-                    y: {
-                        ...commonOptions.scales.y,
-                        max: 100,
-                        title: {
-                            ...commonOptions.scales.y.title,
-                            text: 'Attendance Percentage'
-                        }
-                    }
+                    y: { ...commonOptions.scales.y, max: 100 }
                 },
                 plugins: {
                     ...commonOptions.plugins,
@@ -238,7 +361,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         ...commonOptions.plugins.tooltip,
                         callbacks: {
                             label: function(context) {
-                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%`;
+                                const value = context.parsed.y || 0;
+                                return `Attendance: ${value.toFixed(2)}%`;
                             }
                         }
                     }
@@ -252,13 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: ['CTS', 'ISE 1', 'MSE', 'Sem CGPA (x10)'],
                 datasets: [{
-                    label: 'Average Marks',
-                    data: [
-                        mentor.marks.cts,
-                        mentor.marks.ise1,
-                        mentor.marks.mse,
-                        mentor.marks.semCgpa * 10
-                    ],
+                    data: [mentor.marks.cts, mentor.marks.ise1, mentor.marks.mse, mentor.marks.semCgpa * 10],
                     backgroundColor: 'rgba(255, 206, 86, 0.7)'
                 }]
             },
@@ -266,14 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ...commonOptions,
                 scales: {
                     ...commonOptions.scales,
-                    y: {
-                        ...commonOptions.scales.y,
-                        max: 100,
-                        title: {
-                            ...commonOptions.scales.y.title,
-                            text: 'Marks / CGPA (x10)'
-                        }
-                    }
+                    y: { ...commonOptions.scales.y, max: 100 }
                 },
                 plugins: {
                     ...commonOptions.plugins,
@@ -281,19 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         ...commonOptions.plugins.tooltip,
                         callbacks: {
                             label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
+                                const label = context.label || '';
+                                const value = context.parsed.y || 0;
+                                if (label === 'Sem CGPA (x10)') {
+                                    return `CGPA: ${(value / 10).toFixed(2)}`;
                                 }
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y.toFixed(2);
-                                    if (context.label === "Sem CGPA (x10)") {
-                                        label += ` (CGPA: ${(context.parsed.y / 10).toFixed(2)})`;
-                                    } else {
-                                        label += '%';
-                                    }
-                                }
-                                return label;
+                                return `${label}: ${value.toFixed(2)}%`;
                             }
                         }
                     }
@@ -301,7 +405,91 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
+    // Overall Form Completion Chart
+    new Chart(document.getElementById('overallFormCompletion').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Main Forms', 'Follow-up Forms'],
+            datasets: [{
+                label: 'Completed Forms',
+                data: [{{ completed_main_forms }}, {{ completed_followup_forms }}],
+                backgroundColor: 'rgba(75, 192, 192, 0.7)'
+            }, {
+                label: 'Remaining Forms',
+                data: [{{ remaining_main_forms }}, {{ remaining_followup_forms }}],
+                backgroundColor: 'rgba(255, 99, 132, 0.7)'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                x: {
+                    stacked: true,
+                    ...commonOptions.scales.x
+                },
+                y: {
+                    stacked: true,
+                    ...commonOptions.scales.y,
+                    max: 300 // Adjust based on your maximum total forms
+                }
+            },
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    ...commonOptions.plugins.tooltip,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Sessions per Year Chart
+    new Chart(document.getElementById('sessionsPerYear').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['SE', 'TE', 'BE'],
+            datasets: [{
+                label: 'Number of Sessions',
+                data: [{{ se_sessions }}, {{ te_sessions }}, {{ be_sessions }}],
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                ...commonOptions.scales,
+                y: {
+                    ...commonOptions.scales.y,
+                    beginAtZero: true,
+                    max: 10 // Adjust based on your maximum sessions
+                }
+            }
+        }
+    });
 });
 </script>
 {% endblock %}
+
+
+
+
+
+
+
+
