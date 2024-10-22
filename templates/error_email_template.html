@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Notification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h2 {
+            color: #dc3545;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dc3545;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #0056b3;
+            font-size: 20px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .info-item {
+            background-color: #e9ecef;
+            border-radius: 4px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+        }
+        .info-item strong {
+            color: #495057;
+            display: inline-block;
+            width: 120px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            overflow: auto;
+            font-size: 14px;
+            line-height: 1.45;
+            color: #212529;
+        }
+        .debug-info {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #6c757d;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Error Notification</h2>
+        <div class="info-item">
+            <strong>Error Message:</strong> {{ error_message }}
+        </div>
+        <div class="info-item">
+            <strong>Request Method:</strong> {{ request_method }}
+        </div>
+        <div class="info-item">
+            <strong>Request Path:</strong> {{ request_path }}
+        </div>
+        <div class="info-item">
+            <strong>User:</strong> {{ user }}
+        </div>
+        <h3>Traceback:</h3>
+        <pre>{{ traceback }}</pre>
+        <div class="debug-info">
+            <strong>Debug Mode:</strong> {{ debug_mode }}
+        </div>
+    </div>
+</body>
+</html>

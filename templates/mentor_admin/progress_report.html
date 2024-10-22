@@ -7,18 +7,22 @@
 {% block content %}
 <style>
     .admin-progress-report {
+        font-family: 'Arial', sans-serif;
+       
+        color: #333;
         padding: 20px;
     }
-    .mentor-section {
-        margin-bottom: 40px;
-        background-color: #f8f9fa;
+    .mentor-section, .overall-stats {
+        background-color: #fff;
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-    .mentor-section h2 {
+    .mentor-section h2, .overall-stats h2 {
         margin-bottom: 20px;
-        color: #333;
+        color: #495057;
+        font-size: 1.5em;
     }
     .chart-container {
         display: grid;
@@ -28,15 +32,11 @@
         margin: 20px 0;
     }
     .chart-box {
-        width: 90%;
-        padding: 10px;
-        border-radius: 10px;
         background: #fff;
+        border-radius: 10px;
+        padding: 15px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
-        height: auto; /* Change from fixed height to auto */
-        display: flex;
-        flex-direction: column;
     }
     .chart-box:hover {
         transform: scale(1.02);
@@ -44,20 +44,35 @@
     }
     .chart-box h3 {
         text-align: center;
-        font-size: 1.4em;
+        font-size: 1.2em;
         margin-bottom: 10px;
         color: #666;
     }
     canvas {
-        width: 90% !important;
-        height: 200px !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 250px;
     }
     .legend {
-        margin-top: auto; /* Push legend to the bottom */
-        padding-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+        margin-bottom: 5px;
+    }
+    .legend-color {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        border-radius: 3px;
     }
     .stats-message {
-        font-size: 0.9em; /* Reduce font size */
+        font-size: 0.9em;
         margin-top: 10px;
         color: #555;
         text-align: center;
@@ -70,69 +85,17 @@
     .stats-message li {
         margin-bottom: 5px;
     }
+    .overall-stats .chart-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
     .overall-chart-box {
-        height: auto; /* Change from fixed height to auto */
-    }
-    .overall-chart-box canvas {
-        height: 250px !important; /* Reduce height */
-    }
-    @media (max-width: 992px) {
-        .chart-container {
-            grid-template-columns: repeat(2, 1fr);
-        }
+        grid-column: span 1;
     }
     @media (max-width: 768px) {
-        .chart-container {
+        .overall-stats .chart-container {
             grid-template-columns: 1fr;
         }
-    }
-    .overall-stats {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 40px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .overall-stats h2 {
-        margin-bottom: 20px;
-        color: #333;
-    }
-    .stats-message {
-        font-size: 1.1em;
-        margin-bottom: 15px;
-        color: #555;
-    }
-    .legend {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
-    }
-    .legend-item {
-        display: flex;
-        align-items: center;
-        margin-right: 20px;
-        margin-bottom: 5px;
-    }
-    .legend-color {
-        width: 20px;
-        height: 20px;
-        margin-right: 5px;
-        border-radius: 3px;
-    }
-    .stats-message {
-        font-size: 1em;
-        margin-top: 15px;
-        color: #555;
-        text-align: center;
-    }
-    .stats-message ul {
-        list-style-type: none;
-        padding: 0;
-    }
-   
-    .mentor-section {
-        margin-top: 40px;
     }
 </style>
 
@@ -258,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false, // Hide the default legend
+                display: false,
             },
             tooltip: {
                 enabled: true,
@@ -268,15 +231,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 titleColor: 'white',
                 bodyColor: 'white',
                 titleFont: {
-                    size: 15,
+                    size: 14,
                     weight: 'bold'
                 },
                 bodyFont: {
-                    size: 14
+                    size: 13
                 },
-                padding: 12,
-                cornerRadius: 5,
-                displayColors: false,
+                padding: 10,
+                cornerRadius: 4,
+                displayColors: true,
                 callbacks: {
                     title: function(tooltipItems) {
                         return tooltipItems[0].label;
@@ -287,42 +250,37 @@ document.addEventListener('DOMContentLoaded', function() {
                             label += ': ';
                         }
                         if (context.parsed.y !== null) {
-                            label += context.parsed.y;
+                            label += context.parsed.y.toFixed(2);
                         }
                         return label;
                     }
                 },
-                // Add this new property to limit the tooltip width
-                bodyMaxWidth: 150
+                bodyMaxWidth: 200
             }
         },
         scales: {
             x: {
                 grid: { display: false },
                 ticks: {
-                    font: {
-                        size: 16  // Increase this value to make labels bigger
-                    },
-                    color: '#333'
+                    font: { size: 12 },
+                    color: '#666'
                 }
             },
             y: {
                 beginAtZero: true,
-                grid: { display: false },
+                grid: { color: 'rgba(0, 0, 0, 0.1)' },
                 ticks: {
-                    font: {
-                        size: 14  // Increase this value for y-axis labels
-                    },
-                    color: '#333'
+                    font: { size: 12 },
+                    color: '#666'
                 },
                 title: {
                     display: true,
                     text: 'Value',
                     font: {
-                        size: 16,
+                        size: 14,
                         weight: 'bold'
                     },
-                    color: '#333'
+                    color: '#666'
                 }
             }
         }
@@ -509,6 +467,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+
+
 
 
 
