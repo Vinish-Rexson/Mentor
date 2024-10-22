@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import CustomLoginView 
 
-
+def trigger_error(request):
+    division_by_zero = 1 / 0
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mentor.urls')),
     path('mentor_admin/', include('mentor_admin.urls')),
     path('accounts/login/', CustomLoginView.as_view(), name='login'),
+    path('sentry-debug/', trigger_error),
 ]
