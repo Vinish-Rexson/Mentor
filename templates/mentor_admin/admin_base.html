@@ -39,33 +39,20 @@
             </a>
         </li>
         
-        
-        <li class="{% if request.path == '/mentor_admin/form_dashboard/' %}active{% endif %}">
-            <a href="/mentor_admin/form_dashboard/">
-                <i class='bx bxs-message-dots'></i>
-                <span class="text">Forms</span>
-            </a>
-        </li>
-        
         <li class="{% if request.path == '/mentor_admin/sessions/' %}active{% endif %}">
             <a href="/mentor_admin/sessions/">
                 <i class='bx bxs-message-dots'></i>
-                <span class="text">Session</span>
+                <span class="text">Sessions Shared</span>
             </a>
         </li>
 
         <li class="{% if request.path == '/mentor_admin/progress_report/' %}active{% endif %}">
-            <a href="/mentor_admin/progress_report/">
+            <a href="{% url 'admin_progress_report' %}">
                 <i class='bx bxs-doughnut-chart'></i>
                 <span class="text">Progress Report</span>
             </a>
         </li>
-        <li class="{% if request.path == '/mentor_admin/tools/' %}active{% endif %}">
-            <a href="/mentor_admin/tools/">
-                <i class='bx bxs-shopping-bag-alt'></i>
-                <span class="text">Tools</span>
-            </a>
-        </li>
+
         <li class="{% if request.path == '/mentor_admin/mentors/' %}active{% endif %}">
             <a href="/mentor_admin/mentors/">
                 <i class='bx bxs-group'></i>

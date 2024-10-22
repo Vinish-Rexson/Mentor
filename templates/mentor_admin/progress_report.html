@@ -1,0 +1,307 @@
+{% extends 'mentor_admin/admin_base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block title %}Admin Progress Report{% endblock %}
+
+{% block content %}
+<style>
+    .admin-progress-report {
+        padding: 20px;
+    }
+    .mentor-section {
+        margin-bottom: 40px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .mentor-section h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .chart-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        width: 100%;
+        margin: 20px 0;
+    }
+    .chart-box {
+        padding: 10px;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .chart-box:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+    .chart-box h3 {
+        text-align: center;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        color: #666;
+    }
+    canvas {
+        width: 100% !important;
+        height: 300px !important;
+    }
+    @media (max-width: 992px) {
+        .chart-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 768px) {
+        .chart-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-progress-report">
+    <h1>Admin Progress Report</h1>
+    
+    {% for mentor in mentor_data %}
+    
+    <div class="mentor-section">
+        <h2>{{ mentor.mentor.username|replace_underscore }}</h2>
+        
+        <div class="chart-container">
+            <div class="chart-box">
+                <h3>Form Completion</h3>
+                <canvas id="formCompletion{{ forloop.counter }}"></canvas>
+            </div>
+            
+            <div class="chart-box">
+                <h3>Attendance</h3>
+                <canvas id="attendance{{ forloop.counter }}"></canvas>
+            </div>
+            
+            <div class="chart-box">
+                <h3>Marks</h3>
+                <canvas id="marks{{ forloop.counter }}"></canvas>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    var mentorData = [
+    
+    {% for mentor in mentor_data %}
+        {
+            formCompletion: {
+                mainForms: {{ mentor.main_form_count }},
+                followupForms: {{ mentor.followup_form_count }},
+                remainingForms: {{ mentor.remaining_forms }}
+            },
+            attendance: {
+                ise1: {{ mentor.attendance_data.avg_atte_ise1|default:0 }},
+                mse: {{ mentor.attendance_data.avg_atte_mse|default:0 }},
+                overall: {{ mentor.attendance_data.avg_attendance|default:0 }}
+            },
+            marks: {
+                cts: {{ mentor.marks_data.avg_cts|default:0 }},
+                ise1: {{ mentor.marks_data.avg_ise1|default:0 }},
+                mse: {{ mentor.marks_data.avg_mse|default:0 }},
+                semCgpa: {{ mentor.marks_data.avg_semcgpa|default:0 }}
+            }
+        },
+    {% endfor %}
+    ];
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {
+                titleFont: {
+                    size: 16,
+                    weight: 'bold'
+                },
+                bodyFont: {
+                    size: 14
+                },
+                padding: 12,
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: 'white',
+                borderWidth: 1,
+                displayColors: false
+            },
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 14
+                    }
+                },
+                title: {
+                    display: true,
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                }
+            }
+        }
+    };
+
+    mentorData.forEach((mentor, index) => {
+        // Form Completion Chart
+        new Chart(document.getElementById(`formCompletion${index + 1}`).getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Main Forms', 'Follow-up Forms', 'Remaining Forms'],
+                datasets: [{
+                    label: 'Form Completion',
+                    data: [mentor.formCompletion.mainForms, mentor.formCompletion.followupForms, mentor.formCompletion.remainingForms],
+                    backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(255, 99, 132, 0.7)']
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        title: {
+                            ...commonOptions.scales.y.title,
+                            text: 'Number of Forms'
+                        }
+                    }
+                },
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Attendance Chart
+        new Chart(document.getElementById(`attendance${index + 1}`).getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['ISE 1', 'MSE', 'Overall'],
+                datasets: [{
+                    label: 'Average Attendance',
+                    data: [
+                        mentor.attendance.ise1,
+                        mentor.attendance.mse,
+                        mentor.attendance.overall
+                    ],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        max: 100,
+                        title: {
+                            ...commonOptions.scales.y.title,
+                            text: 'Attendance Percentage'
+                        }
+                    }
+                },
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Marks Chart
+        new Chart(document.getElementById(`marks${index + 1}`).getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['CTS', 'ISE 1', 'MSE', 'Sem CGPA (x10)'],
+                datasets: [{
+                    label: 'Average Marks',
+                    data: [
+                        mentor.marks.cts,
+                        mentor.marks.ise1,
+                        mentor.marks.mse,
+                        mentor.marks.semCgpa * 10
+                    ],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        max: 100,
+                        title: {
+                            ...commonOptions.scales.y.title,
+                            text: 'Marks / CGPA (x10)'
+                        }
+                    }
+                },
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(2);
+                                    if (context.label === "Sem CGPA (x10)") {
+                                        label += ` (CGPA: ${(context.parsed.y / 10).toFixed(2)})`;
+                                    } else {
+                                        label += '%';
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+    
+});
+</script>
+{% endblock %}

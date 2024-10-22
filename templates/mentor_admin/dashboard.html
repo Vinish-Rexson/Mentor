@@ -128,6 +128,84 @@
         background-color: #4299e1;
         color: white;
     }
+
+    .form-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .semester-form {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+        width: 48%;
+    }
+
+    .semester-form h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 16px;
+    }
+
+    .semester-form label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 8px;
+    }
+
+    .semester-form select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #2d3748;
+        margin-bottom: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    .semester-form select:focus {
+        outline: none;
+        border-color: #4299e1;
+    }
+
+    .semester-form button {
+        width: 100%;
+        padding: 12px;
+        background-color: #4299e1;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .semester-form button:hover {
+        background-color: #3182ce;
+    }
+
+    #increment-form button {
+        background-color: #48bb78;
+    }
+
+    #increment-form button:hover {
+        background-color: #38a169;
+    }
+
+    #decrement-form button {
+        background-color: #ed8936;
+    }
+
+    #decrement-form button:hover {
+        background-color: #dd6b20;
+    }
 </style>
 
 <div class="dashboard-container">
@@ -179,62 +257,51 @@
             </a> 
         </li>
     </ul>
-
-    <div class="section-wrapper">
-        <h2 class="section-title">Recent Main Forms</h2>
-        <div class="section-content">
-            <div class="recent">
-                {% for form in recent_mainform %}
-                <div class="form-item">
-                    <span class="recency-label">{% if forloop.first %}Latest{% else %}{{ forloop.counter }} days ago{% endif %}</span>
-                    <a href="{% url 'form_student' form.student.id mentor.id %}" class="form-link">
-                        <div class="form-preview">
-                            <i class='bx bxs-file-doc'></i>
-                            <span>Main Form</span>
-                        </div>
-                        <div class="form-info">
-                            <h3>{{ form.name }}</h3>
-                            <p>Date: {{ form.date|date:"d/m/Y h:i A" }}</p>
-                            <p>Roll No: {{ form.rollno }}</p>
-                        </div>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="form-item no-data">
-                    <p>No recent main forms available</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+    <div class="form-container">
+        <form method="post" id="increment-form" class="semester-form">
+            {% csrf_token %}
+            <h3>Increment Semester</h3>
+            <label for="increment-year">Select Year:</label>
+            <select name="year" id="increment-year" required>
+                <option value="FE">First Year (FE)</option>
+                <option value="SE">Second Year (SE)</option>
+                <option value="TE">Third Year (TE)</option>
+                <option value="BE">Final Year (BE)</option>
+            </select>
+        
+            <button type="button" onclick="submitForm('increment')">Increment Semester</button>
+        </form>
+        
+        <form method="post" id="decrement-form" class="semester-form">
+            {% csrf_token %}
+            <h3>Decrement Semester</h3>
+            <label for="decrement-year">Select Year:</label>
+            <select name="year" id="decrement-year" required>
+                <option value="FE">First Year (FE)</option>
+                <option value="SE">Second Year (SE)</option>
+                <option value="TE">Third Year (TE)</option>
+                <option value="BE">Final Year (BE)</option>
+            </select>
+        
+            <button type="button" onclick="submitForm('decrement')">Decrement Semester</button>
+        </form>
     </div>
-
-    <div class="section-wrapper">
-        <h2 class="section-title">Recent Follow-up Forms</h2>
-        <div class="section-content">
-            <div class="recent">
-                {% for followup in recent_followupform %}
-                <div class="form-item">
-                    <span class="recency-label">{% if forloop.first %}Latest{% else %}{{ forloop.counter }} days ago{% endif %}</span>
-                    <a href="{% url 'followup_form_student' followup.student.id mentor.id %}" class="form-link">
-                        <div class="form-preview">
-                            <i class='bx bxs-file-plus'></i>
-                            <span>Follow-up Form</span>
-                        </div>
-                        <div class="form-info">
-                            <h3>{{ followup.name }}</h3>
-                            <p>Date: {{ followup.date|date:"d/m/Y h:i A" }}</p>
-                            <p>Roll No: {{ followup.rollno }}</p>
-                        </div>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="form-item no-data">
-                    <p>No recent follow-up forms available</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+    
+    <script>
+    function submitForm(action) {
+        const year = document.getElementById(action === 'increment' ? 'increment-year' : 'decrement-year').value;
+    
+        // Construct the URL for the action with the selected year
+        const url = `/mentor_admin/change-sem/${action}/${year}/`;  // Using the correct URL format
+    
+        const form = action === 'increment' ? document.getElementById('increment-form') : document.getElementById('decrement-form');
+    
+        // Set the form action to the constructed URL
+        form.action = url;
+    
+        form.submit();
+    }
+    </script>    
 </div>
 
 {% endblock %}
