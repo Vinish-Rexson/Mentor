@@ -28,12 +28,15 @@
         margin: 20px 0;
     }
     .chart-box {
+        width: 90%;
         padding: 10px;
         border-radius: 10px;
         background: #fff;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
-        height: 250px; /* Reduce this value */
+        height: auto; /* Change from fixed height to auto */
+        display: flex;
+        flex-direction: column;
     }
     .chart-box:hover {
         transform: scale(1.02);
@@ -46,8 +49,32 @@
         color: #666;
     }
     canvas {
-        width: 100% !important;
-        height: 200px !important; /* Reduce this value */
+        width: 90% !important;
+        height: 200px !important;
+    }
+    .legend {
+        margin-top: auto; /* Push legend to the bottom */
+        padding-top: 10px;
+    }
+    .stats-message {
+        font-size: 0.9em; /* Reduce font size */
+        margin-top: 10px;
+        color: #555;
+        text-align: center;
+    }
+    .stats-message ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .stats-message li {
+        margin-bottom: 5px;
+    }
+    .overall-chart-box {
+        height: auto; /* Change from fixed height to auto */
+    }
+    .overall-chart-box canvas {
+        height: 250px !important; /* Reduce height */
     }
     @media (max-width: 992px) {
         .chart-container {
@@ -103,12 +130,7 @@
         list-style-type: none;
         padding: 0;
     }
-    .overall-chart-box {
-        height: 350px; /* Increase height for better visibility */
-    }
-    .overall-chart-box canvas {
-        height: 300px !important;
-    }
+   
     .mentor-section {
         margin-top: 40px;
     }
@@ -269,7 +291,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         return label;
                     }
-                }
+                },
+                // Add this new property to limit the tooltip width
+                bodyMaxWidth: 150
             }
         },
         scales: {
@@ -485,6 +509,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+
+
 
 
 
