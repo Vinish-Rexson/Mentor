@@ -205,9 +205,11 @@ def change_sem_for_year(request, action, year):
         # Get the students who belong to the selected year
         students_in_selected_year = MentorshipData.objects.filter(year=year)
         updated_students = 0
-
+        edit_log = []
         # Increment or decrement semesters for the students in the selected year
         for student in students_in_selected_year:
+            old_sem = student.sem
+            old_year = student.year
             if action == 'increment' and student.sem < 8:
                 student.sem += 1
             elif action == 'decrement' and student.sem > 1:
@@ -217,6 +219,10 @@ def change_sem_for_year(request, action, year):
             student.set_year_based_on_sem()
             student.save()
             updated_students += 1
+
+            # Add a message to the edit log if the student's year changed
+            if student.year != old_year:
+                edit_log.append(f"{student.name}: Moved from {old_year} (Sem {old_sem}) to {student.year} (Sem {student.sem})")
 
         # Now, update the rest of the students who are not in the selected year
         for year_key, sem_range in year_to_semester.items():
@@ -233,10 +239,13 @@ def change_sem_for_year(request, action, year):
                     student.set_year_based_on_sem()
                     student.save()
 
-        if action == 'increment':
-            messages.success(request, f'Successfully incremented semester for {updated_students} students in {year}, and adjusted others accordingly.')
-        else:
-            messages.success(request, f'Successfully decremented semester for {updated_students} students in {year}, and adjusted others accordingly.')
+        # Create a summary message
+        summary = f"{'Incremented' if action == 'increment' else 'Decremented'} semester for {updated_students} students in {year}."
+        
+        # Add the edit log and summary to the messages
+        messages.success(request, summary)
+        for log in edit_log:
+            messages.info(request, log)
 
         return redirect('mentor_admin_dashboard')  # Redirect to mentor admin dashboard
 
@@ -341,4 +350,5 @@ def admin_progress_report(request):
     }
     
     return render(request, 'mentor_admin/progress_report.html', context)
+
 
