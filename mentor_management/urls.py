@@ -17,14 +17,35 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import CustomLoginView 
+from django.conf.urls import handler400, handler403, handler404, handler500
+from django.shortcuts import render
 
-def trigger_error(request):
-    division_by_zero = 1 / 0
+
+# Custom error views
+def custom_bad_request(request, exception):
+    return render(request, '400.html', status=400)
+
+def custom_permission_denied(request, exception):
+    return render(request, '403.html', status=403)
+
+def custom_page_not_found(request, exception):
+    return render(request, '404.html', status=404)
+
+def custom_server_error(request):
+    return render(request, '500.html', status=500)
+
+
+# Assign custom views
+handler400 = 'mentor_management.urls.custom_bad_request'
+handler403 = 'mentor_management.urls.custom_permission_denied'
+handler404 = 'mentor_management.urls.custom_page_not_found'
+handler500 = 'mentor_management.urls.custom_server_error'
+CSRF_FAILURE_VIEW = 'mentor_management.views.custom_csrf_failure'
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mentor.urls')),
     path('mentor_admin/', include('mentor_admin.urls')),
     path('accounts/login/', CustomLoginView.as_view(), name='login'),
-    path('sentry-debug/', trigger_error),
 ]

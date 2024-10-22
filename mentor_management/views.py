@@ -1,5 +1,5 @@
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.contrib.auth.models import Group
 
 class CustomLoginView(LoginView):
@@ -16,3 +16,6 @@ class CustomLoginView(LoginView):
 
         # Default fallback if no group is found
         return '/dashboard/'
+
+def custom_csrf_failure(request, reason=""):
+    return render(request, '403_csrf.html', status=403)
