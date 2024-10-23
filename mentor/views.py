@@ -992,7 +992,8 @@ from django.http import JsonResponse
 from django.db.models import Avg
 @login_required
 def attendance_data_view(request):
-    mentor_username = request.user.username.replace('_', ' ').title()
+    mentor = request.user
+    mentor_username = mentor.username.replace('_', ' ').title()
     mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
 
     def get_attendance_data(year):
@@ -1057,7 +1058,7 @@ def attendance_data_view(request):
         'te': get_marks_data('TE'),
         'be': get_marks_data('BE')
     }
-    
+
     return JsonResponse({
         'attendance': attendance_data,
         'marks': marks_data
