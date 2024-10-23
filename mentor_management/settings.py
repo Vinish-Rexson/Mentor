@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-d5ps^h^ufw6fs4p7992y134j+@ipeq@(84zx^t81hu^^8(l$!m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','https://mentor.up.railway.app']
 
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 
@@ -141,7 +141,8 @@ LOGOUT_REDIRECT_URL = '/accounts/login'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://9693-152-58-48-116.ngrok-free.app'
+    'https://9693-152-58-48-116.ngrok-free.app',
+    'https://mentor.up.railway.app',
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
