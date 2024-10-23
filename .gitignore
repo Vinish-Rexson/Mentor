@@ -1,0 +1,13 @@
+# Ignore virtual environment
+venv/
+
+# Ignore static and media files (if you are serving them from a cloud service)
+static/
+media/
+
+# Ignore Django migrations
+**/migrations/
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
