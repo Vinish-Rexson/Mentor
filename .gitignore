@@ -2,8 +2,8 @@
 venv/
 
 # Ignore static and media files (if you are serving them from a cloud service)
-static/
-media/
+# static/
+# media/
 
 # Ignore Django migrations
 **/migrations/
