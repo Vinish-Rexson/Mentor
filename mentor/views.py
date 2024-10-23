@@ -369,14 +369,11 @@ def download_document(request, rollno):
 
 from django.http import HttpResponse
 from io import BytesIO
-from docx2pdf import convert
+import pypandoc
 import tempfile
 import os
 
 def download_pdf(request, rollno, form_type='main'):
-    # Initialize COM library
-    # pythoncom.CoInitialize()
-
     # Get the Word document using the existing download_document function
     if form_type == 'main':
         word_response = download_document(request, rollno)
@@ -396,7 +393,10 @@ def download_pdf(request, rollno, form_type='main'):
 
         # Convert the Word document to PDF
         pdf_file_path = os.path.join(tmpdirname, f"{rollno}_{form_type}.pdf")
-        convert(word_file_path, pdf_file_path)
+        try:
+            pypandoc.convert_file(word_file_path, 'pdf', outputfile=pdf_file_path)
+        except Exception as e:
+            return HttpResponse(f"Error converting document: {str(e)}", status=500)
 
         # Read the PDF file
         with open(pdf_file_path, 'rb') as pdf_file:
