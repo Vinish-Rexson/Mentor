@@ -154,7 +154,7 @@ def generate_qr(request, student_id, mentor_id):
     })
 
 
-@login_required
+
 def form_student_generate(request, student_id, mentor_id):
     # Fetch the student and mentor based on their IDs
     student = get_object_or_404(MentorshipData, id=student_id)
