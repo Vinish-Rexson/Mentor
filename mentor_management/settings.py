@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-d5ps^h^ufw6fs4p7992y134j+@ipeq@(84zx^t81hu^^8(l$!m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True  # Make sure this is True for development
 
 # ALLOWED_HOSTS = ['127.0.0.1','https://mentor.up.railway.app']
 ALLOWED_HOSTS = ['*']
@@ -125,11 +125,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Add this to ensure Django knows where to find the files
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
@@ -204,3 +206,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'vinishcodes@gmail.com'  # Your Gmail address
 EMAIL_HOST_PASSWORD = 'vepj vatn ustj cjrm'  # Use an app password if 2FA is enabled
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Optional, set default sender
+
+

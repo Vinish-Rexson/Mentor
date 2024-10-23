@@ -16,9 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import CustomLoginView 
+from .views import CustomLoginView, test_media, serve_profile_picture 
 from django.conf.urls import handler400, handler403, handler404, handler500
 from django.shortcuts import render
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.static import serve
+import os
 
 
 # Custom error views
@@ -48,4 +52,15 @@ urlpatterns = [
     path('', include('mentor.urls')),
     path('mentor_admin/', include('mentor_admin.urls')),
     path('accounts/login/', CustomLoginView.as_view(), name='login'),
+    path('test-media/', test_media, name='test_media'),
+    path('media/profile_pictures/<str:filename>', serve_profile_picture, name='serve_profile_picture'),
 ]
+
+# Add this at the end of the file
+if settings.DEBUG:
+    urlpatterns += [
+        path('media/<path:path>', serve, {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+    ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
