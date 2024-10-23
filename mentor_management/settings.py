@@ -11,10 +11,18 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Initialize environment variables
+env = environ.Env()
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -85,12 +93,12 @@ WSGI_APPLICATION = 'mentor_management.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'ifOVoKYzedORdGCIPqNdHkmehuKUkEoR',
-        'HOST': 'autorack.proxy.rlwy.net',
-        'PORT': '47775',
+        'ENGINE': 'django.db.backends.postgresql',  # PostgreSQL database backend
+        'NAME': env('DATABASE_NAME'),              # Fetch from .env
+        'USER': env('DATABASE_USER'),              # Fetch from .env
+        'PASSWORD': env('DATABASE_PASSWORD'),      # Fetch from .env
+        'HOST': env('DATABASE_HOST'),              # Fetch from .env
+        'PORT': env('DATABASE_PORT'),              # Fetch from .env
     }
 }
 
