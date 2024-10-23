@@ -990,9 +990,13 @@ from django.http import JsonResponse
 
 from django.http import JsonResponse
 from django.db.models import Avg
+@login_required
 def attendance_data_view(request):
+    mentor_username = request.user.username.replace('_', ' ').title()
+    mentor_students = MentorshipData.objects.filter(faculty_mentor=mentor_username)
+
     def get_attendance_data(year):
-        students = MentorshipData.objects.filter(year=year).values_list('roll_number', flat=True)
+        students = mentor_students.filter(year=year).values_list('roll_number', flat=True)
         data = Student1.objects.filter(mentorship_data__roll_number__in=students).aggregate(
             avg_atte_ise1=Avg('atte_ise1'),
             avg_atte_mse=Avg('atte_mse'),
@@ -1015,7 +1019,7 @@ def attendance_data_view(request):
         }
 
     def get_marks_data(year):
-        students = MentorshipData.objects.filter(year=year).values_list('roll_number', flat=True)
+        students = mentor_students.filter(year=year).values_list('roll_number', flat=True)
         data = Student1.objects.filter(mentorship_data__roll_number__in=students).aggregate(
             avg_cts=Avg('cts'),
             avg_ise1=Avg('ise1'),
