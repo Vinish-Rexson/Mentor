@@ -148,61 +148,59 @@ CSRF_TRUSTED_ORIGINS = ['https://mentor.up.railway.app']
 # ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
-import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 
-# import os
-# from mentor_admin.custom_handlers import CustomAdminEmailHandler  # Import your custom handler
+from mentor_admin.custom_handlers import CustomAdminEmailHandler  # Import your custom handler
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'mail_admins': {
-#             'level': 'ERROR',
-#             'class': 'mentor_admin.custom_handlers.CustomAdminEmailHandler',
-#             'include_html': True,
-#         },
-#     },
-#     'loggers': {
-#         'django.request': {
-#             'handlers': ['mail_admins'],
-#             'level': 'ERROR',
-#             'propagate': True,
-#         },
-#     },
-# }
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'mentor_admin.custom_handlers.CustomAdminEmailHandler',
+            'include_html': True,
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
 
 
 
 
-# import sentry_sdk
 
-# sentry_sdk.init(
-#     dsn="https://7ae341bbad5c3d5ef2d5cd9dd8a8665e@o4508166967590912.ingest.us.sentry.io/4508167230783488",
-#     # Set traces_sample_rate to 1.0 to capture 100%
-#     # of transactions for tracing.
-#     traces_sample_rate=1.0,
-#     # Set profiles_sample_rate to 1.0 to profile 100%
-#     # of sampled transactions.
-#     # We recommend adjusting this value in production.
-#     profiles_sample_rate=1.0,
-# )
+import sentry_sdk
 
-# ADMINS = [
-#     ('Vinish', 'vinishcodes@gmail.com'),  # Replace with your name and email
-#     ('Nishant', 'mauryanishant2005@gmail.com'),  # Replace with your name and email
-# ]
+sentry_sdk.init(
+    dsn="https://7ae341bbad5c3d5ef2d5cd9dd8a8665e@o4508166967590912.ingest.us.sentry.io/4508167230783488",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'vinishcodes@gmail.com'  # Your Gmail address
-# EMAIL_HOST_PASSWORD = 'vepj vatn ustj cjrm'  # Use an app password if 2FA is enabled
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Optional, set default sender
+ADMINS = [
+    ('Vinish', 'vinishcodes@gmail.com'),  # Replace with your name and email
+    ('Nishant', 'mauryanishant2005@gmail.com'),  # Replace with your name and email
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'vinishcodes@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'vepj vatn ustj cjrm'  # Use an app password if 2FA is enabled
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Optional, set default sender
