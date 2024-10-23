@@ -372,11 +372,10 @@ from io import BytesIO
 from docx2pdf import convert
 import tempfile
 import os
-import pythoncom
 
 def download_pdf(request, rollno, form_type='main'):
     # Initialize COM library
-    pythoncom.CoInitialize()
+    # pythoncom.CoInitialize()
 
     # Get the Word document using the existing download_document function
     if form_type == 'main':
