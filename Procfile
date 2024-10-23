@@ -1,1 +1,2 @@
-web: python manage.py migrate && gunicorn club_platform.wsgi --log-file -
+release: python manage.py migrate
+web: gunicorn mentor_management.wsgi --log-file - --workers 3
