@@ -33,6 +33,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -193,7 +194,6 @@ sentry_sdk.init(
 ADMINS = [
     ('Vinish', 'vinishcodes@gmail.com'),  # Replace with your name and email
     ('Nishant', 'mauryanishant2005@gmail.com'),  # Replace with your name and email
-    ('Team4i', 'team4ingineers@gmail.com'),  # Replace with your name and email
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
